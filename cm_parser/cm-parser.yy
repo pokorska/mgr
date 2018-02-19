@@ -28,7 +28,7 @@ class calcxx_driver;
 
 %code
 {
-# include "calc++-driver.hh"
+# include "cm-driver.hh"
 }
 
 %define api.token.prefix {TOK_}

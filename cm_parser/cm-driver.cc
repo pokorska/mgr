@@ -1,5 +1,5 @@
-#include "calc++-driver.hh"
-#include "calc++-parser.tab.hh"
+#include "cm-driver.hh"
+#include "cm-parser.out.hh"
 #include "ast.h"
 
 calcxx_driver::calcxx_driver ()
