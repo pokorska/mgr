@@ -35,34 +35,34 @@ blank [ \t]
 {blank}+   loc.step ();
 [\n]+      loc.lines (yyleng); loc.step ();
 
-"-"      return yy::calcxx_parser::make_MINUS(loc);
-"+"      return yy::calcxx_parser::make_PLUS(loc);
-"*"      return yy::calcxx_parser::make_STAR(loc);
-"/"      return yy::calcxx_parser::make_SLASH(loc);
-"("      return yy::calcxx_parser::make_LPAREN(loc);
-")"      return yy::calcxx_parser::make_RPAREN(loc);
-":="     return yy::calcxx_parser::make_ASSIGN(loc);
-"INC"    return yy::calcxx_parser::make_INCREASE(loc);
-"DEC"    return yy::calcxx_parser::make_DECREASE(loc);
-"JZ"     return yy::calcxx_parser::make_JUMP_ZERO(loc);
-"PRINT"  return yy::calcxx_parser::make_PRINT(loc);
-"READ"   return yy::calcxx_parser::make_READ(loc);
-{id}:    return yy::calcxx_parser::make_LABEL(yytext, loc);
+"-"      return yy::cm_parser::make_MINUS(loc);
+"+"      return yy::cm_parser::make_PLUS(loc);
+"*"      return yy::cm_parser::make_STAR(loc);
+"/"      return yy::cm_parser::make_SLASH(loc);
+"("      return yy::cm_parser::make_LPAREN(loc);
+")"      return yy::cm_parser::make_RPAREN(loc);
+":="     return yy::cm_parser::make_ASSIGN(loc);
+"INC"    return yy::cm_parser::make_INCREASE(loc);
+"DEC"    return yy::cm_parser::make_DECREASE(loc);
+"JZ"     return yy::cm_parser::make_JUMP_ZERO(loc);
+"PRINT"  return yy::cm_parser::make_PRINT(loc);
+"READ"   return yy::cm_parser::make_READ(loc);
+{id}:    return yy::cm_parser::make_LABEL(yytext, loc);
 
 {int}      {
   errno = 0;
   long n = strtol (yytext, NULL, 10);
   if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
     driver.error (loc, "integer is out of range");
-  return yy::calcxx_parser::make_NUMBER(n, loc);
+  return yy::cm_parser::make_NUMBER(n, loc);
 }
-{id}       return yy::calcxx_parser::make_IDENTIFIER(yytext, loc);
+{id}       return yy::cm_parser::make_IDENTIFIER(yytext, loc);
 .          driver.error (loc, "invalid character");
-<<EOF>>    return yy::calcxx_parser::make_END(loc);
+<<EOF>>    return yy::cm_parser::make_END(loc);
 %%
 
 void
-calcxx_driver::scan_begin ()
+cm_driver::scan_begin ()
 {
   yy_flex_debug = trace_scanning;
   if (file.empty () || file == "-")
@@ -74,7 +74,7 @@ calcxx_driver::scan_begin ()
     }
 }
 void
-calcxx_driver::scan_end ()
+cm_driver::scan_end ()
 {
   fclose (yyin);
 }

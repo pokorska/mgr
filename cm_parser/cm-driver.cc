@@ -2,42 +2,38 @@
 #include "cm-parser.out.hh"
 #include "ast.h"
 
-calcxx_driver::calcxx_driver ()
-  : trace_scanning (false), trace_parsing (false)
-{
-  variables["one"] = 1;
-  variables["two"] = 2;
-}
+cm_driver::cm_driver ()
+  : trace_scanning (false), trace_parsing (false) { }
 
-calcxx_driver::~calcxx_driver ()
-{
-}
+cm_driver::~cm_driver() { }
 
-int
-calcxx_driver::parse (const std::string &f)
+int cm_driver::parse (const std::string &f)
 {
   file = f;
   minsky_result = nullptr;
   scan_begin ();
-  yy::calcxx_parser parser (*this);
+  labels.clear();
+  yy::cm_parser parser (*this);
   parser.set_debug_level (trace_parsing);
   int res = parser.parse ();
   scan_end ();
-  if (minsky_result != nullptr)
-    minsky_result->evaluate(&stacks, labels);
   return res;
 }
 
-void
-calcxx_driver::error (const yy::location& l, const std::string& m)
+void cm_driver::error (const yy::location& l, const std::string& m)
 {
   std::cerr << l << ": " << m << std::endl;
 }
 
-void
-calcxx_driver::error (const std::string& m)
+void cm_driver::error (const std::string& m)
 {
   std::cerr << m << std::endl;
+}
+
+void cm_driver::run() {
+  stacks.clear();
+  if (minsky_result != nullptr)
+    minsky_result->evaluate(&stacks, labels);
 }
 
 std::string strip_label(const std::string& label) {

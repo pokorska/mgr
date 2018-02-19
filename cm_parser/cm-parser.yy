@@ -1,7 +1,7 @@
 %skeleton "lalr1.cc" /* -*- C++ -*- */
 %require "3.0.4"
 %defines
-%define parser_class_name {calcxx_parser}
+%define parser_class_name {cm_parser}
 
 %define api.token.constructor
 %define api.value.type variant
@@ -11,10 +11,10 @@
 # include <string>
 # include <iostream>
 # include "ast.h"
-class calcxx_driver;
+class cm_driver;
 }
 // The parsing context.
-%param { calcxx_driver& driver }
+%param { cm_driver& driver }
 
 %locations
 %initial-action
@@ -60,27 +60,7 @@ class calcxx_driver;
 
 %%
 %start minsky_unit;
-/*
-unit: assignments exp  { driver.result = $2; };
 
-assignments:
-  %empty                 {}
-| assignments assignment {};
-
-assignment:
-  "identifier" ":=" exp { driver.variables[$1] = $3; };
-
-%left "+" "-";
-%left "*" "/";
-exp:
-  exp "+" exp   { $$ = $1 + $3; }
-| exp "-" exp   { $$ = $1 - $3; }
-| exp "*" exp   { $$ = $1 * $3; }
-| exp "/" exp   { $$ = $1 / $3; }
-| "(" exp ")"   { std::swap ($$, $2); }
-| "identifier"  { $$ = driver.variables[$1]; }
-| "number"      { std::swap ($$, $1); };
-*/
 minsky_unit: statements { driver.minsky_result = $1; $$ = $1; }
 
 statements:
@@ -98,7 +78,7 @@ statement:
 %%
 
 void
-yy::calcxx_parser::error (const location_type& l,
+yy::cm_parser::error (const location_type& l,
                           const std::string& m)
 {
   driver.error (l, m);

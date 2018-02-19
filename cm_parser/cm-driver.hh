@@ -1,25 +1,23 @@
-#ifndef CALCXX_DRIVER_HH
-# define CALCXX_DRIVER_HH
+#ifndef CM_DRIVER_HH
+# define CM_DRIVER_HH
 # include <string>
 # include <map>
 # include "cm-parser.out.hh"
 // Tell Flex the lexer's prototype ...
 # define YY_DECL \
-  yy::calcxx_parser::symbol_type yylex (calcxx_driver& driver)
+  yy::cm_parser::symbol_type yylex (cm_driver& driver)
 // ... and declare it for the parser's sake.
 YY_DECL;
 // Conducting the whole scanning and parsing of CM.
-class calcxx_driver
+class cm_driver
 {
 public:
-  calcxx_driver ();
-  virtual ~calcxx_driver ();
+  cm_driver ();
+  virtual ~cm_driver ();
 
-  std::map<std::string, int> variables;
   std::map<int, int> stacks;
   std::map<std::string, Statement*> labels;
 
-  int result;
   Statement* minsky_result;
 // Handling the scanner.
   void scan_begin ();
@@ -36,5 +34,7 @@ public:
   // Error handling.
   void error (const yy::location& l, const std::string& m);
   void error (const std::string& m);
+
+  void run();
 };
-#endif // ! CALCXX_DRIVER_HH
+#endif // ! CM_DRIVER_HH
