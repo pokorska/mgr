@@ -4,7 +4,7 @@
 # include <cstdlib>
 # include <string>
 # include "bf-driver.hh"
-# include "bf-parser.tab.hh"
+# include "bf-parser.out.hh"
 
 // Work around an incompatibility in flex (at least versions
 // 2.5.31 through 2.5.33): it generates code that does

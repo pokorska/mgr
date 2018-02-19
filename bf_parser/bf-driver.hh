@@ -2,7 +2,7 @@
 # define BF_DRIVER_HH
 # include <string>
 # include <map>
-# include "bf-parser.tab.hh"
+# include "bf-parser.out.hh"
 // Tell Flex the lexer's prototype ...
 # define YY_DECL \
   yy::bf_parser::symbol_type yylex (bf_driver& driver)

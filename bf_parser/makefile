@@ -1,7 +1,7 @@
 all:
-	flex -o generated_scanner.c flex-scanner.l
-	bison bf-parser.yy
-	g++ -o test test.cc generated_scanner.c bf-parser.tab.cc bf-driver.cc -std=c++11
+	flex -o generated_scanner.out.c flex-scanner.l
+	bison bf-parser.yy -o bf-parser.out.cc
+	g++ -o test.e test.cc generated_scanner.out.c bf-parser.out.cc bf-driver.cc -std=c++11
 
 clean:
-	rm test generated_scanner.c location.hh position.hh stack.hh bf-parser.tab.cc bf-parser.tab.hh
+	rm *.e *.out.c *.out.cc *.out.hh location.hh position.hh stack.hh

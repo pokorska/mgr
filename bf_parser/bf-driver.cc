@@ -1,5 +1,5 @@
 #include "bf-driver.hh"
-#include "bf-parser.tab.hh"
+#include "bf-parser.out.hh"
 #include "ast.h"
 
 #include <iostream>
