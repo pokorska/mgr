@@ -10,6 +10,8 @@ int main (int argc, char *argv[])
       driver.trace_parsing = true;
     else if (argv[i] == std::string ("-s"))
       driver.trace_scanning = true;
+    else if (argv[i] == std::string ("-turing"))
+      driver.turing = true;
     else if (!driver.parse (argv[i]))
       driver.run();
     else

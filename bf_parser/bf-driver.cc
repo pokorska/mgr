@@ -5,7 +5,7 @@
 #include <iostream>
 
 bf_driver::bf_driver()
-  : trace_scanning (false), trace_parsing (false) { }
+  : trace_scanning (false), trace_parsing (false), turing (false) { }
 
 bf_driver::~bf_driver() { }
 
@@ -32,9 +32,16 @@ void bf_driver::error (const std::string& m)
 }
 
 void bf_driver::run() {
-  pos = 0;
-  tape.clear();
-  if (ast != nullptr) {
+  if (ast == nullptr) {
+    std::cerr << "No ast provided";
+    return;
+  }
+
+  if (turing) {
+    std::cout << ast->translate();
+  } else {
+    pos = 0;
+    tape.clear();
     ast->evaluate(&tape, &pos);
   }
 }
