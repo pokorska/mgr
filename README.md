@@ -17,7 +17,6 @@ of Brainfuck and Counter Machine.
 
 ### Brainfuck
 
-[//]: <> (TODO: Do not use link reference)
 (Brainfuck - Wikipedia): https://pl.wikipedia.org/wiki/Brainfuck
 
 ### Turing Machine
