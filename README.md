@@ -2,6 +2,32 @@
 Program translations to counter machine
 * Brainfuck
 
+## Usage
+
+Preconditions:
+* Bison
+* Flex
+* g++ (with c++11)
+
+Execute translation from Brainfuck to Turing Machine within `bf_parser` folder:
+```
+make all; ./test.e -turing ../examples/trivial.bf
+```
+
+Execute program in Brainfuck within `bf_parser` forder:
+```
+make all; ./test.e ../examples/hello.bf
+```
+
+Execute program in Minsky Machine within `cm_parser` folder:
+```
+make all; ./test.e ../examples/simple.cm
+```
+
+Final note:
+Instead of `../examples/trivial.bf` etc. may appear any other path to text file containing
+source code written in given language (currently Brainfuck or Minsky Machine)
+
 ## Overview
 
 The goal is to translate automatically any program written in Brainfuck to Counter Machine
