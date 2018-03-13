@@ -1,0 +1,198 @@
+% Opcje klasy 'iithesis' opisane sa w komentarzach w pliku klasy. Za ich pomoca
+% ustawia sie przede wszystkim jezyk i rodzaj (lic/inz/mgr) pracy, oraz czy na
+% drugiej stronie pracy ma byc skladany wzor oswiadczenia o autorskim wykonaniu.
+\documentclass[english,shortabstract,mgr]{iithesis}
+
+\usepackage[utf8]{inputenc}
+
+%%%%% DANE DO STRONY TYTUŁOWEJ
+% Niezaleznie od jezyka pracy wybranego w opcjach klasy, tytul i streszczenie
+% pracy nalezy podac zarowno w jezyku polskim, jak i angielskim.
+% Pamietaj o madrym (zgodnym z logicznym rozbiorem zdania oraz estetyka) recznym
+% zlamaniu wierszy w temacie pracy, zwlaszcza tego w jezyku pracy. Uzyj do tego
+% polecenia \fmlinebreak.
+\polishtitle    {Tłumaczenie współczesnego języka programowania\fmlinebreak do Maszyny Minsky'ego.}
+\englishtitle   {Modern programming language translation to theoretical model of Minsky Machine (Counter Machine).}
+\polishabstract {TODO: polishabstract}
+\englishabstract{
+Counter Machine (a machine with finite state set, two counters and input/output tape) is~able to express any
+computations done by~modern programming languages. This is~well known theorem, just like computations
+performed using Turing Machine and~means that anything written in modern programming language is possible
+to~translate into theoretical model of Minsky Machine (as well as into Turing Machine).
+
+My goal is to build automatic translation from modern programming language (C++) to Minsky Machine.
+}
+% w pracach wielu autorow nazwiska mozna oddzielic poleceniem \and
+\author         {Jadwiga Pokorska}
+% w przypadku kilku promotorow, lub koniecznosci podania ich afiliacji, linie
+% w ponizszym poleceniu mozna zlamac poleceniem \fmlinebreak
+\advisor        {dr Jakub Michaliszyn}
+%\date          {}                     % Data zlozenia pracy
+% Dane do oswiadczenia o autorskim wykonaniu
+\transcriptnum {247906}                     % Numer indeksu
+\advisorgen    {dr Jakuba Michaliszyn} % Nazwisko promotora w dopelniaczu
+%%%%%
+
+%%%%% WLASNE DODATKOWE PAKIETY
+%
+%\usepackage{graphicx,listings,amsmath,amssymb,amsthm,amsfonts,tikz}
+%
+%%%%% WŁASNE DEFINICJE I POLECENIA
+%
+%\theoremstyle{definition} \newtheorem{definition}{Definition}[chapter]
+%\theoremstyle{remark} \newtheorem{remark}[definition]{Observation}
+%\theoremstyle{plain} \newtheorem{theorem}[definition]{Theorem}
+%\theoremstyle{plain} \newtheorem{lemma}[definition]{Lemma}
+%\renewcommand \qedsymbol {\ensuremath{\square}}
+% ...
+%%%%%
+
+\begin{document}
+
+%%%%% POCZĄTEK ZASADNICZEGO TEKSTU PRACY
+
+\chapter{Introduction}
+
+\ldots
+
+\chapter {Specifications of languages}
+
+\section {Brainfuck}
+TODO.
+
+\section {Turing Machine}
+
+\subsection {Instructions}
+
+Turing Machine consists of finite number of states, changes between them
+and~potentially infinite tape, on~which it is able to~write and~read symbols.
+It has no code sequence, program is a~set of state changes and~definition
+of~initial state. There is special final state \texttt{END} that does not need
+to~be defined to~be used.
+
+There is predefined set of symbols used on the tape which is whole ASCII character set
+extended with the same amount of additional (non-ASCII) symbols. Regular
+ASCII characters have 7 bits (numbers 0-127), so tape symbols have 8 bits
+allowing to hold regular ASCII and special characters (numbers 128-255).
+
+There are few special definitions (so far using regular ASCII,
+but it will be changed to use special characters instead):
+\begin{itemize}
+  \item \texttt{BLANK} which represents empty field on the tape
+  \item \texttt{*} (ALL) defines all characters (both ASCII and special)
+  \item \texttt{\#} (NOTHING) means no character which is used to say
+                   that we do not want to write anything on tape during
+                   this state change
+  \item \texttt{\&} (NON-ZERO) defines all characters except 0
+  \item \texttt{0} (ZERO) represents zero that is used for condotional jumps
+                   (jump zero)
+  \item \texttt{>} (NEXT-CHAR) allows to write on the tape next character
+                   (increased by one), i.e. writes \texttt{g} if on the tape
+                   was \texttt{f}
+  \item \texttt{<} (PREV-CHAR) similarly as above but writes previous caracted,
+                   i.e. writes \texttt{e} when seen \texttt{f}
+\end{itemize}
+
+Defining initial state:
+\begin{verbatim}
+START: <state name>
+\end{verbatim}
+
+Each state change looks as follows:
+\begin{verbatim}
+<state name> <symbol(s)> -> <target state> <head move> <symbol to write>
+\end{verbatim}
+
+\texttt{symbol(s)} is ASCII character including special definitions (currently
+all special definitions use regular ASCII, so that it is easy to see
+in standard text file), in future it will allow to get non-ASCII special
+characters as well.
+
+\texttt{head move} is one of: \texttt{L}, \texttt{R} or \texttt{-} which
+steer the head to go left, right or stay in place, respectively.
+
+\texttt{symbol to write} is any (currently ASCII) symbol. Currently there
+is no mechanism to prevent writing any symbol from special definitions,
+but~it will cause undefined behaviour of~the machine. The only symbol
+from special definitions that is allowed to appear as \texttt{symbol to write}
+is \texttt{\#} (NOTHING) meaning that symbol on the tape should not change.
+
+\subsection {Extensions of theoretical model}
+
+Standard input/output handling is done by allowing to read or write single
+ASCII character from/to stdin/stdout. It is possible to~add additional
+reading or~writing before moving head. It is done by modifying change
+symbol \texttt{->} in state change definition.
+\begin{itemize}
+  \item Reading is done with \texttt{->*}, i.e. \texttt{state1 A ->* state2 R NOTHING}
+        which means when seen symbol \texttt{A} in state \texttt{state1} we read
+        from stdin one character, overwrite \texttt{A} to read value and move
+        head one field right.
+  \item Writing is done similarly with \texttt{->\^},
+        i.e. \texttt{state1 A ->\^ state2 R NOTHING} which will print symbol
+        \texttt{A} on stdout and move head right.
+\end{itemize}
+
+\subsection{Example}
+
+Program that reads letter from stdin, writes this letter and next one into
+stdout and second written letter was \texttt{Z} or \texttt{z} then prints
+\texttt{.} at the end as well, otherwise finishes.
+
+\begin{verbatim}
+START: s1
+s1 ALL ->^ s2 - NOTHING
+s2 ALL ->* s3 - NEXT_CHAR
+s3 ALL -> s4 - NOTHING
+s4 z -> s5 R NOTHING
+s4 Z -> s5 R NOTHING
+s5 ALL -> s6 - .
+s6 ALL -> END - NOTHING
+\end{verbatim}
+
+Note: If there is no state change defined for given configuration
+(nothing matches) then it is assumed that machine gets to \texttt{END} state.
+Because of this in the above example last instruction is not necessary.
+
+\section {2 Stack Pushdown Automata}
+Not yet defined.
+
+\section {Minsky Machine}
+
+\subsection {Instructions}
+Minsky Machine (currently) consists of finite number of counters
+each holding one non-negative integer and sequence of instructions.
+Each instruction might be prefixed by a label which will be used for
+code execution and allow to jump into desired code parts. (The idea is similar
+to RAM machine.)
+
+Each of the instructions is one of the following ones:
+\begin{itemize}
+  \item \texttt{INC <number>} increases given counter
+  \item \texttt{DEC <number>} decreases given counter
+  \item \texttt{PRINT <number>} prints state of given counter to standard output
+  \item \texttt{READ <number>} reads number from standard input into given counter
+  \item \texttt{JZ <number> <label>} if value of given counter is 0 then execution
+        will continue from place in code with given label
+\end{itemize}
+
+\subsection {Example}
+Program that reads number $n$ from stdin and writes $2 \cdot n$ to stdout.
+
+\begin{verbatim}
+      READ 1
+loop: JZ 1 end
+      DEC 1
+      INC 2
+      INC 2
+      JZ 3 loop
+end:  PRINT 2
+\end{verbatim}
+
+%%%%% BIBLIOGRAFIA
+
+%\begin{thebibliography}{1}
+%\bibitem{example} \ldots
+%\end{thebibliography}
+
+\end{document}

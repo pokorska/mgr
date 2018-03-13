@@ -5,6 +5,11 @@
 *.out.hh
 *.out.h
 *.e
+*.aux
+*.log
+*.auc
+*.out
+*.toc
 location.hh
 position.hh
 stack.hh
