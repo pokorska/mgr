@@ -53,7 +53,6 @@ blank  [ \t]
 {id}        return yy::tm_parser::make_STATE_NAME(yytext, loc);
 {symbol}    return yy::tm_parser::make_SYMBOL(yytext[0], loc);
 
-.          loc.step(); // comment
 <<EOF>>    return yy::tm_parser::make_END(loc);
 %%
 

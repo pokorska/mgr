@@ -5,11 +5,8 @@
 #include <string>
 #include <vector>
 
-std::string strip_label(const std::string& label);
-
 const int BLANK = 0;
 const int MAX_TAPE_LENGTH = 1000;
-const std::string STATE_NAME_BASE = "state";
 const std::string STATEMENT_SEPARATOR = "\n";
 const char ALL_CHARS = '*'; // TODO: change it to non-ASCII character.
 const char NO_CHAR = '#'; // TODO: change to non-ASCII
