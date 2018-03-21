@@ -15,9 +15,6 @@ public:
   tm_driver ();
   virtual ~tm_driver ();
 
-  std::vector<int> tape;
-  int pos;
-
   TransitionMap* ast;
 // Handling the scanner.
   void scan_begin ();
@@ -35,7 +32,7 @@ public:
   void error (const yy::location& l, const std::string& m);
   void error (const std::string& m);
 
-  bool turing;
+  bool _2stackPDA;
   void run();
 };
 #endif // ! BF_DRIVER_HH

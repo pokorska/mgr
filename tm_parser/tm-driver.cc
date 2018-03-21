@@ -1,11 +1,10 @@
 #include "tm-driver.hh"
 #include "tm-parser.out.hh"
 #include "ast.h"
-
 #include <iostream>
 
 tm_driver::tm_driver()
-  : trace_scanning (false), trace_parsing (false), turing (false) { }
+  : trace_scanning (false), trace_parsing (false), _2stackPDA (false) { }
 
 tm_driver::~tm_driver() { }
 
@@ -37,18 +36,19 @@ void tm_driver::run() {
     return;
   }
 
-  if (turing) {
+  if (_2stackPDA) {
     std::cout << "No translation implemented";//ast->translate();
   } else {
-    pos = 0;
-    tape.clear();
-    //ast->evaluate(&tape, &pos);
-    ast->print_status();
+    ast->evaluate();
+    //ast->print_status();
   }
 }
 
-std::string strip_label(const std::string& label) {
-  int pos = label.find(':');
-  if (pos == std::string::npos) return label;
-  return label.substr(0, pos);
+std::ostream& operator<<(std::ostream& out, const TransitionRaw& t) {
+  std::string arrow = "->";
+  if (t.type == TransitionRaw::Input) arrow = "->*";
+  if (t.type == TransitionRaw::Output) arrow = "->^";
+  out << t.curr_state << " " << t.pattern << " " << arrow << " "
+      << t.next_state << " " << t.symbol_to_write;
+  return out;
 }
