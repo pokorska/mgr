@@ -95,18 +95,19 @@ stdin one character, overwrite `A` to read value and move head one field right
 
 Example:
 
-Program that reads letter from stdin, writes this letter and next one into stdout and second written letter was `Z` or `z`
+Program that reads letter from stdin, writes this letter and next one into stdout and second written letter was `B` or `b`
 then prints `.` at the end as well, otherwise finishes.
 
 ```
 START: s1
-s1 ALL ->^ s2 - NOTHING
-s2 ALL ->* s3 - NEXT_CHAR
+s1 ALL ->* s2 - NOTHING
+s2 ALL ->^ s3 - NEXT_CHAR
 s3 ALL -> s4 - NOTHING
-s4 z -> s5 R NOTHING
-s4 Z -> s5 R NOTHING
+s4 b ->^ s5 R NOTHING
+s4 B ->^ s5 R NOTHING
 s5 ALL -> s6 - .
-s6 ALL -> END - NOTHING
+s6 ALL ->^ s7 - NOTHING
+s7 ALL -> END - NOTHING
 ```
 
 Note: If there is no state change defined for given configuration (nothing matches) then it is assumed that machine gets
