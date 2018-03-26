@@ -14,6 +14,7 @@ const char NON_ZERO = '&'; // TODO: change to non-ASCII
 const char NEXT_CHAR = '>'; // TODO: change to non-ASCII
 const char PREV_CHAR = '<'; // TODO: change to non-ASCII
 const char ZERO = '0'; // TODO: CHANGE!
+const char EMPTY_STACK_CHAR = '$';
 const std::string END_STATE = "END";
 
 enum HeadMove { Left, Right, None };
@@ -131,6 +132,52 @@ class TransitionMap {
       }
       ExtendTape(&tape, head);
     }
+  }
+
+  std::string transitionTypeToString(TransitionRaw::Type t) {
+    return t == TransitionRaw::Input ? "->*" : t == TransitionRaw::Output ? "->^" : "->";
+  }
+
+  std::string buildTapeExtension(const TransitionRaw& t) {
+    std::string result = "";
+    std::string input_char_section = (t.type == TransitionRaw::Input) ? "ALL " : "";
+    std::string input_handling = (t.type == TransitionRaw::Input) ? "ORIG_LEFT" : "INPUT_CHAR";
+    std::string output_char_section = (t.type == TransitionRaw::Output) ? " Output: ORIG_LEFT" : "";
+    result += t.curr_state + " " + t.pattern + " " + EMPTY_STACK_CHAR + " " + input_char_section +
+              transitionTypeToString(t.type) + " " + t.next_state + " (" + input_handling + " + BLANK) " +
+              EMPTY_STACK_CHAR + output_char_section;
+    return result;
+  }
+
+  std::string translate() {
+    std::string result = "";
+    for (const auto& alt : transitions) {
+      for (const TransitionRaw& t : alt.second) {
+        // Additional transition for handling tape extensions (inserting BLANKs).
+        if (t.head_move == Right)
+          result += buildTapeExtension(t) + STATEMENT_SEPARATOR;
+
+        std::string input_handling = (t.type == TransitionRaw::Input) ? "INPUT_CHAR" : "ORIG_LEFT";
+        std::string output_char_section = (t.type == TransitionRaw::Output) ? " Output: ORIG_LEFT" : "";
+        std::string left_stack = "", right_stack = "";
+        if (t.head_move == Right) {
+          left_stack = "(" + input_handling + " + ORIG_RIGHT)";
+          right_stack = "NOTHING";
+        }
+        else if (t.head_move == Left) {
+          left_stack = "NOTHING";
+          right_stack = "(ORIG_RIGHT + " + input_handling + ")";
+        } else {
+          left_stack = input_handling;
+          right_stack = "ORIG_RIGHT";
+        }
+        result += t.curr_state + " " + t.pattern + " " + ALL_CHARS + " " +
+                  transitionTypeToString(t.type) + " " + t.next_state + " " +
+                  left_stack + " " + right_stack +
+                  output_char_section + STATEMENT_SEPARATOR;
+      }
+    }
+    return result;
   }
 
   void print_status() const {
