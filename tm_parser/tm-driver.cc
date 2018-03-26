@@ -37,7 +37,7 @@ void tm_driver::run() {
   }
 
   if (_2stackPDA) {
-    std::cout << "No translation implemented";//ast->translate();
+    std::cout << ast->translate();
   } else {
     ast->evaluate();
     //ast->print_status();
