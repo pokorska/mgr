@@ -113,9 +113,56 @@ s7 ALL -> END - NOTHING
 Note: If there is no state change defined for given configuration (nothing matches) then it is assumed that machine gets
 to `END` state. Because of this in the above example last instruction is not necessary.
 
-### 2 Stack Pushdown Automata
+### 2 Stack Pushdown Automaton
 
-Not yet defined.
+2 Stack PushDown Automaton consists of two stacks, input tape and definition of states and transitions between them.
+Each transition looks as follows:
+```
+<state name> <left pattern> <right pattern> -> <target state> <left stack items> <right stack items>
+```
+
+Explanation:
+* `left pattern` is symbol or pattern that should be matched for symbol at the top of left stack
+* `right pattern` is the same as above, but for right stack
+* `left stack items` is list of items that should be pushed to left stack before moving to `target state`. It might be
+   single letter `"a"`, sequence of letters `"abc"` or sequence of letters and references, i.e. `("a" + ORIG_LEFT + "b")`
+   where `ORIG_LEFT` means the letter we read from left stack (the one matched in `left pattern`). Note: If `+` is used
+   it is required to put whole sequence in parenthesis
+* `right stack items` is the same as above, but for items to be pushed into right stack
+
+Special references and definitions in transitions:
+* `ORIG_LEFT` is the letter taken from left stack
+* `ORIG_RIGHT` is the letter taken from right stack
+* `INPUT_CHAR` is the letter taken from input tape (only in input transition type - see section below)
+* `NOTHING` may be used as `left stack items` or `right stack items` and means that nothing is pushed into left/right stack
+* `END` is special state name where transition is made if no other transition is specified
+* `$` is symbol of empty stack
+
+---
+
+Input/Ouput handling is done similarly to Turing Machine - We change `->` in transition to `->*` or `->^`.
+
+When defining input transition it is allowed to use `INPUT_CHAR` in any items to be pushed into left/right stack. Here is example
+that takes character from input tape and pushes it into left stack (and ignores symbols taken from both stacks).
+```
+state1 ALL ALL ->* state2 INPUT_CHAR NOTHING
+```
+
+When defining output transition we *must* specify what character is printed with adding `Output: <letter>` at the very back
+of transition definition.
+Example that prints letter taken from left stack (and ignores what was taken from right stack):
+```
+state1 ALL ALL ->^ state2 NOTHING NOTHING Output: ORIG_LEFT
+```
+Example that prints letter "a" (and ignores what was taken from stacks):
+```
+state1 ALL ALL ->^ state2 NOTHING NOTHING Output: "a"
+```
+
+---
+
+*Important note:* Order of defining transition matters. If patterns do not match distinct set of letters then
+the transition that appeared first is applied.
 
 ### Counter Machine
 
