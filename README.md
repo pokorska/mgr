@@ -161,7 +161,7 @@ state1 ALL ALL ->^ state2 NOTHING NOTHING Output: "a"
 
 ---
 
-*Important note:* Order of defining transition matters. If patterns do not match distinct set of letters then
+**Important note:** Order of defining transition matters. If patterns do not match distinct set of letters then
 the transition that appeared first is applied.
 
 ### Counter Machine
