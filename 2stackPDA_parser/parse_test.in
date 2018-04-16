@@ -1,0 +1,3 @@
+START: s1
+s1 ALL ALL -> s2 ("aa" + "bcd") "F"
+s2 ALL ALL ->^ s3 "left" "right" Output: ("f" + "g" + "h")
