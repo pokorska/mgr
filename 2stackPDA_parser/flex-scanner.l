@@ -55,7 +55,11 @@ blank  [ \t]
 ")"          return yy::_2stackPDA_parser::make_RPAREN(loc);
 "+"          return yy::_2stackPDA_parser::make_PLUS(loc);
 "$"          return yy::_2stackPDA_parser::make_EMPTY_STACK(loc);
-\"[^\"]+\"   return yy::_2stackPDA_parser::make_STRING(yytext, loc);
+\"[^\"]+\"   {
+               std::string inner_string = &yytext[1]; // Removing " symbol from the beginning.
+               inner_string.pop_back(); // Removing " symbol from the end.
+               return yy::_2stackPDA_parser::make_STRING(inner_string, loc);
+             }
 {id}         return yy::_2stackPDA_parser::make_STATE_NAME(yytext, loc);
 {symbol}     return yy::_2stackPDA_parser::make_SYMBOL(yytext[0], loc);
 
