@@ -140,7 +140,7 @@ class TransitionMap {
 
   std::string buildTapeExtension(const TransitionRaw& t) {
     std::string result = "";
-    std::string input_handling = (t.type == TransitionRaw::Input) ? "ORIG_LEFT" : "INPUT_CHAR";
+    std::string input_handling = (t.type == TransitionRaw::Input) ? "INPUT_CHAR" : "ORIG_LEFT";
     std::string output_char_section = (t.type == TransitionRaw::Output) ? " Output: ORIG_LEFT" : "";
     result += t.curr_state + " " + t.pattern + " " + EMPTY_STACK_CHAR + " " +
               transitionTypeToString(t.type) + " " + t.next_state + " (" + input_handling + " + BLANK) " +
