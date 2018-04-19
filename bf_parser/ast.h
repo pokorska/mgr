@@ -207,7 +207,7 @@ class Write : public Statement {
   }
 
   virtual std::string translate(Statement* next) {
-    return getStateName() + " " + ALL_CHARS + " ->* " +
+    return getStateName() + " " + ALL_CHARS + " ->^ " +
            nullSafeGetName(next) + " " + to_char(None) + " " + NO_CHAR +
            STATEMENT_SEPARATOR;
   }
@@ -226,7 +226,7 @@ class Read : public Statement {
   }
   
   virtual std::string translate(Statement* next) {
-    return getStateName() + " " + ALL_CHARS + " ->^ " +
+    return getStateName() + " " + ALL_CHARS + " ->* " +
            nullSafeGetName(next) + " " + to_char(None) + " " + NO_CHAR +
            STATEMENT_SEPARATOR;
   }

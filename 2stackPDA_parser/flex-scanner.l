@@ -44,8 +44,8 @@ blank  [ \t]
 "NOTHING"    return yy::_2stackPDA_parser::make_NOTHING(loc);
 "NON_ZERO"   return yy::_2stackPDA_parser::make_NON_ZERO(loc);
 "ZERO"       return yy::_2stackPDA_parser::make_ZERO(loc);
-"NEXT_CHAR"  return yy::_2stackPDA_parser::make_NEXT_CHAR(loc);
-"PREV_CHAR"  return yy::_2stackPDA_parser::make_PREV_CHAR(loc);
+"NEXT"       return yy::_2stackPDA_parser::make_NEXT(loc);
+"PREV"       return yy::_2stackPDA_parser::make_PREV(loc);
 "ORIG_LEFT"  return yy::_2stackPDA_parser::make_ORIG_LEFT(loc);
 "ORIG_RIGHT" return yy::_2stackPDA_parser::make_ORIG_RIGHT(loc);
 "INPUT_CHAR" return yy::_2stackPDA_parser::make_INPUT_CHAR(loc);

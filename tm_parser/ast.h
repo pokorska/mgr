@@ -149,16 +149,22 @@ class TransitionMap {
   }
 
   std::string translate() {
-    std::string result = "START: " + init_state + STATEMENT_SEPARATOR;
+    const std::string new_init_state_name = "init_state";
+    std::string result = "START: " + new_init_state_name + STATEMENT_SEPARATOR;
+    result += new_init_state_name + " $ $ -> " + init_state + " BLANK NOTHING" + STATEMENT_SEPARATOR;
     for (const auto& alt : transitions) {
       for (const TransitionRaw& t : alt.second) {
         // Additional transition for handling tape extensions (inserting BLANKs).
         if (t.head_move == Right)
           result += buildTapeExtension(t) + STATEMENT_SEPARATOR;
 
-        std::string input_handling = "ORIG_LEFT";
-        if (t.symbol_to_write != NO_CHAR)
-          input_handling = std::string("\"") + t.symbol_to_write + "\"";
+        std::string input_handling = std::string("\"") + t.symbol_to_write + "\"";
+        if (t.symbol_to_write == NO_CHAR)
+          input_handling = "ORIG_LEFT";
+        else if (t.symbol_to_write == NEXT_CHAR)
+          input_handling = "NEXT(ORIG_LEFT)";
+        else if (t.symbol_to_write == PREV_CHAR)
+          input_handling = "PREV(ORIG_LEFT)";
         // Warning: Defining read transition OVERWRITES symbol on the tape with symbol read from stdin.
         if (t.type == TransitionRaw::Input)
           input_handling = "INPUT_CHAR";

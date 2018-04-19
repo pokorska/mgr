@@ -8,17 +8,86 @@
 
 #include "../shared_files/constants.h"
 
+class StackSymbol {
+ public:
+  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) = 0;
+};
+
+class SymbolRaw : public StackSymbol {
+ private:
+  int symbol;
+ public:
+  SymbolRaw(int symbol) : symbol(symbol) { }
+  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+    return symbol;
+  }
+};
+
+class SymbolInput : public StackSymbol {
+ public:
+  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+    if (input_symbol == mgr::NO_CHAR) throw "No input provided in stack symbol evaluation";
+    return input_symbol;
+  }
+};
+
+class SymbolOrigLeft : public StackSymbol {
+ public:
+  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+    return orig_left;
+  }
+};
+
+class SymbolOrigRight : public StackSymbol {
+ public:
+  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+    return orig_right;
+  }
+};
+
+class SymbolNothing : public StackSymbol {
+ public:
+  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+    throw "Trying to evaluate NOTHING symbol";
+  }
+};
+
+class SymbolPrev : public StackSymbol {
+ private:
+  StackSymbol* inner;
+ public:
+  SymbolPrev(StackSymbol* inner) : inner(inner) { }
+  ~SymbolPrev() { delete inner; }
+  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+    int inner_symbol = inner->evaluate(orig_left, orig_right, input_symbol);
+    return inner_symbol-1;
+  }
+};
+
+class SymbolNext : public StackSymbol {
+ private:
+  StackSymbol* inner;
+ public:
+  SymbolNext(StackSymbol* inner) : inner(inner) { }
+  ~SymbolNext() { delete inner; }
+  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+    int inner_symbol = inner->evaluate(orig_left, orig_right, input_symbol);
+    return inner_symbol+1;
+  }
+};
+
 struct TransitionRaw {
   enum Type { Regular, Input, Output };
   Type type;
-  char left_pattern, right_pattern, output_symbol;
+  char left_pattern, right_pattern;
+  StackSymbol* output_symbol; // TODO: Change to sequence of symbols to write.
   std::string curr_state, next_state;
-  std::vector<int> left_stack, right_stack;
+  std::vector<StackSymbol*> left_stack, right_stack;
 
   // Constructor with vector<int> as symbols to be pushed into stacks.
   TransitionRaw(const std::string& curr_state, char left_pattern, char right_pattern,
-      Type type, std::string next_state, const std::vector<int>& left_stack,
-      const std::vector<int>& right_stack, char output_symbol = mgr::NO_CHAR)
+      Type type, std::string next_state, const std::vector<StackSymbol*>& left_stack,
+      const std::vector<StackSymbol*>& right_stack, StackSymbol* output_symbol = new SymbolNothing())
     : curr_state(curr_state), left_pattern(left_pattern), right_pattern(right_pattern),
       type(type), next_state(next_state), left_stack(left_stack), right_stack(right_stack),
       output_symbol(output_symbol) { }
@@ -27,11 +96,20 @@ struct TransitionRaw {
   // and stored within vector<int> internally.
   TransitionRaw(const std::string& curr_state, char left_pattern, char right_pattern,
       Type type, std::string next_state, const std::string& left_stack_str,
-      const std::string& right_stack_str, char output_symbol = mgr::NO_CHAR)
+      const std::string& right_stack_str, StackSymbol* output_symbol = new SymbolNothing())
     : curr_state(curr_state), left_pattern(left_pattern), right_pattern(right_pattern),
       type(type), next_state(next_state), output_symbol(output_symbol) {
-    left_stack = explode(left_stack_str);
-    right_stack = explode(right_stack_str);
+    std::vector<int> left_symbols, right_symbols;
+    left_stack = explode_to_stack(left_stack_str);
+    right_stack = explode_to_stack(right_stack_str);
+  }
+
+  static std::vector<StackSymbol*> explode_to_stack(const std::string& s) {
+    std::vector<int> exploded_str = explode(s);
+    std::vector<StackSymbol*> result;
+    for (int symbol : exploded_str)
+      result.emplace_back(new SymbolRaw(symbol));
+    return result;
   }
 
   static std::vector<int> explode(const std::string& s) {
@@ -72,8 +150,8 @@ class TransitionMap {
     }
   }
 
-  void AddTransition(TransitionRaw t) {
-    transitions[t.curr_state].push_back(t);
+  void AddTransition(const TransitionRaw& t) {
+    transitions[t.curr_state].emplace_back(t);
   }
   void AddInitState(std::string name) {
     init_state = name;
@@ -85,37 +163,21 @@ class TransitionMap {
         return t;
     }
     // Default transition returned when no match is found.
-    return TransitionRaw(state, left_letter, right_letter, TransitionRaw::Regular, mgr::END_STATE, "", "");
+    return TransitionRaw(state, left_letter, right_letter,
+                         TransitionRaw::Regular, mgr::END_STATE, "", "");
   }
 
-  char InterpretSymbol(const TransitionRaw& t, char curr_symbol) {
-    char to_write = t.output_symbol;
-    if (to_write == mgr::NEXT_CHAR)
-      return curr_symbol + 1;
-    else if (to_write == mgr::PREV_CHAR)
-      return curr_symbol - 1;
-    else
-      return to_write;
-  }
-
-  void PushToStack(std::stack<int>* stack, const std::vector<int>& elems,
+  void PushToStack(std::stack<int>* stack, const std::vector<StackSymbol*>& elems,
                    int orig_left, int orig_right, char input_char = mgr::NO_CHAR) {
-    for (int elem : elems) {
-      int to_push = InterpretSymbol(elem, orig_left, orig_right, input_char);
+    for (StackSymbol* elem : elems) {
+      int to_push = elem->evaluate(orig_left, orig_right, input_char);
       if (stack->empty() && to_push != mgr::EMPTY_STACK_CHAR) {
         //std::cout << "Pushing empty stack char first.\n";
         stack->push(mgr::EMPTY_STACK_CHAR);
       }
       //std::cout << "Pushing to stack: " << (char)to_push << " value " << to_push << "\n";
-      stack->push(InterpretSymbol(elem, orig_left, orig_right, input_char));
+      stack->push(to_push);
     }
-  }
-
-  int InterpretSymbol(int symbol, int orig_left, int orig_right, int input_char) {
-    if (symbol == mgr::ORIG_LEFT) return orig_left;
-    if (symbol == mgr::ORIG_RIGHT) return orig_right;
-    if (symbol == mgr::INPUT_SYMBOL) return input_char;
-    return symbol;
   }
 
   void evaluate() {
@@ -126,7 +188,7 @@ class TransitionMap {
     while (curr_state != mgr::END_STATE) {
       int left_top = left_stack.top(), right_top = right_stack.top();
       left_stack.pop(); right_stack.pop();
-      TransitionRaw transition = FindTransition(curr_state, left_top, right_top);
+      const TransitionRaw& transition = FindTransition(curr_state, left_top, right_top);
       char c = mgr::NO_CHAR;
       if (transition.type == TransitionRaw::Input) {
         do {
@@ -134,7 +196,7 @@ class TransitionMap {
         } while (c == '\n' || c == ' ' || c == mgr::NO_CHAR);
       }
       else if (transition.type == TransitionRaw::Output)
-        std::cout << (char)InterpretSymbol(transition.output_symbol, left_top, right_top, c);
+        std::cout << (char)(transition.output_symbol->evaluate(left_top, right_top, c));
       //std::cout << "Left stack\n";
       PushToStack(&left_stack, transition.left_stack, left_top, right_top, c);
       //std::cout << "Right stack\n";

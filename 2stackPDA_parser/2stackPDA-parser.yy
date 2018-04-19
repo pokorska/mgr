@@ -43,8 +43,8 @@ class _2stackPDA_driver;
   NOTHING "NOTHING"
   NON_ZERO "NON_ZERO"
   ZERO "ZERO"
-  NEXT_CHAR "NEXT_CHAR"
-  PREV_CHAR "PREV_CHAR"
+  NEXT "NEXT"
+  PREV "PREV"
   ORIG_LEFT "ORIG_LEFT"
   ORIG_RIGHT "ORIG_RIGHT"
   INPUT_CHAR "INPUT_CHAR"
@@ -63,22 +63,22 @@ class _2stackPDA_driver;
 %type <TransitionRaw::Type> transition_regular
 %type <TransitionRaw::Type> transition_in
 %type <TransitionRaw::Type> transition_out
-%type <char> output_symbol
-%type <std::vector<int> > stack_items
-%type <std::vector<int> > stack_items_no_input
-%type <std::vector<int> > general_items
-%type <std::vector<int> > items_no_input
-%type <std::vector<int> > item
-%type <std::vector<int> > item_no_input
+%type <StackSymbol*> output_symbol
+%type <std::vector<StackSymbol*> > stack_items
+%type <std::vector<StackSymbol*> > stack_items_no_input
+%type <std::vector<StackSymbol*> > general_items
+%type <std::vector<StackSymbol*> > items_no_input
+%type <std::vector<StackSymbol*> > item
+%type <std::vector<StackSymbol*> > item_no_input
 // TODO: vector<int> should be the type
-%type <char> output_items
+%type <StackSymbol*> output_items
 %type <Statement*> init_state
 %type <Statement*> transition
 %type <Statement*> transitions
 %type <Statement*> statements
 %type <TransitionMap*> _2stackPDA_unit
 
-%printer { for (int x : $$) yyoutput << x << " "; } stack_items stack_items_no_input general_items items_no_input item item_no_input
+%printer { for (StackSymbol* x : $$) yyoutput << "<some symbol>" << " "; } stack_items stack_items_no_input general_items items_no_input item item_no_input
 %printer { yyoutput << $$; } <*>;
 
 %%
@@ -117,15 +117,19 @@ transition_out:
 
 // TODO: extend.
 item_no_input:
-  "string" { $$ = TransitionRaw::explode($1); }
-| ORIG_LEFT { $$ = std::vector<int>(1, mgr::ORIG_LEFT); }
-| ORIG_RIGHT { $$ = std::vector<int>(1, mgr::ORIG_RIGHT); }
-| "B" { $$ = std::vector<int>(1, mgr::BLANK); }
-| EMPTY_STACK { $$ = std::vector<int>(1, mgr::EMPTY_STACK_CHAR); }
+  "string" { $$ = TransitionRaw::explode_to_stack($1); }
+| ORIG_LEFT { $$ = std::vector<StackSymbol*>(1, new SymbolOrigLeft()); }
+| ORIG_RIGHT { $$ = std::vector<StackSymbol*>(1, new SymbolOrigRight()); }
+| "B" { $$ = std::vector<StackSymbol*>(1, new SymbolRaw(mgr::BLANK)); }
+| EMPTY_STACK { $$ = std::vector<StackSymbol*>(1, new SymbolRaw(mgr::EMPTY_STACK_CHAR)); }
+| NEXT "(" item_no_input ")" { $$ = std::vector<StackSymbol*>(1, new SymbolNext($3[0])); } // TODO: fix
+| PREV "(" item_no_input ")" { $$ = std::vector<StackSymbol*>(1, new SymbolPrev($3[0])); } // TODO: fix
 
 item:
   item_no_input { $$ = $1; }
-| INPUT_CHAR { $$ = std::vector<int>(1, mgr::INPUT_SYMBOL); }
+| INPUT_CHAR { $$ = std::vector<StackSymbol*>(1, new SymbolInput()); }
+| NEXT "(" item ")" { $$ = std::vector<StackSymbol*>(1, new SymbolNext($3[0])); } // TODO: fix
+| PREV "(" item ")" { $$ = std::vector<StackSymbol*>(1, new SymbolPrev($3[0])); } // TODO: fix
 
 general_items:
   item { $$ = $1; }
@@ -137,23 +141,21 @@ items_no_input:
 
 output_items:
   output_symbol { $$ = $1; }
-| item { $$ = (char)$1[0]; }
-| "(" general_items ")" { $$ = (char)$2[0]; }
+| item { $$ = $1[0]; } // TODO: output_items should be a vector
+| "(" general_items ")" { $$ = $2[0]; } // TODO: as above
 
 output_symbol:
-  "symbol" { $$ = $1; }
-| NEXT_CHAR { $$ = '>'; }
-| PREV_CHAR { $$ = '<'; }
-| NOTHING { $$ = '#'; }
+  "symbol" { $$ = new SymbolRaw($1); }
+| NOTHING { $$ = new SymbolNothing(); }
 
 stack_items:
   item { $$ = $1; }
-| NOTHING { $$ = std::vector<int>(); }
+| NOTHING { $$ = std::vector<StackSymbol*>(); }
 | "(" general_items ")" { $$ = $2; }
 
 stack_items_no_input:
   item_no_input { $$ = $1; }
-| NOTHING { $$ = std::vector<int>(); }
+| NOTHING { $$ = std::vector<StackSymbol*>(); }
 | "(" items_no_input ")" { $$ = $2; }
 
 transition:

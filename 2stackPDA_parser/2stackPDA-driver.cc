@@ -55,7 +55,7 @@ std::ostream& operator<<(std::ostream& out, const TransitionRaw& t) {
   if (t.type == TransitionRaw::Input) arrow = "->*";
   if (t.type == TransitionRaw::Output) arrow = "->^";
   out << t.curr_state << " " << t.left_pattern << " " << t.right_pattern << " "
-      << arrow << " " << t.next_state << " " << t.output_symbol;
+      << arrow << " " << t.next_state << " " << "<output>";//t.output_symbol;
   return out;
 }
 /*
