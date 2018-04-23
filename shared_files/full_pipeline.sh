@@ -1,6 +1,7 @@
 #!/bin/bash
 
 RUN=false
+DEBUG=false
 OUTPUT="output.txt"
 POSITIONAL=()
 while [[ $# -gt 0 ]]
@@ -21,6 +22,10 @@ case $key in
     -r|--run)
     RUN=true
     shift # past argument
+    ;;
+    --debug)
+    DEBUG=true
+    shift
     ;;
     *)    # unknown option
     POSITIONAL+=("$1") # save it in an array for later
@@ -48,7 +53,11 @@ cd ../shared_files/;
 ./tm_to_pda.e -2StackPDA tmp.code > $OUTPUT
 
 if [ $RUN = true ]; then
-  ./pda_to_cm.e $OUTPUT;
+  if [ $DEBUG = true ]; then
+    ./pda_to_cm.e --debug $OUTPUT;
+  else
+    ./pda_to_cm.e $OUTPUT;
+  fi
 fi
 
 rm bf_to_tm.e tm_to_pda.e pda_to_cm.e tmp.code

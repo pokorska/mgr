@@ -19,6 +19,7 @@ class SymbolRaw : public StackSymbol {
  public:
   SymbolRaw(int symbol) : symbol(symbol) { }
   virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+    if (symbol == mgr::EMPTY_STACK_CHAR) return mgr::EMPTY_STACK_VALUE;
     return symbol;
   }
 };
@@ -133,11 +134,13 @@ class TransitionMap {
  private:
   std::map<std::string, std::vector<TransitionRaw>> transitions;
   std::string init_state;
+  bool debug = false;
 
-  bool MatchPattern(char letter, char pattern) const {
+  bool MatchPattern(int letter, char pattern) const {
     if (pattern == mgr::ALL_CHARS) return true;
     if (pattern == mgr::NON_ZERO) return letter != '\0';
     if (pattern == mgr::ZERO) return letter == '\0';
+    if (pattern == mgr::EMPTY_STACK_CHAR) return letter == mgr::EMPTY_STACK_VALUE;
     return letter == pattern;
   }
 
@@ -150,6 +153,8 @@ class TransitionMap {
     }
   }
 
+  void setDebug(bool d) { debug = d; }
+
   void AddTransition(const TransitionRaw& t) {
     transitions[t.curr_state].emplace_back(t);
   }
@@ -157,7 +162,7 @@ class TransitionMap {
     init_state = name;
   }
 
-  TransitionRaw FindTransition(const std::string& state, char left_letter, char right_letter) {
+  TransitionRaw FindTransition(const std::string& state, int left_letter, int right_letter) {
     for (const auto& t : transitions[state]) {
       if (MatchPattern(left_letter, t.left_pattern) && MatchPattern(right_letter, t.right_pattern))
         return t;
@@ -171,19 +176,36 @@ class TransitionMap {
                    int orig_left, int orig_right, char input_char = mgr::NO_CHAR) {
     for (StackSymbol* elem : elems) {
       int to_push = elem->evaluate(orig_left, orig_right, input_char);
-      if (stack->empty() && to_push != mgr::EMPTY_STACK_CHAR) {
+      if (stack->empty() && to_push != mgr::EMPTY_STACK_VALUE) {
         //std::cout << "Pushing empty stack char first.\n";
-        stack->push(mgr::EMPTY_STACK_CHAR);
+        stack->push(mgr::EMPTY_STACK_VALUE);
       }
       //std::cout << "Pushing to stack: " << (char)to_push << " value " << to_push << "\n";
       stack->push(to_push);
     }
   }
 
+  void print_stack(std::stack<int>* s) {
+    std::stack<int> tmp;
+    while (!s->empty()) {
+      tmp.push(s->top());
+      s->pop();
+    }
+    bool start = true;
+    while (!tmp.empty()) {
+      int val = tmp.top();
+      tmp.pop();
+      if (!start || val != -4)
+        std::cout << val << " ";
+      start = false;
+      s->push(val);
+    }
+  }
+
   void evaluate() {
     std::stack<int> left_stack, right_stack;
-    left_stack.push(mgr::EMPTY_STACK_CHAR);
-    right_stack.push(mgr::EMPTY_STACK_CHAR);
+    left_stack.push(mgr::EMPTY_STACK_VALUE);
+    right_stack.push(mgr::EMPTY_STACK_VALUE);
     std::string curr_state = init_state;
     while (curr_state != mgr::END_STATE) {
       int left_top = left_stack.top(), right_top = right_stack.top();
@@ -197,15 +219,21 @@ class TransitionMap {
       }
       else if (transition.type == TransitionRaw::Output)
         std::cout << (char)(transition.output_symbol->evaluate(left_top, right_top, c));
-      //std::cout << "Left stack\n";
       PushToStack(&left_stack, transition.left_stack, left_top, right_top, c);
-      //std::cout << "Right stack\n";
       PushToStack(&right_stack, transition.right_stack, left_top, right_top, c);
-      //std::cout << "Stack pushes done.\n";
+      if (debug) {
+      }
       curr_state = transition.next_state;
-      //std::cout << "Transitioned to state: " << curr_state << "\n";
-      if (left_stack.empty()) left_stack.push(mgr::EMPTY_STACK_CHAR);
-      if (right_stack.empty()) right_stack.push(mgr::EMPTY_STACK_CHAR);
+      if (left_stack.empty()) left_stack.push(mgr::EMPTY_STACK_VALUE);
+      if (right_stack.empty()) right_stack.push(mgr::EMPTY_STACK_VALUE);
+
+      if (debug) {
+        std::cout << "  Left stack: ";
+        print_stack(&left_stack);
+        std::cout << "\n Right stack: ";
+        print_stack(&right_stack);
+        std::cout << "\nTransitioned to state: " << curr_state << "\n";
+      }
     }
   }
 

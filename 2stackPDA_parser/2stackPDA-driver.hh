@@ -31,6 +31,8 @@ public:
   std::string file;
   // Whether parser traces should be generated.
   bool trace_parsing;
+  // Printing additional debugging info.
+  bool debug;
   // Error handling.
   void error (const yy::location& l, const std::string& m);
   void error (const std::string& m);

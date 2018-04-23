@@ -18,6 +18,7 @@ const std::string END_STATE = "END";
 const int INPUT_SYMBOL = -1;
 const int ORIG_LEFT = -2;
 const int ORIG_RIGHT = -3;
+const int EMPTY_STACK_VALUE = -4;
 
 }
 

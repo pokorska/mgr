@@ -5,7 +5,7 @@
 #include <vector>
 
 _2stackPDA_driver::_2stackPDA_driver()
-  : trace_scanning (false), trace_parsing (false), _minsky (false) { }
+  : trace_scanning (false), trace_parsing (false), _minsky (false), debug(false) { }
 
 _2stackPDA_driver::~_2stackPDA_driver() { }
 
@@ -41,6 +41,8 @@ void _2stackPDA_driver::run() {
     std::cerr << "No ast provided\n";
     return;
   }
+
+  if (debug) ast->setDebug(true);
 
   if (_minsky) {
     std::cout << "unimplemented\n"; //ast->translate();
