@@ -9,6 +9,30 @@ Preconditions:
 * Flex
 * g++ (with c++11)
 
+### Full pipeline execution (currently Brainfuck -> 2 Stack PDA)
+
+Within directory `shared_files` there is script `full_pipeline.sh` which executes all translations
+one by one to create final result - code in 2 Stack PDA.
+
+Usage - below command will translate file `hello.bf` written in Brainfuck and translate it to `hello_output.pda`
+written in 2 Stack PDA. Additionally immediately after translation output code will be executed (option `--run`).
+```
+./full_pipeline.sh -f ../examples/hello.bf -o hello_output.pda --run
+```
+
+Options:
+* **(required)** `-f <input file path>` or `--file <input file path>` - specifies the path to input file written in Brainfuck,
+* `-o <output file path>` or `--output <output file path>` - specifies the path to output file (result of translation)
+  written in 2 Stack PDA. If not provided then `output.pda` is created within current drectory.
+* `-r` or `--run` - executes translated code
+* `--debug` - adds additional debugging information when executing program. Currently no debug information is printed
+  while translating.
+
+Currently all necessary files are recompiled each time script is executed (it takes a while) and there is no option
+to just run the code without recompiling everything (at least not with this script usage).
+
+### Separate one step translations
+
 Execute translation from Brainfuck to Turing Machine within `bf_parser` folder:
 ```
 make all; ./test.e -turing ../examples/trivial.bf

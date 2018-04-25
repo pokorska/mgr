@@ -2,7 +2,7 @@
 
 RUN=false
 DEBUG=false
-OUTPUT="output.txt"
+OUTPUT="output.pda"
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
@@ -53,6 +53,7 @@ cd ../shared_files/;
 ./tm_to_pda.e -2StackPDA tmp.code > $OUTPUT
 
 if [ $RUN = true ]; then
+  echo "> Running the translated code";
   if [ $DEBUG = true ]; then
     ./pda_to_cm.e --debug $OUTPUT;
   else
