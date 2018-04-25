@@ -125,13 +125,12 @@ then prints `.` at the end as well, otherwise finishes.
 ```
 START: s1
 s1 ALL ->* s2 - NOTHING
-s2 ALL ->^ s3 - NEXT_CHAR
-s3 ALL -> s4 - NOTHING
-s4 b ->^ s5 R NOTHING
-s4 B ->^ s5 R NOTHING
-s5 ALL -> s6 - .
-s6 ALL ->^ s7 - NOTHING
-s7 ALL -> END - NOTHING
+s2 ALL ->^ s3 - NOTHING
+s3 b -> s4 R NOTHING
+s3 B -> s4 R NOTHING
+s4 ALL -> s5 - .
+s5 ALL ->^ s6 - NOTHING
+s6 ALL -> END - NOTHING
 ```
 
 Note: If there is no state change defined for given configuration (nothing matches) then it is assumed that machine gets
@@ -187,6 +186,21 @@ state1 ALL ALL ->^ state2 NOTHING NOTHING Output: "a"
 
 **Important note:** Order of defining transition matters. If patterns do not match distinct set of letters then
 the transition that appeared first is applied.
+
+Example (equivalent to example from Turing Machine):
+```
+START: init_state
+init_state $ $ -> s1 BLANK NOTHING
+s1 ALL ALL ->* s2 INPUT_CHAR ORIG_RIGHT
+s2 ALL ALL ->^ s3 ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
+s3 b $ -> s4 (ORIG_LEFT + BLANK) $
+s3 b ALL -> s4 (ORIG_LEFT + ORIG_RIGHT) NOTHING
+s3 B $ -> s4 (ORIG_LEFT + BLANK) $
+s3 B ALL -> s4 (ORIG_LEFT + ORIG_RIGHT) NOTHING
+s4 ALL ALL -> s5 "." ORIG_RIGHT
+s5 ALL ALL ->^ s6 ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
+s6 ALL ALL -> END ORIG_LEFT ORIG_RIGHT
+```
 
 ### Counter Machine
 
