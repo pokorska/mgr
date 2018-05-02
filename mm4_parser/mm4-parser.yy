@@ -44,7 +44,6 @@ class mm4_driver;
   DECREASE "-1"
   FLUSH
   LOAD
-  READ
   NOOP
   OUTPUT "Output:"
 ;
@@ -109,7 +108,7 @@ counters:
 
 input_operation:
   LOAD { $$ = TransitionRaw::Load; }
-| READ { $$ = TransitionRaw::Decrease; }
+| "-1" { $$ = TransitionRaw::Decrease; }
 | NOOP { $$ = TransitionRaw::NothingIn; }
 
 output_operation:

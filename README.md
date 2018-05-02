@@ -202,7 +202,109 @@ s5 ALL ALL ->^ s6 ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
 s6 ALL ALL -> END ORIG_LEFT ORIG_RIGHT
 ```
 
-### Counter Machine
+### Counter Machine (4 counters)
+
+Counter Machine consists of 4 counters each holding non-negative integer, finite number of states
+and transitions between them. Each transition looks as follows:
+
+```
+<state name> (<pattern> <pattern> <pattern> pattern>) -> <target state> (<number> <number> <number> <number>)
+```
+
+Where:
+* `<state name>` is the state in which counter machine needs to be within for this transition to be applied,
+* `<pattern>` is one of values `0`, `1` or `_` meaning empty counter, non-empty counter and any counter state
+    and defines what is expected state of given counter - the transition may be applied only when all counter
+    states are matched (Notice that symbol `_` is matched with any state of the counter),
+* `target state` is the state in which machine will be after applying the transition,
+* `<number>` is integer from range `{-1, MAX_INT}` specifying what should be added to given counter - it is allowed
+  to decrease counter by `1` only, but it is possible to increase it by any number that can be stored in regular
+  integer type.
+
+**Note:** If there are many transitions that may be applied in given state matching all counters **the first one**
+is applied. It means that order of defining transitions matters.
+
+It is required to give initial state of the machine with following statement:
+```
+START: <state name>
+```
+
+---
+
+Input/Output operations fit in the schema of using counters - input and output are additional counters which
+transitions may use in similar way as counters are used.
+
+Input transition is defined as follows:
+```
+<state name> (<counters>) <input pattern> ->* <target state> (<numbers>) <input operation>
+```
+
+Where:
+* `<input pattern>` is one of `0`, `1` or `_` (same as counter pattern) and specifies what should be the state
+    of input counter for this transition to be applied,
+* `<input operation>` specifies what action should be performed on input counter and is one of
+    `LOAD`, `-1` or `NOOP` meaning respectively loading character from stdin into the input counter,
+    decrease input counter by `1` and leaving input counter untouched.
+
+This transition reads from stdin into input counter:
+```
+state1 (_ _ _ _) _ ->* state2 (0 0 0 0) LOAD
+```
+
+These transitions read value from input counter and store it in first counter:
+```
+state1 (_ _ _ _) 1 ->* state1 (1 0 0 0) -1
+state1 (_ _ _ _) 0 ->* state2 (0 0 0 0) NOOP
+```
+
+Note: It is assumed that transition may just decrease the input counter and is not allowed to increase its value
+  directly.
+
+Output transition is defined as follows:
+```
+<state name> (<counters>) ->* <target state> (<numbers>) Output: <output operation>
+```
+
+Where:
+* `<output operation>` specifies what should be performed on output counter and may be one of
+    `FLUSH` or non-negative number, meaning respectively pushing counter to stdout and modifying
+    value stored in the counter by given number.
+
+These transitions print character stored in first counter:
+```
+state1 (1 _ _ _) ->^ state1 (-1 0 0 0) Output: 1
+state1 (0 _ _ _) ->^ state2 (0 0 0 0) Output: FLUSH
+```
+
+Note: It is assumed that transition may just increase the output counter and is not allowed to decrease its value
+  directly.
+
+Example:
+
+Code that reads character from stdin doubles its ASCII value and prints the result.
+```
+START: s1
+s1 (_ _ _ _) _ ->* s2 (0 0 0 0) LOAD
+s2 (_ _ _ _) 1 ->* s2 (1 0 0 0) -1
+s2 (_ _ _ _) 0 ->* s3 (0 0 0 0) NOOP
+s3 (1 _ _ _) -> s3 (-1 2 0 0)
+s3 (0 _ _ _) -> s4 (0 0 0 0)
+s4 (_ 1 _ _) ->^ s4 (0 -1 0 0) Output: 1
+s4 (_ 0 _ _) ->^ END (0 0 0 0) Output: FLUSH
+```
+
+### Counter Machine (2 counters) - not yet implemented
+
+Counter Machine with 2 counters has the same definition like Counter Machine with 4 counters, but it is allowed
+to use only 2 counters, so transitions become of the form:
+
+```
+<state name> (<pattern> <pattern>) -> <target state> (<number> <number>)
+```
+
+Input/Ouput is handled the same way it is handled in Counter Machine with 4 counters.
+
+### Counter Machine (OLD - this part will be removed)
 
 Counter Machine (currently) consists of finite number of counters each holding one non-negative integer
 and sequence of instructions. Each instruction might be prefixed by a label which will be used for
