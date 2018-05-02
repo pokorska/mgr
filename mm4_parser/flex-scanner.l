@@ -45,7 +45,6 @@ blank  [ \t]
 "-1"        return yy::mm4_parser::make_DECREASE(loc);
 "FLUSH"     return yy::mm4_parser::make_FLUSH(loc);
 "LOAD"      return yy::mm4_parser::make_LOAD(loc);
-"READ"      return yy::mm4_parser::make_READ(loc);
 "NOOP"      return yy::mm4_parser::make_NOOP(loc);
 "Output:"   return yy::mm4_parser::make_OUTPUT(loc);
 {id}        return yy::mm4_parser::make_STATE_NAME(yytext, loc);
