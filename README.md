@@ -262,7 +262,7 @@ Note: It is assumed that transition may just decrease the input counter and is n
 
 Output transition is defined as follows:
 ```
-<state name> (<counters>) ->* <target state> (<numbers>) Output: <output operation>
+<state name> (<counters>) ->^ <target state> (<numbers>) Output: <output operation>
 ```
 
 Where:

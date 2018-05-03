@@ -155,10 +155,206 @@ Note: If there is no state change defined for given configuration
 (nothing matches) then it is assumed that machine gets to \texttt{END} state.
 Because of this in the above example last instruction is not necessary.
 
-\section {2 Stack Pushdown Automata}
-Not yet defined.
+\section {2 Stack Pushdown Automaton}
 
-\section {Minsky Machine}
+2 Stack PushDown Automaton consists of two stacks, input tape and~definition
+of~states and transitions between them. Each transition looks as follows:
+\begin{verbatim}
+<state name> <left pattern> <right pattern> ->
+    <target state> <left stack items> <right stack items>
+\end{verbatim}
+
+Explanation:
+\begin{itemize}
+  \item \texttt{left pattern} is symbol or pattern that should be matched
+      for symbol at the top of left stack
+  \item \texttt{right pattern} is the same as above, but for right stack
+  \item \texttt{left stack items} is list of items that should be pushed to left stack before moving
+      to \texttt{target state}. It might be single letter \texttt{"a"}, sequence of letters
+      \texttt{"abc"} or~sequence of~letters and~references, i.e. \texttt{("a" + ORIG\_LEFT + "b")}
+      where \texttt{ORIG\_LEFT} means the letter we read from left stack (the one matched
+      in \texttt{left pattern}). Note: If \texttt{+} is used it is required to put whole sequence in parenthesis
+  \item \texttt{right stack items} is the same as above, but for items to be pushed into right stack
+\end{itemize}
+
+Special references and definitions in transitions:
+\begin{itemize}
+  \item \texttt{ORIG\_LEFT} is the letter taken from left stack
+  \item \texttt{ORIG\_RIGHT} is the letter taken from right stack
+  \item \texttt{INPUT\_CHAR} is the letter taken from input tape
+      (only in input transition type - see section below)
+  \item \texttt{NOTHING} may be used as \texttt{left stack items} or \texttt{right stack items}
+      and means that nothing is pushed into left/right stack
+  \item \texttt{END} is special state name where transition is made if no other transition is specified
+  \item \texttt{\$} is symbol of empty stack
+\end{itemize}
+
+\subsection {Extensions of theoretical model}
+
+Input/Ouput handling is done similarly to Turing Machine - We change \texttt{->} in transition
+to \texttt{->*} or \texttt{->\^}.
+
+When defining input transition it is allowed to use \texttt{INPUT\_CHAR} in any items
+to be pushed into left/right stack. Here is example that takes character from input
+tape and pushes it into left stack (and ignores symbols taken from both stacks).
+\begin{verbatim}
+state1 ALL ALL ->* state2 INPUT_CHAR NOTHING
+\end{verbatim}
+
+When defining output transition we \textbf{must} specify what character is printed
+with adding \texttt{Output: <letter>} at the very back of transition definition.
+Example that prints letter taken from left stack (and ignores what was taken from right stack):
+\begin{verbatim}
+state1 ALL ALL ->^ state2 NOTHING NOTHING Output: ORIG_LEFT
+\end{verbatim}
+Example that prints letter "a" (and ignores what was taken from stacks):
+\begin{verbatim}
+state1 ALL ALL ->^ state2 NOTHING NOTHING Output: "a"
+\end{verbatim}
+
+\textbf{Important note:} Order of defining transition matters. If patterns do not match
+distinct set of letters then the transition that appeared first is applied.
+
+\subsection{Example}
+
+Example (equivalent to example from Turing Machine):
+\begin{verbatim}
+START: init_state
+init_state $ $ -> s1 BLANK NOTHING
+s1 ALL ALL ->* s2 INPUT_CHAR ORIG_RIGHT
+s2 ALL ALL ->^ s3 ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
+s3 b $ -> s4 (ORIG_LEFT + BLANK) $
+s3 b ALL -> s4 (ORIG_LEFT + ORIG_RIGHT) NOTHING
+s3 B $ -> s4 (ORIG_LEFT + BLANK) $
+s3 B ALL -> s4 (ORIG_LEFT + ORIG_RIGHT) NOTHING
+s4 ALL ALL -> s5 "." ORIG_RIGHT
+s5 ALL ALL ->^ s6 ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
+s6 ALL ALL -> END ORIG_LEFT ORIG_RIGHT
+\end{verbatim}
+
+\section {Counter Machine (4 counters)}
+
+Counter Machine consists of $4$ counters each holding non-negative integer,
+finite number of states and~transitions between them. Each transition
+looks as follows:
+
+\begin{verbatim}
+<state name> (<pattern> <pattern> <pattern> pattern>) ->
+    <target state> (<number> <number> <number> <number>)
+\end{verbatim}
+
+Where:
+\begin{itemize}
+  \item \texttt{<state name>} is the state in which counter machine needs to be
+      within for this transition to be applied,
+  \item \texttt{<pattern>} is one of values \texttt{0}, texttt{1} or texttt{\_}
+      meaning empty counter, non-empty counter and any counter state and defines
+      what is expected state of given counter - the transition may be applied
+      only when all counter states are matched (Notice that symbol \texttt{\_}
+      is matched with any state of the counter),
+  \item \texttt{target state} is the state in which machine will be after
+      applying the transition,
+  \item \texttt{<number>} is integer from range \texttt{[-1, MAX\_INT]} specifying
+      what should be added to given counter - it is allowed to decrease counter
+      by $1$ only, but it is possible to increase it by any number that can be stored
+      in regular integer type.
+\end{itemize}
+
+\textbf{Note:} If there are many transitions that may be applied in given state
+matching all counters \textbf{the first one} is applied. It means that order
+of defining transitions matters.
+
+It is required to give initial state of the machine with following statement:
+\begin{verbatim}
+START: <state name>
+\end{verbatim}
+
+\subsection {Extensions of theoretical model}
+
+Input/Output operations fit in the schema of using counters - input and output
+are additional counters which transitions may use in similar way as counters are used.
+
+Input transition is defined as follows:
+\begin{verbatim}
+<state name> (<counters>) <input pattern> ->*
+    <target state> (<numbers>) <input operation>
+\end{verbatim}
+
+Where:
+\begin{itemize}
+  \item \texttt{<input pattern>} is one of \texttt{0}, \texttt{1} or \texttt{\_}
+      (same as counter pattern) and specifies what should be the state
+      of input counter for this transition to be applied,
+  \item \texttt{<input operation>} specifies what action should be performed
+      on input counter and is one of \texttt{LOAD}, \texttt{-1} or \texttt{NOOP}
+      meaning respectively loading character from stdin into the input counter,
+      decrease input counter by `1` and leaving input counter untouched.
+\end{itemize}
+
+This transition reads from stdin into input counter:
+\begin{verbatim}
+state1 (_ _ _ _) _ ->* state2 (0 0 0 0) LOAD
+\end{verbatim}
+
+These transitions read value from input counter and store it in first counter:
+\begin{verbatim}
+state1 (_ _ _ _) 1 ->* state1 (1 0 0 0) -1
+state1 (_ _ _ _) 0 ->* state2 (0 0 0 0) NOOP
+\end{verbatim}
+
+Note: It is assumed that transition may just decrease the input counter
+and is not allowed to increase its value directly.
+
+Output transition is defined as follows:
+\begin{verbatim}
+<state name> (<counters>) ->^ <target state> (<numbers>) Output: <output operation>
+\end{verbatim}
+
+Where:
+\begin{itemize}
+  \item \texttt{<output operation>} specifies what should be performed
+      on output counter and may be one of \texttt{FLUSH} or non-negative number,
+      meaning respectively pushing counter to stdout and modifying
+      value stored in the counter by given number.
+\end{itemize}
+
+These transitions print character stored in first counter:
+\begin{verbatim}
+state1 (1 _ _ _) ->^ state1 (-1 0 0 0) Output: 1
+state1 (0 _ _ _) ->^ state2 (0 0 0 0) Output: FLUSH
+\end{verbatim}
+
+Note: It is assumed that transition may just increase the output counter
+and is not allowed to decrease its value directly.
+
+
+\subsection{Example}
+
+Code that reads character from stdin doubles its ASCII value and prints the result.
+\begin{verbatim}
+START: s1
+s1 (_ _ _ _) _ ->* s2 (0 0 0 0) LOAD
+s2 (_ _ _ _) 1 ->* s2 (1 0 0 0) -1
+s2 (_ _ _ _) 0 ->* s3 (0 0 0 0) NOOP
+s3 (1 _ _ _) -> s3 (-1 2 0 0)
+s3 (0 _ _ _) -> s4 (0 0 0 0)
+s4 (_ 1 _ _) ->^ s4 (0 -1 0 0) Output: 1
+s4 (_ 0 _ _) ->^ END (0 0 0 0) Output: FLUSH
+\end{verbatim}
+
+\section {Counter Machine (2 counters)}
+
+Counter Machine with 2 counters has the same definition like
+Counter Machine with 4 counters, but it is allowed to use only
+2 counters, so transitions become of the form:
+
+\begin{verbatim}
+<state name> (<pattern> <pattern>) -> <target state> (<number> <number>)
+\end{verbatim}
+
+Input/Ouput is handled the same way it is handled in Counter Machine with 4 counters.
+
+\section {Minsky Machine - OLD}
 
 \subsection {Instructions}
 Minsky Machine (currently) consists of finite number of counters
