@@ -304,28 +304,3 @@ to use only 2 counters, so transitions become of the form:
 
 Input/Ouput is handled the same way it is handled in Counter Machine with 4 counters.
 
-### Counter Machine (OLD - this part will be removed)
-
-Counter Machine (currently) consists of finite number of counters each holding one non-negative integer
-and sequence of instructions. Each instruction might be prefixed by a label which will be used for
-code execution and allow to jump into desired code parts. (The idea is similar to RAM machine.)
-Each of the instructions is one of the following ones:
-* `INC <number>` increases given counter
-* `DEC <number>` decreases given counter
-* `PRINT <number>` prints state of given counter to standard output
-* `READ <number>` reads number from standard input into given counter
-* `JZ <number> <label>` if value of given counter is 0 then execution will continue from place in code with given label
-
-Example:
-
-Program that reads number `n` from stdin and writes `2*n` to stdout.
-
-```
-      READ 1
-loop: JZ 1 end
-      DEC 1
-      INC 2
-      INC 2
-      JZ 3 loop
-end:  PRINT 2
-```

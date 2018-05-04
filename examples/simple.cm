@@ -1,7 +1,0 @@
-      READ 1
-loop: JZ 1 end
-      DEC 1
-      INC 2
-      INC 2
-      JZ 3 loop
-end:  PRINT 2
