@@ -1,6 +1,18 @@
 #include "ast.h"
 
+#include <unordered_set>
+#include <unordered_map>
+
 #include <iostream>
+
+struct pairhash {
+public:
+  template <typename T, typename U>
+  std::size_t operator()(const std::pair<T, U> &x) const
+  {
+    return std::hash<T>()(x.first) ^ std::hash<U>()(x.second);
+  }
+};
 
 bool TransitionMap::MatchPattern(int letter, char pattern) const {
   if (pattern == mgr::ALL_CHARS) return true;
@@ -112,52 +124,100 @@ std::string create_no_action_MM4(const std::string& state, const std::string& ta
   return state + " (_ _ _ _) -> " + target + " (0 0 0 0)";
 }
 
-std::string create_MM4(const std::string& state, int c1_in, int c2_in, int stack,
+enum Stack { Left, Right };
+
+std::string create_MM4(const std::string& state, int c1_in, int c2_in, Stack stack,
     const std::string& target, int c1_out, int c2_out) {
   //std::cout << "> STATE: " << state << " TARGET: " << target << "\n";
   const std::string counters_in = c_to_string(c1_in) + " " + c_to_string(c2_in);
   const std::string counters_out = std::to_string(c1_out) + " " + std::to_string(c2_out);
-  return state + " (" + (stack > 0 ? "_ _ " + counters_in : counters_in + " _ _") + ") -> "
-      + target + " (" + (stack > 0 ? "0 0 " + counters_out : counters_out + " 0 0") + ")";
+  return state + " (" + (stack == Right ? "_ _ " + counters_in : counters_in + " _ _") + ") -> "
+      + target + " (" + (stack == Right ? "0 0 " + counters_out : counters_out + " 0 0") + ")";
 }
 
-void build_char_recognition(const std::string& state,
-    std::map<int,std::string> out_map, std::string default_out,
-    std::vector<std::string>* dest, int stack) {
+void insert_interpreted_chars(char pattern, std::unordered_set<int>* chars,
+    int alph_size = mgr::DEFAULT_ALPHABET_SIZE) {
+  if (pattern == mgr::ALL_CHARS)
+    for (int i = 1; i < alph_size; ++i)
+      chars->insert(i);
+  else if (pattern == mgr::NON_ZERO)
+    for (int i = 2; i < alph_size; ++i)
+      chars->insert(i);
+  else if (pattern == mgr::ZERO)
+    chars->insert(1);
+  else
+    chars->insert((int)pattern + 1);
+}
+
+std::string build_name(const std::string& base, int left, int right = -1) {
+  return base + "_L" + std::to_string(left) + (right == -1 ? "" : "_R" + std::to_string(right));
+}
+
+std::vector<int> get_all_chars(char pattern, int alph_size = mgr::DEFAULT_ALPHABET_SIZE) {
+  std::vector<int> result;
+  if (pattern == mgr::ALL_CHARS)
+    for (int i = 1; i < alph_size; ++i)
+      result.push_back(i);
+  else if (pattern == mgr::NON_ZERO)
+    for (int i = 2; i < alph_size; ++i)
+      result.push_back(i);
+  else if (pattern == mgr::ZERO)
+    result.push_back(1);
+  else
+    result.push_back((int)pattern + 1);
+  return result;
+}
+
+// Creates recognition of stack items for given state.
+void build_items_recognition(const std::string& state,
+    const std::vector<TransitionRaw>& transitions, std::vector<std::string>* dest) {
   const int alph_size = mgr::DEFAULT_ALPHABET_SIZE; // TODO: It should be given as parameter.
-  const std::string inner_base = state + "_" + (stack > 0 ? "R" : "L");
-  dest->push_back(create_MM4(state, -1, -1, stack, inner_base + "0", 0, 0));
+  std::unordered_map<std::pair<int,int>, const TransitionRaw*, pairhash> bindings;
+  std::unordered_set<int> left_items;
+  for (const TransitionRaw& t : transitions) {
+    if (t.curr_state != state) continue;
+
+    // Generate bindings.
+    std::vector<int> all_left = get_all_chars(t.left_pattern);
+    std::vector<int> all_right = get_all_chars(t.right_pattern);
+    for (int left_char : all_left)
+      for (int right_char : all_right) {
+        const std::pair<int,int> chars = std::make_pair(left_char, right_char);
+        // Making sure it's not yet in the map - first transition on the list should be matched.
+        if (bindings.count(chars) == 0)
+          bindings[std::make_pair(left_char, right_char)] = &t;
+      }
+
+    // Gather existing characters as left stack items to recognize.
+    insert_interpreted_chars(t.left_pattern, &left_items, alph_size);
+  }
+  dest->push_back(create_no_action_MM4(state, build_name(state,0)));
   for (int i = 0; i < alph_size; ++i) {
-    dest->push_back(create_MM4(inner_base + std::to_string(i), 1, -1, stack,
-        inner_base + std::to_string((i+1) % alph_size), -1, i == alph_size-1 ? 1 : 0));
-    if (out_map.count(i) > 0) {
-      dest->push_back(create_MM4(inner_base + std::to_string(i), 0, -1, stack,
-          out_map[i] + "_tmp", 0, 0));
+    dest->push_back(create_MM4(build_name(state,i), 1, -1, Left,
+        build_name(state, (i+1) % alph_size), -1, i == alph_size - 1 ? 1 : 0));
+    if (left_items.count(i) > 0) {
       // Moving counter back to its position.
-      //std::cout << ">> STATE: " << out_map[i] << "\n";
-      dest->push_back(create_MM4(out_map[i] + "_tmp", -1, 1, stack,
-          out_map[i] + "_tmp", 1, -1));
-      dest->push_back(create_MM4(out_map[i] + "_tmp", -1, 0, stack,
-          out_map[i], 0, 0));
-    } else if (default_out != mgr::END_STATE) {
-      dest->push_back(create_MM4(inner_base + std::to_string(i), 0, -1, stack,
-          default_out + "_tmp", 0, 0));
-      // Moving counter back to its position.
-      //std::cout << ">> DEFAULT: " << default_out << "\n";
-      dest->push_back(create_MM4(default_out + "_tmp", -1, 1, stack,
-          default_out + "_tmp", 1, -1));
-      dest->push_back(create_MM4(default_out + "_tmp", -1, 0, stack,
-          default_out, 0, 0));
+      const std::string tmp_state = build_name(state,i) + "_tmp";
+      dest->push_back(create_MM4(build_name(state,i), 0, -1, Left, tmp_state, 0, 0));
+      dest->push_back(create_MM4(tmp_state, -1, 1, Left, tmp_state, 1, -1));
+      dest->push_back(create_MM4(tmp_state, -1, 0, Left, build_name(state,i,0), 0, 0));
+      // Build inner circle for recognizing item on the right stack.
+      for (int j = 0; j < alph_size; ++j) {
+        dest->push_back(create_MM4(build_name(state,i,j), 1, -1, Right,
+            build_name(state,i,(j+1) % alph_size), -1, j == alph_size - 1 ? 1 : 0));
+        const std::pair<int,int> recognized = std::make_pair(i,j);
+        if (bindings.count(recognized) > 0) { // If transition matching these chars exists
+          const TransitionRaw* t = bindings[recognized];
+          // Moving counter back to its position.
+          const std::string tmp_state = build_name(state,i,j) + "_tmp";
+          dest->push_back(create_MM4(build_name(state,i,j), 0, -1, Right, tmp_state, 0, 0));
+          dest->push_back(create_MM4(tmp_state, -1, 1, Right, tmp_state, 1, -1));
+          dest->push_back(create_MM4(tmp_state, -1, 0, Right,
+              build_name(state,i,j) + "_RECOGNIZED_" + t->next_state, 0, 0));
+        }
+      }
     }
   }
-}
-
-bool add_to_recognition_outmap(char pattern, const std::string& base,
-    std::map<int, std::string>* outmap) {
-  if (pattern == mgr::NON_ZERO) return false;
-  if (pattern == mgr::ALL_CHARS) return false;
-  (*outmap)[(int)pattern+1] = base + "_" + pattern;
-  return true;
 }
 
 std::string TransitionMap::translate() {
@@ -165,35 +225,7 @@ std::string TransitionMap::translate() {
   for (const auto& item : transitions) {
     const std::string state = item.first;
     const std::vector<TransitionRaw>& transitions_v = item.second;
-    //std::cout << state << " " << transitions.size() << "\n";
-    std::map<char, std::vector<TransitionRaw>> left_out;
-    std::map<int,std::string> recognition_outmap;
-    std::string default_out = mgr::END_STATE;
-    for (const TransitionRaw& t : transitions_v)
-      left_out[t.left_pattern].push_back(t);
-    for (const auto& group : left_out) {
-      if (!add_to_recognition_outmap(group.first, state, &recognition_outmap))
-        default_out = state + "_" + group.first;
-    }
-    //std::cout << "> DEFAULT (1): " << default_out << "\n";
-    build_char_recognition(state, recognition_outmap, default_out, &results, 0);
-    // For each group of recognized patterns in left stack we need to build
-    // structure for recognizing elements on the right stack.
-    for (const auto& group : left_out) {
-      const std::string beg_state = state + "_" + group.first;
-      std::map<int, std::string> recognition_outmap;
-      std::string default_out = mgr::END_STATE;
-      for (const TransitionRaw& t : group.second) {
-        if (!add_to_recognition_outmap(t.right_pattern, beg_state, &recognition_outmap))
-          default_out = beg_state + "_" + t.right_pattern;
-      }
-      //std::cout << "> DEFAULT: " << default_out << "\n";
-      build_char_recognition(beg_state, recognition_outmap, default_out, &results, 1);
-
-      // Creating final return to target state (after recognizing both stack elements).
-      for (const TransitionRaw& t : group.second) 
-        results.push_back(create_no_action_MM4(beg_state + "_" + t.right_pattern, t.next_state));
-    }
+    build_items_recognition(state, transitions_v, &results);
   }
   std::string result = "";
   for (const std::string& s : results)
