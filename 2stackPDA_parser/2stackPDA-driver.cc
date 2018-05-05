@@ -45,7 +45,7 @@ void _2stackPDA_driver::run() {
   if (debug) ast->setDebug(true);
 
   if (_minsky) {
-    std::cout << "unimplemented\n"; //ast->translate();
+    std::cout << ast->translate();
   } else {
     ast->evaluate();
     //ast->print_status();
