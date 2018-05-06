@@ -1,3 +1,13 @@
 START: s1
-s1 a ALL -> s2 ORIG_LEFT ORIG_RIGHT
-s2 b ALL ->^ s3 NOTHING NOTHING Output: "b"
+s1 ALL ALL ->^ s2 NOTHING NOTHING Output: "H"
+s2 ALL ALL ->^ s3 NOTHING NOTHING Output: "e"
+s3 ALL ALL ->^ s4 NOTHING NOTHING Output: "l"
+s4 ALL ALL ->^ s5 NOTHING NOTHING Output: "l"
+s5 ALL ALL ->^ s6 NOTHING NOTHING Output: "o"
+s6 ALL ALL ->^ s7 NOTHING NOTHING Output: " "
+s7 ALL ALL ->^ s8 NOTHING NOTHING Output: "W"
+s8 ALL ALL ->^ s9 NOTHING NOTHING Output: "o"
+s9 ALL ALL ->^ s10 NOTHING NOTHING Output: "r"
+s10 ALL ALL ->^ s11 NOTHING NOTHING Output: "l"
+s11 ALL ALL ->^ s12 NOTHING NOTHING Output: "d"
+s12 ALL ALL ->^ END NOTHING NOTHING Output: "!"

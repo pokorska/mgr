@@ -138,7 +138,7 @@ std::string create_MM4(const std::string& state, int c1_in, int c2_in, Stack sta
 void insert_interpreted_chars(char pattern, std::unordered_set<int>* chars,
     int alph_size = mgr::DEFAULT_ALPHABET_SIZE) {
   if (pattern == mgr::ALL_CHARS)
-    for (int i = 1; i < alph_size; ++i)
+    for (int i = 0; i < alph_size; ++i)
       chars->insert(i);
   else if (pattern == mgr::NON_ZERO)
     for (int i = 2; i < alph_size; ++i)
@@ -156,7 +156,7 @@ std::string build_name(const std::string& base, int left, int right = -1) {
 std::vector<int> get_all_chars(char pattern, int alph_size = mgr::DEFAULT_ALPHABET_SIZE) {
   std::vector<int> result;
   if (pattern == mgr::ALL_CHARS)
-    for (int i = 1; i < alph_size; ++i)
+    for (int i = 0; i < alph_size; ++i)
       result.push_back(i);
   else if (pattern == mgr::NON_ZERO)
     for (int i = 2; i < alph_size; ++i)
@@ -193,7 +193,7 @@ void build_pushing_symbol(const std::string& base, int symbol, Stack stack,
 }
 
 std::string create_output_MM4(const std::string& state, int symbol, const std::string& target) {
-  return state + "(_ _ _ _) ->^ " + target + "(0 0 0 0) Output: "
+  return state + " (_ _ _ _) ->^ " + target + " (0 0 0 0) Output: "
       + (symbol == -1 ? "FLUSH" : std::to_string(symbol));
 }
 
@@ -210,10 +210,13 @@ void build_output_items(const std::string& base, int left, int right,
     const TransitionRaw& t, std::vector<std::string>* dest, int alph_size) {
   if (t.type != TransitionRaw::Output) return;
   // Push to output counter.
-  dest->push_back(create_output_MM4(get_curr_name(base), t.output_symbol->evaluate(left-1, right-1),
-      gen_next_name(base)));
+  const std::string state1 = get_curr_name(base);
+  const std::string state2 = gen_next_name(base);
+  const std::string state3 = gen_next_name(base);
+  dest->push_back(create_output_MM4(state1, t.output_symbol->evaluate(left-1, right-1),
+      state2));
   // Flush output counter.
-  dest->push_back(create_output_MM4(get_curr_name(base), -1, gen_next_name(base)));
+  dest->push_back(create_output_MM4(state2, -1, state3));
 }
 
 void build_closing_transition(const std::string& base, const std::string& target,
@@ -235,8 +238,8 @@ void build_pushing_items(const std::string& start_state, int left, int right, in
     int symbol_to_push = 1 + symbol->evaluate(left-1, right-1, input);
     build_pushing_symbol(start_state, symbol_to_push, Right, dest, alph_size);
   }
-  build_output_items(get_curr_name(start_state), left, right, t, dest, alph_size);
-  build_closing_transition(get_curr_name(start_state), t.next_state, dest);
+  build_output_items(start_state, left, right, t, dest, alph_size);
+  build_closing_transition(start_state, t.next_state, dest);
 }
 
 // Creates recognition of stack items for given state.
