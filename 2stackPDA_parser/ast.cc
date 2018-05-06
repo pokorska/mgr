@@ -168,6 +168,77 @@ std::vector<int> get_all_chars(char pattern, int alph_size = mgr::DEFAULT_ALPHAB
   return result;
 }
 
+std::string gen_next_name(const std::string& base) {
+  mgr::SequenceGenerator* seq_gen = mgr::SequenceGenerator::getInstance();
+  return base + std::to_string(seq_gen->getNext());
+}
+
+std::string get_curr_name(const std::string& base) {
+  mgr::SequenceGenerator* seq_gen = mgr::SequenceGenerator::getInstance();
+  return base + std::to_string(seq_gen->getCurrent());
+}
+
+void build_pushing_symbol(const std::string& base, int symbol, Stack stack,
+    std::vector<std::string>* dest, int alph_size = mgr::DEFAULT_ALPHABET_SIZE) {
+  const std::string start = get_curr_name(base);
+  // Multiply by N.
+  dest->push_back(create_MM4(start, 1, -1, stack, start, -1, alph_size));
+  // Change state.
+  dest->push_back(create_MM4(start, 0, -1, stack, gen_next_name(base), 0, 0));
+  // Copy back to original counter.
+  dest->push_back(create_MM4(get_curr_name(base), -1, 1, stack, get_curr_name(base), 1, -1));
+  dest->push_back(create_MM4(get_curr_name(base), -1, 0, stack, gen_next_name(base), 0, 0));
+  // Add given symbol.
+  dest->push_back(create_MM4(get_curr_name(base), -1, -1, stack, gen_next_name(base), symbol, 0));
+}
+
+std::string create_output_MM4(const std::string& state, int symbol, const std::string& target) {
+  return state + "(_ _ _ _) ->^ " + target + "(0 0 0 0) Output: "
+      + (symbol == -1 ? "FLUSH" : std::to_string(symbol));
+}
+
+std::string create_input_MM4(const std::string& state, int in,
+    const std::string& target, int out) {
+  std::string input_operation = "-1";
+  if (out == -2) input_operation = "LOAD";
+  if (out == 0) input_operation = "NOOP";
+  return state + " (_ _ _ _) " + (in == -1 ? "_" : std::to_string(in)) + " ->* " + target
+      + " (0 0 0 0) " + input_operation;
+}
+
+void build_output_items(const std::string& base, int left, int right,
+    const TransitionRaw& t, std::vector<std::string>* dest, int alph_size) {
+  if (t.type != TransitionRaw::Output) return;
+  // Push to output counter.
+  dest->push_back(create_output_MM4(get_curr_name(base), t.output_symbol->evaluate(left-1, right-1),
+      gen_next_name(base)));
+  // Flush output counter.
+  dest->push_back(create_output_MM4(get_curr_name(base), -1, gen_next_name(base)));
+}
+
+void build_closing_transition(const std::string& base, const std::string& target,
+    std::vector<std::string>* dest) {
+  dest->push_back(create_no_action_MM4(get_curr_name(base), target));
+}
+
+void build_pushing_items(const std::string& start_state, int left, int right, int input,
+    const TransitionRaw& t, std::vector<std::string>* dest,
+    int alph_size = mgr::DEFAULT_ALPHABET_SIZE) {
+  mgr::SequenceGenerator* seq_gen = mgr::SequenceGenerator::getInstance();
+  seq_gen->reset();
+  dest->push_back(create_no_action_MM4(start_state, gen_next_name(start_state)));
+  for (StackSymbol* symbol : t.left_stack) {
+    int symbol_to_push = 1 + symbol->evaluate(left-1, right-1, input);
+    build_pushing_symbol(start_state, symbol_to_push, Left, dest, alph_size);
+  }
+  for (StackSymbol* symbol : t.right_stack) {
+    int symbol_to_push = 1 + symbol->evaluate(left-1, right-1, input);
+    build_pushing_symbol(start_state, symbol_to_push, Right, dest, alph_size);
+  }
+  build_output_items(get_curr_name(start_state), left, right, t, dest, alph_size);
+  build_closing_transition(get_curr_name(start_state), t.next_state, dest);
+}
+
 // Creates recognition of stack items for given state.
 void build_items_recognition(const std::string& state,
     const std::vector<TransitionRaw>& transitions, std::vector<std::string>* dest) {
@@ -210,10 +281,24 @@ void build_items_recognition(const std::string& state,
           const TransitionRaw* t = bindings[recognized];
           // Moving counter back to its position.
           const std::string tmp_state = build_name(state,i,j) + "_tmp";
+          const std::string final_state = build_name(state, i, j) + "_RECOGNIZED";
           dest->push_back(create_MM4(build_name(state,i,j), 0, -1, Right, tmp_state, 0, 0));
           dest->push_back(create_MM4(tmp_state, -1, 1, Right, tmp_state, 1, -1));
-          dest->push_back(create_MM4(tmp_state, -1, 0, Right,
-              build_name(state,i,j) + "_RECOGNIZED_" + t->next_state, 0, 0));
+          dest->push_back(create_MM4(tmp_state, -1, 0, Right, final_state, 0, 0));
+          if (t->type == TransitionRaw::Input) {
+            dest->push_back(create_input_MM4(final_state, -1, final_state + "_input0", -2));
+            for (int k = 0; k < alph_size; ++k) {
+              const std::string state = final_state + "_input" + std::to_string(k);
+              const std::string next_state = final_state + "_input" + std::to_string(k+1);
+              const std::string read_input_state = state + "_in_done";
+              dest->push_back(create_input_MM4(state, 1, next_state, -1));
+              dest->push_back(create_input_MM4(state, 0, read_input_state, 0));
+              if (k == mgr::NO_CHAR) continue; // Cannot recognize NO_CHAR.
+              build_pushing_items(read_input_state, i, j, k, *t, dest, alph_size);
+            }
+          } else {
+            build_pushing_items(final_state, i, j, mgr::NO_CHAR, *t, dest, alph_size);
+          }
         }
       }
     }
@@ -227,7 +312,7 @@ std::string TransitionMap::translate() {
     const std::vector<TransitionRaw>& transitions_v = item.second;
     build_items_recognition(state, transitions_v, &results);
   }
-  std::string result = "";
+  std::string result = "START: " + init_state + mgr::STATEMENT_SEPARATOR;
   for (const std::string& s : results)
     result += s + mgr::STATEMENT_SEPARATOR;
   return result;

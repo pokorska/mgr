@@ -45,7 +45,11 @@ void _2stackPDA_driver::run() {
   if (debug) ast->setDebug(true);
 
   if (_minsky) {
-    std::cout << ast->translate();
+    try {
+      std::cout << ast->translate();
+    } catch (const char* msg) {
+      std::cout << "ERROR: (translating) " << msg << "\n";
+    }
   } else {
     ast->evaluate();
     //ast->print_status();
