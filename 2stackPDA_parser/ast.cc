@@ -186,10 +186,14 @@ void build_pushing_symbol(const std::string& base, int symbol, Stack stack,
   // Change state.
   dest->push_back(create_MM4(start, 0, -1, stack, gen_next_name(base), 0, 0));
   // Copy back to original counter.
-  dest->push_back(create_MM4(get_curr_name(base), -1, 1, stack, get_curr_name(base), 1, -1));
-  dest->push_back(create_MM4(get_curr_name(base), -1, 0, stack, gen_next_name(base), 0, 0));
+  std::string state1 = get_curr_name(base);
+  std::string state2 = gen_next_name(base);
+  dest->push_back(create_MM4(state1, -1, 1, stack, state1, 1, -1));
+  dest->push_back(create_MM4(state1, -1, 0, stack, state2, 0, 0));
   // Add given symbol.
-  dest->push_back(create_MM4(get_curr_name(base), -1, -1, stack, gen_next_name(base), symbol, 0));
+  state1 = get_curr_name(base);
+  state2 = gen_next_name(base);
+  dest->push_back(create_MM4(state1, -1, -1, stack, state2, symbol, 0));
 }
 
 std::string create_output_MM4(const std::string& state, int symbol, const std::string& target) {
