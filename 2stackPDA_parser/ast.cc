@@ -210,6 +210,23 @@ std::string create_input_MM4(const std::string& state, int in,
       + " (0 0 0 0) " + input_operation;
 }
 
+std::string create_input_MM4(const std::string& state, int c[4], int in,
+    const std::string& target, int c_out[4], int in_oper) {
+  std::string input_operation = "-1";
+  if (in_oper == -2) input_operation = "LOAD";
+  if (in_oper == 0) input_operation = "NOOP";
+  char in_str = in == -1 ? '_' : in == 0 ? '0' : '1';
+  char c_str[4];
+  std::string c_out_str[4];
+  for (int i = 0; i < 4; ++i) {
+    c_str[i] = c[i] == -1 ? '_' : c[i] == 0 ? '0' : '1';
+    c_out_str[i] = std::to_string(c_out[i]);
+  }
+  return state + " (" + c_str[0] + " " + c_str[1] + " " + c_str[2] + " " + c_str[3] + ")"
+      + " " + in_str + " ->* " + target + " (" + c_out_str[0] + " " + c_out_str[1]
+      + " " + c_out_str[2] + " " + c_out_str[3] + ") " + input_operation;
+}
+
 void build_output_items(const std::string& base, int left, int right,
     const TransitionRaw& t, std::vector<std::string>* dest, int alph_size) {
   if (t.type != TransitionRaw::Output) return;
@@ -244,6 +261,46 @@ void build_pushing_items(const std::string& start_state, int left, int right, in
   }
   build_output_items(start_state, left, right, t, dest, alph_size);
   build_closing_transition(start_state, t.next_state, dest);
+}
+
+bool simple_track_possible(const TransitionRaw& t) {
+  if (t.left_stack.size() == 1 && t.left_stack[0]->isInputChar()) return true;
+  //TODO: if (t.right_stack.size() == 1 && t.right_stack[0]->isInputChar()) return true;
+  return false;
+}
+
+void build_simple_track(const std::string& state, const TransitionRaw& t, int left, int right,
+    std::vector<std::string>* dest, int alph_size = mgr::DEFAULT_ALPHABET_SIZE) {
+  // Assume left stack grabs input char (and nothing else), right stack may be anything
+  // but cannot contain INPUT_CHAR.
+
+  // Multiply by N.
+  dest->push_back(create_MM4(state, 1, -1, Left, state, -1, alph_size));
+  // Change state.
+  dest->push_back(create_MM4(state, 0, -1, Left, gen_next_name(state), 0, 0));
+  // Copy back to original counter.
+  std::string state1 = get_curr_name(state);
+  std::string state2 = gen_next_name(state);
+  dest->push_back(create_MM4(state1, -1, 1, Left, state1, 1, -1));
+  dest->push_back(create_MM4(state1, -1, 0, Left, state2, 0, 0));
+
+  // Load and copy input char to the top of the left stack.
+  state1 = get_curr_name(state);
+  state2 = gen_next_name(state);
+  std::string state3 = gen_next_name(state);
+  int counters[4] = { -1,-1,-1,-1 };
+  int counters_changes[4] = { 0,0,0,0 };
+  dest->push_back(create_input_MM4(state1, counters, -1, state2, counters_changes, -2));
+  counters_changes[0] = 1;
+  dest->push_back(create_input_MM4(state2, counters, 1, state2, counters_changes, -1));
+  // Notice we increase first counter once more to hande +1 shift of all ASCII chars within stack.
+  dest->push_back(create_input_MM4(state2, counters, 0, state3, counters_changes, 0));
+
+  for (StackSymbol* symbol : t.right_stack) {
+    int symbol_to_push = 1 + symbol->evaluate(left-1, right-1);
+    build_pushing_symbol(state, symbol_to_push, Right, dest, alph_size);
+  }
+  build_closing_transition(state, t.next_state, dest);
 }
 
 // Creates recognition of stack items for given state.
@@ -293,15 +350,19 @@ void build_items_recognition(const std::string& state,
           dest->push_back(create_MM4(tmp_state, -1, 1, Right, tmp_state, 1, -1));
           dest->push_back(create_MM4(tmp_state, -1, 0, Right, final_state, 0, 0));
           if (t->type == TransitionRaw::Input) {
-            dest->push_back(create_input_MM4(final_state, -1, final_state + "_input0", -2));
-            for (int k = 0; k < alph_size; ++k) {
-              const std::string state = final_state + "_input" + std::to_string(k);
-              const std::string next_state = final_state + "_input" + std::to_string(k+1);
-              const std::string read_input_state = state + "_in_done";
-              dest->push_back(create_input_MM4(state, 1, next_state, -1));
-              dest->push_back(create_input_MM4(state, 0, read_input_state, 0));
-              if (k == mgr::NO_CHAR) continue; // Cannot recognize NO_CHAR.
-              build_pushing_items(read_input_state, i, j, k, *t, dest, alph_size);
+            if (simple_track_possible(*t)) {
+              build_simple_track(final_state, *t, i, j, dest);
+            } else {
+              dest->push_back(create_input_MM4(final_state, -1, final_state + "_input0", -2));
+              for (int k = 0; k < alph_size; ++k) {
+                const std::string state = final_state + "_input" + std::to_string(k);
+                const std::string next_state = final_state + "_input" + std::to_string(k+1);
+                const std::string read_input_state = state + "_in_done";
+                dest->push_back(create_input_MM4(state, 1, next_state, -1));
+                dest->push_back(create_input_MM4(state, 0, read_input_state, 0));
+                if (k == mgr::NO_CHAR) continue; // Cannot recognize NO_CHAR.
+                build_pushing_items(read_input_state, i, j, k, *t, dest, alph_size);
+              }
             }
           } else {
             build_pushing_items(final_state, i, j, mgr::NO_CHAR, *t, dest, alph_size);

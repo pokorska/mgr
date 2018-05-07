@@ -11,6 +11,7 @@
 class StackSymbol {
  public:
   virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) = 0;
+  virtual bool isInputChar() const = 0;
 };
 
 class SymbolRaw : public StackSymbol {
@@ -22,6 +23,7 @@ class SymbolRaw : public StackSymbol {
     if (symbol == mgr::EMPTY_STACK_CHAR) return mgr::EMPTY_STACK_VALUE;
     return symbol;
   }
+  virtual bool isInputChar() const { return false; }
 };
 
 class SymbolInput : public StackSymbol {
@@ -30,6 +32,7 @@ class SymbolInput : public StackSymbol {
     if (input_symbol == mgr::NO_CHAR) throw "No input provided in stack symbol evaluation";
     return input_symbol;
   }
+  virtual bool isInputChar() const { return true; }
 };
 
 class SymbolOrigLeft : public StackSymbol {
@@ -37,6 +40,7 @@ class SymbolOrigLeft : public StackSymbol {
   virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
     return orig_left;
   }
+  virtual bool isInputChar() const { return false; }
 };
 
 class SymbolOrigRight : public StackSymbol {
@@ -44,6 +48,7 @@ class SymbolOrigRight : public StackSymbol {
   virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
     return orig_right;
   }
+  virtual bool isInputChar() const { return false; }
 };
 
 class SymbolNothing : public StackSymbol {
@@ -51,6 +56,7 @@ class SymbolNothing : public StackSymbol {
   virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
     throw "Trying to evaluate NOTHING symbol";
   }
+  virtual bool isInputChar() const { return false; }
 };
 
 class SymbolPrev : public StackSymbol {
@@ -63,6 +69,7 @@ class SymbolPrev : public StackSymbol {
     int inner_symbol = inner->evaluate(orig_left, orig_right, input_symbol);
     return inner_symbol-1;
   }
+  virtual bool isInputChar() const { return false; }
 };
 
 class SymbolNext : public StackSymbol {
@@ -75,6 +82,7 @@ class SymbolNext : public StackSymbol {
     int inner_symbol = inner->evaluate(orig_left, orig_right, input_symbol);
     return inner_symbol+1;
   }
+  virtual bool isInputChar() const { return false; }
 };
 
 struct TransitionRaw {
