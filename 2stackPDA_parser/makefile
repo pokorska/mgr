@@ -1,8 +1,11 @@
-all: names_manip.o ast.o parser.o lexer.o driver.o test.o
-	g++ -o test.e names_manip.o ast.o lexer.o parser.o driver.o test.o -std=c++11
+all: names_manip.o translation.o ast.o parser.o lexer.o driver.o test.o
+	g++ -o test.e names_manip.o translation.o ast.o lexer.o parser.o driver.o test.o -std=c++11
 
 names_manip.o:
 	g++ -o names_manip.o -c names_manip.cc -std=c++11
+
+translation.o:
+	g++ -o translation.o -c translation.cc -std=c++11
 
 ast.o:
 	g++ -o ast.o -c ast.cc -std=c++11
