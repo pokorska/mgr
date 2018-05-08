@@ -5,6 +5,7 @@
 *.out.hh
 *.out.h
 *.e
+*.o
 *.aux
 *.log
 *.auc
