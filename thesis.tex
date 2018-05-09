@@ -30,7 +30,7 @@ My goal is to build automatic translation from a~modern programming language (C+
 %\date          {}                     % Data zlozenia pracy
 % Dane do oswiadczenia o autorskim wykonaniu
 \transcriptnum {247906}                     % Numer indeksu
-\advisorgen    {dr Jakuba Michaliszyn} % Nazwisko promotora w dopelniaczu
+\advisorgen    {dr Jakuba Michaliszyna} % Nazwisko promotora w dopelniaczu
 %%%%%
 
 %%%%% WLASNE DODATKOWE PAKIETY
@@ -47,15 +47,29 @@ My goal is to build automatic translation from a~modern programming language (C+
 % ...
 %%%%%
 
+%\usepackage{todonotes}
+
+\newcommand{\todo}[1]{\textbf{TODO:} #1}
+
 \begin{document}
 
 %%%%% POCZĄTEK ZASADNICZEGO TEKSTU PRACY
 
 \chapter{Introduction}
 
+\todo{Co to są maszyny Turinga, Mińskiego, Brainfuck, Turning-zupełność, hipoteza Churcha}
+
+\todo{O czym jest ta praca - lista kontrybucji}
+
+\todo{Po co jest ta praca --- ,,proof of concept''; ,,walory dydaktyczne'', \dots}
+
+\todo{,,Related work''}
+
+\todo{Plan pracy}
+
 \ldots
 
-\chapter {Specifications of languages}
+\chapter {Preliminaries}
 
 \section {Brainfuck}
 
@@ -397,6 +411,45 @@ state_name (pattern pattern) -> target_state (number number)
 \end{verbatim}
 
 Input/Output is handled the same way it is handled in Counter Machine with 4 counters.
+
+
+\chapter{Theoretical underpinnings}
+
+\todo{O tym, jak te redukcje działają}
+
+\chapter{Implementation}
+
+\section{Ogólny wstęp}
+
+\todo{Uzasadnienie doboru narzędzi}
+
+\todo{Najciekawsze wyzwania}
+
+\todo{Wszystko, co było ciekawe}
+
+\section{Szczegóły techniczne}
+
+\todo{Co jest gdzie, jak to się uruchamia, itd. / skrócona instrukcja użytkownika}
+
+\todo{Ograniczenia implementacji}
+
+\section{Przykłady}
+
+Dużo przykładów...
+
+\section{Ewaluacja}
+
+Porównanie czasów
+
+Tabelka
+
+\section{Optymalizacje}
+
+\chapter{Podsumowanie, wnioski, możliwości kontynuowania}
+
+\appendix
+
+\chapter{Szczegółowy sposób instalacji i konfiguracji lub dostępu do działającego systemu oraz podręcznik użytkownika systemu.}
 
 %%%%% BIBLIOGRAFIA
 
