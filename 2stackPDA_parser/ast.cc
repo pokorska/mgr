@@ -8,15 +8,6 @@
 
 #include <iostream>
 
-struct pairhash {
-public:
-  template <typename T, typename U>
-  std::size_t operator()(const std::pair<T, U> &x) const
-  {
-    return std::hash<T>()(x.first) ^ std::hash<U>()(x.second);
-  }
-};
-
 bool TransitionMap::MatchPattern(int letter, char pattern) const {
   if (pattern == mgr::ALL_CHARS) return true;
   if (pattern == mgr::NON_ZERO) return letter != '\0';
@@ -42,9 +33,11 @@ void TransitionMap::AddInitState(std::string name) {
   init_state = name;
 }
 
-TransitionRaw TransitionMap::FindTransition(const std::string& state, int left_letter, int right_letter) {
+TransitionRaw TransitionMap::FindTransition(
+    const std::string& state, int left_letter, int right_letter) {
   for (const auto& t : transitions[state]) {
-    if (MatchPattern(left_letter, t.left_pattern) && MatchPattern(right_letter, t.right_pattern))
+    if (MatchPattern(left_letter, t.left_pattern) &&
+        MatchPattern(right_letter, t.right_pattern))
       return t;
   }
   // Default transition returned when no match is found.
@@ -52,8 +45,9 @@ TransitionRaw TransitionMap::FindTransition(const std::string& state, int left_l
                        TransitionRaw::Regular, mgr::END_STATE, "", "");
 }
 
-void TransitionMap::PushToStack(std::stack<int>* stack, const std::vector<StackSymbol*>& elems,
-                 int orig_left, int orig_right, char input_char) {
+void TransitionMap::PushToStack(std::stack<int>* stack,
+    const std::vector<StackSymbol*>& elems, int orig_left,
+    int orig_right, char input_char) {
   for (StackSymbol* elem : elems) {
     int to_push = elem->evaluate(orig_left, orig_right, input_char);
     if (stack->empty() && to_push != mgr::EMPTY_STACK_VALUE) {

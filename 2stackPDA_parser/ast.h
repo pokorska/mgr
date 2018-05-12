@@ -10,7 +10,8 @@
 
 class StackSymbol {
  public:
-  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) = 0;
+  virtual int evaluate(int orig_left, int orig_right,
+      int input_symbol = mgr::NO_CHAR) const = 0;
   virtual bool isInputChar() const = 0;
 };
 
@@ -19,7 +20,8 @@ class SymbolRaw : public StackSymbol {
   int symbol;
  public:
   SymbolRaw(int symbol) : symbol(symbol) { }
-  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+  virtual int evaluate(int orig_left, int orig_right,
+      int input_symbol = mgr::NO_CHAR) const {
     if (symbol == mgr::EMPTY_STACK_CHAR) return mgr::EMPTY_STACK_VALUE;
     return symbol;
   }
@@ -28,7 +30,8 @@ class SymbolRaw : public StackSymbol {
 
 class SymbolInput : public StackSymbol {
  public:
-  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+  virtual int evaluate(int orig_left, int orig_right,
+      int input_symbol = mgr::NO_CHAR) const {
     if (input_symbol == mgr::NO_CHAR) throw "No input provided in stack symbol evaluation";
     return input_symbol;
   }
@@ -37,7 +40,8 @@ class SymbolInput : public StackSymbol {
 
 class SymbolOrigLeft : public StackSymbol {
  public:
-  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+  virtual int evaluate(int orig_left, int orig_right,
+      int input_symbol = mgr::NO_CHAR) const {
     return orig_left;
   }
   virtual bool isInputChar() const { return false; }
@@ -45,7 +49,8 @@ class SymbolOrigLeft : public StackSymbol {
 
 class SymbolOrigRight : public StackSymbol {
  public:
-  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+  virtual int evaluate(int orig_left, int orig_right,
+      int input_symbol = mgr::NO_CHAR) const {
     return orig_right;
   }
   virtual bool isInputChar() const { return false; }
@@ -53,7 +58,8 @@ class SymbolOrigRight : public StackSymbol {
 
 class SymbolNothing : public StackSymbol {
  public:
-  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+  virtual int evaluate(int orig_left, int orig_right,
+      int input_symbol = mgr::NO_CHAR) const {
     throw "Trying to evaluate NOTHING symbol";
   }
   virtual bool isInputChar() const { return false; }
@@ -65,7 +71,8 @@ class SymbolPrev : public StackSymbol {
  public:
   SymbolPrev(StackSymbol* inner) : inner(inner) { }
   ~SymbolPrev() { delete inner; }
-  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+  virtual int evaluate(int orig_left, int orig_right,
+      int input_symbol = mgr::NO_CHAR) const {
     int inner_symbol = inner->evaluate(orig_left, orig_right, input_symbol);
     return inner_symbol-1;
   }
@@ -78,7 +85,8 @@ class SymbolNext : public StackSymbol {
  public:
   SymbolNext(StackSymbol* inner) : inner(inner) { }
   ~SymbolNext() { delete inner; }
-  virtual int evaluate(int orig_left, int orig_right, int input_symbol = mgr::NO_CHAR) {
+  virtual int evaluate(int orig_left, int orig_right,
+      int input_symbol = mgr::NO_CHAR) const {
     int inner_symbol = inner->evaluate(orig_left, orig_right, input_symbol);
     return inner_symbol+1;
   }
