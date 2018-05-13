@@ -4,6 +4,7 @@
 \documentclass[english,shortabstract,mgr]{iithesis}
 
 \usepackage[utf8]{inputenc}
+\usepackage{ulem}
 
 %%%%% DANE DO STRONY TYTUŁOWEJ
 % Niezaleznie od jezyka pracy wybranego w opcjach klasy, tytul i streszczenie
@@ -57,7 +58,53 @@ My goal is to build automatic translation from a~modern programming language (C+
 
 \chapter{Introduction}
 
-\todo{Co to są maszyny Turinga, Mińskiego, Brainfuck, Turning-zupełność, hipoteza Churcha}
+\section{Turing Machine}
+
+Modern computers and their abilities nowadays are complex and depend on many different factors
+to~perform given computations, like processor technology, software optimizations within given
+processor model, input/output communication protocols and many others. This is why if we want
+to~state or proof anything about computer programs behaviour we need to~find common language
+and~one general theoretical model representing any type of "computer".
+
+The model is known since 1936 when Alan Turing proposed something called \textbf{Turing Machine}
+to represent a~machine able to~execute any computations expressible in~terms of~computer program.
+It has all positive and~negative properties which belong to~modern programs, i.e. it~is possible
+to create a~program which will never stop, consume infinite amount of memory and it~is not possible
+to~solve any given problem -- it~has got the~same limitations in~sense of~creating algorithms
+like regular computer.
+
+Turing Machine is~a~finite description of~the~program which uses potentially infinite tape
+as~its memory -- we have some amount of~tape at~the beginning, but~we may extend this tape
+(glue additional tape cells) to~the right end if necessary. All cells are either blank
+or~contain a~single letter -- when machine starts its work there is an~input word
+written on~the tape, during computations it is allowed to~change all the available
+cells and~after it finishes (if it finishes at all) it can either \textit{accept}
+or~\textit{reject} original input word.
+
+As~an~example we can try to construct Turing Machine recognizing all binary palindromes of~even length,
+which is~formally language $A = \{ ww^R : w \in \{0,1\}^* \}$ (where $^R$ means reversing given word).
+
+Because we need to use finite description to~define behaviour we say that the~machine should
+check first letter $a_1$ with last one $a_n$ -- if these cells contain different letters machine
+should reject the whole word, otherwise it should mark them as checked (write for example $\#$ symbol)
+and~continue with $a_2$ and~$a_{n-1}$. At~the~end we should have tape full of $\#$'s and~the~machine
+should accept given word. If there is just one cell with $0$ or~$1$ then it was a~palindrome
+of~odd length and~we should reject it.
+
+\textbf{Def. Turing Machine} is a~$6$-tuple $(Q,\Sigma,\Gamma,\delta,q_0,P)$ where:
+\begin{itemize}
+  \item $Q$ is~a~finite set of~states the~machine can be within,
+  \item $\Sigma$ is~a~finite input alphabet (does not contain blank),
+  \item $\Gamma$ is~a~finite tape alphabet and~$\Sigma \subset \Gamma$,
+  \item $\delta: Q \times \Gamma \rightarrow Q \times \Gamma \times \{L,R\}$ is~a~finite
+      transition function, $L$ and~$R$ mean the~machine should move one cell left or~right
+      respectively,
+  \item $q_0$ is~the~initial state the~machine starts within,
+  \item $P$ is~a~finite set of~states which accept input word.
+\end{itemize}
+
+
+\todo{Co to są \sout{maszyny Turinga}, Mińskiego, Brainfuck, Turning-zupełność, hipoteza Churcha}
 
 \todo{O czym jest ta praca - lista kontrybucji}
 
