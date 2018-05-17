@@ -1,9 +1,9 @@
+\RequirePackage{tikz}
 % Opcje klasy 'iithesis' opisane sa w komentarzach w pliku klasy. Za ich pomoca
 % ustawia sie przede wszystkim jezyk i rodzaj (lic/inz/mgr) pracy, oraz czy na
 % drugiej stronie pracy ma byc skladany wzor oswiadczenia o autorskim wykonaniu.
 \documentclass[english,shortabstract,mgr]{iithesis}
 
-%\usepackage{tikz}
 \usepackage[utf8]{inputenc}
 \usepackage{ulem}
 \usepackage{amsthm}
@@ -53,7 +53,7 @@ My goal is to build automatic translation from a~modern programming language (C+
 %\usepackage{todonotes}
 
 \newcommand{\todo}[1]{\textbf{TODO:} #1}
-\newtheorem*{remark}{Theorem}
+\newtheorem*{hypothesis}{Hypothesis}
 
 \begin{document}
 
@@ -66,17 +66,17 @@ My goal is to build automatic translation from a~modern programming language (C+
 Modern computers and their abilities nowadays are complex and depend on many different factors
 to~perform given computations, like processor technology, software optimizations within given
 processor model, input/output communication protocols and many others. This is why if we want
-to~state or proof anything about the behaviour of computer programs then we need to~find common
-language and~one general theoretical model representing any type of "computer".
+to~state or proof anything about the behaviour of computer programs then we need to~find a~common
+language and~general theoretical model representing any type of "computer".
 
 The model is known since 1936 when Alan Turing proposed something called \textbf{Turing Machine}
 to represent a~machine that is able to~execute any computations expressible in~terms of~computer program.
 It has all positive and~negative properties which belong to~modern programs, i.e. it~is possible
-to create a~program which will never stop, consume infinite amount of memory and it~is not possible
+to create a~program which will never stop or~consume infinite amount of memory. The model does not allow
 to~solve all the problems -- it~has got the~same limitations in~sense of~creating algorithms
 like a~regular computer.
 
-Turing Machine is~a~finite description of~the~algorithm and~uses potentially infinite tape
+Turing Machine is~a~finite description of~an~algorithm and~uses potentially infinite tape
 as~its memory -- we have some amount of~tape at~the beginning, but~we may extend this tape
 (glue additional tape cells) to~the right end if necessary. All cells are either blank
 or~contain a~single letter -- when machine starts its work there is an~input word
@@ -90,7 +90,7 @@ which is~formally set $A = \{ ww^R : w \in \{0,1\}^* \}$ (where $^R$ means rever
 Because we need to use finite description to~define behaviour we say that the~machine should
 check first letter $a_1$ with last one $a_n$ -- if these cells contain different letters machine
 should reject the whole word, otherwise it should mark them as checked (i.e. write $\#$ symbol in~their cells)
-and~continue with $a_2$ and~$a_{n-1}$. At~the~end we should have tape full of $\#$'s and~the~machine
+and~continue with $a_2$ and~$a_{n-1}$. At~the~end we should have tape full of $\#$s and~the~machine
 should accept given word. If there is just one unchanged cell left then it was a~palindrome
 of~odd length and~we should reject it.
 
@@ -106,6 +106,22 @@ of~odd length and~we should reject it.
   \item $P$ is~a~finite set of~states which accept input word.
 \end{itemize}
 
+\textbf{Configuration} of~a~Turing Machine consists of ($w$, $q$, $k$), where:
+\begin{itemize}
+  \item $w \in \Sigma^*$ is a~word initially written on~the~tape,
+  \item $q$ is a~state of the~machine is~currently within,
+  \item $k$ is a~cell number the~machine is currently looking at.
+\end{itemize}
+
+Having a~configuration we can precisely say what is the~program execution progress.
+One configuration is~a~precise step of~computation, so a~sequence of~configurations is called
+a~\textbf{run} of~a~Turing Machine. This sequence may be finite or~infinite the~same way like
+a~program may loop forever or~finish within some number of~steps. Each such run begins with
+a~configuration where some word $w$ is~an~input, $k = 0$ which is the~leftmost cell on~the~tape
+and~$q = q_0$ which is initial state defined in~the~description of~given machine. If~a~run is
+finite and~ends with configuration ($w_n$, $q_n$, $k_n$) then we define the~input word to~be
+\textit{accepted} if $q_n \in P$ ($q_n$ is one of accepting states) and \textit{rejected} otherwise.
+
 \section{Church-Turing thesis and Turing-completeness}
 
 Computers are used to perform calculations for us, more precicely we want them to~execute some
@@ -116,9 +132,9 @@ their all possible divisors. We~are able to~precisely say what this algorithm lo
 we think for a~while we would probably be able to~express it in terms of Turing Machines. That
 is~exactly what \textbf{Church-Turing thesis} states:
 
-\begin{remark}
+\begin{hypothesis}
   Intuitive definition of~any~algorithm is~equivalent to~some description of~Turing Machine.
-\end{remark}
+\end{hypothesis}
 
 This thesis allows us to~think about defining algorithms in~intuitive way while still staying
 within the~world of~Turing Machine programs.
@@ -184,10 +200,14 @@ which are completely separate translations between more and more primitive theor
 It is possible to access any transitional (temporary) programs created during the~whole process.
 
 The~plan for translation that shows what is~generated as~transitional models:
-\todo{Picture}
-%\begin{tikzpicture}
-%  \draw (0,0) rectangle (2,2) node[pos=.5] {Test};
-%\end{tikzpicture}
+
+\begin{tikzpicture}
+  \draw (0,0) rectangle (2,1) node[pos=.5] {Brainfuck};
+  \draw (3,0) rectangle (5,1) node[pos=.5, text width=2cm, align=center] {Turing Machine};
+  \draw (6,0) rectangle (8,1) node[pos=.5, text width=2cm, align=center] {2 Stack PDA};
+  \draw (9,0) rectangle (11,1) node[pos=.5, text width=2.5cm, align=center] {Counter Machine \\ (4 Counters)};
+  \draw (12,0) rectangle (15,1) node[pos=.5, text width=2.5cm, align=center] {Counter Machine \\ (2 Counters)};
+\end{tikzpicture}
 
 \todo{Co to są \sout{maszyny Turinga, Mińskiego, Brainfuck, Turning-zupełność, hipoteza Churcha}}
 
