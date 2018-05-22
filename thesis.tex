@@ -103,7 +103,7 @@ of~odd length and~we should reject it.
       transition function, $L$ and~$R$ mean the~machine should move one cell left or~right
       respectively,
   \item $q_0$ is~the~initial state the~machine starts within,
-  \item $P$ is~a~finite set of~states which accept input word.
+  \item $P$ is~a~finite set of~states which accept the~input word.
 \end{itemize}
 
 \textbf{Configuration} of~a~Turing Machine consists of ($w$, $q$, $k$), where:
@@ -154,7 +154,7 @@ language if and only if there exists some equivalent Turing Machine description.
 We have so far theoretical model -- Turing Machine -- which has the~same power of~expression
 as~modern languages and~it turns out there are many others we~can describe and~prove they are
 equivalent to Turing Machine (so~to~modern languages as~well). One of~such alternatives
-is~\textbf{Counter Machine} (sometimes called \textbf{Minsky Machine}) which is~really primitive
+is~\textbf{Counter Machine} (sometimes called \textbf{Minsky Machine}) which is~really basic
 in~its construction.
 
 Similarly to~Turing Machine, Counter Machine has~finite description -- finite set of~states $Q$
@@ -168,8 +168,44 @@ information about emptiness.
 There are a~few alternative models -- if~we~allow the~machine to~use $3$ counters instead of~$2$
 then we get equivalent model, the~same for $4$ or~more counters. According to~this fact, we~can
 choose how many counters it~is convenient for~us to~use. The~only exception is~Counter Machine with
-$1$ counter which is~not able to~express everything a~$2$ Counter Machine can -- TODO: jaką klasę
-języków możemy wyrazić?
+$1$ counter which is~not able to~express everything a~$2$ Counter Machine can. As~an~argument
+we may say that halting problem for $1$ Counter Machine is~decidable -- it is possible to~check
+in~polynomial time whether given description of $1$ Counter Machine will loop forever or~not.
+Of~course halting problem for $2$ Counter Machine (which is~equivalent to~Turing Machine model)
+is proven to~be not decidable. (TODO: cite)
+
+\section {2 stack pushdown automaton (2 stack PDA)}
+
+Similarly to~Counter Machine, finite description of a~2~stack pusdown automaton contains
+number of~states and~transition function $\delta$, but~counters are replaced with 2 stacks.
+These 2~stacks use stack alphabet $\Gamma$ and the~automaton may change their state
+by~pushing zero or~more symbols at the~top or~removing \textbf{exactly one} symbol from
+the~top.
+
+In practice the~implementation assumes that a~single transition \textbf{always} takes
+a~symbol from each stack and after transitioning to a~new state pushes some symbols
+(maybe the~original ones) to each stack.
+
+Each stack has a~special symbol $\perp$ at the~bottom that determines when a~stack becomes
+empty. Additionally it is not allowed to take $\perp$ out from the stack, so~after transitioning
+to a~new state $\perp$ must be pushed back (maybe followed by other symbols) to~the~stack.
+
+Formally 2 stack PDA is a~$6$-tuple ($Q$, $\Sigma$, $\Gamma$, $\delta$, $q_0$, $F$) where:
+\begin{itemize}
+  \item $Q$ is a~finite set of states,
+  \item $\Sigma$ is a~finite input alphabet ($\epsilon \in \Sigma$),
+  \item $\Gamma$ is a~finite stack alphabet ($\perp \in \Gamma$),
+  \item $\delta: Q \times \Sigma \times \Gamma \times \Gamma \rightarrow
+      Q \times \Gamma^* \times \Gamma^*$ is~a~finite transition function,
+  \item $q_0$ is the initial state of the~PDA,
+  \item $F$ is a~finite set of states which accept the~input word.
+\end{itemize}
+
+Each transition specifies when it may be applied by giving a~triple
+($a$,~$s$,~$t$)~$\in$~($\Sigma$,~$\Gamma$,~$\Gamma$). It means that input symbol is $a$,
+the~left stack has symbol $s$ and the~right stack symbol $t$ at the~top. In practice there
+might be multiple transitions matching current state, so it is assumed that the first one
+defined is applied.
 
 \section{Brainfuck}
 
@@ -191,23 +227,38 @@ to~automatically translate into~theoretical model.
 
 \section {Purpose of this thesis}
 
-This~thesis should be~a~proof of~theoretical concept contained in~Church-Turing thesis -- any~algorithm
+This~thesis should be~a~proof of~theoretical concept based on~Church-Turing thesis -- any~algorithm
 or~mathematical method we~are able to~come up with (as~long as it is expressible in any programming
-language) is possible to~execute on~the~most primitive theoretical model which is~Counter Machine.
+language) is possible to~execute on~the~most basic theoretical model which is a~Counter Machine.
 
 Implementation translates Brainfuck into Counter Machine model and~consists of~a~few separate parts
-which are completely separate translations between more and more primitive theoretical models.
+which are completely separate translations between more and more besic theoretical models.
 It is possible to access any transitional (temporary) programs created during the~whole process.
 
-The~plan for translation that shows what is~generated as~transitional models:
+The~plan of translation including transitional models:
 
+\hspace{-1.5cm}
 \begin{tikzpicture}
   \draw (0,0) rectangle (2,1) node[pos=.5] {Brainfuck};
   \draw (3,0) rectangle (5,1) node[pos=.5, text width=2cm, align=center] {Turing Machine};
   \draw (6,0) rectangle (8,1) node[pos=.5, text width=2cm, align=center] {2 Stack PDA};
-  \draw (9,0) rectangle (11,1) node[pos=.5, text width=2.5cm, align=center] {Counter Machine \\ (4 Counters)};
-  \draw (12,0) rectangle (15,1) node[pos=.5, text width=2.5cm, align=center] {Counter Machine \\ (2 Counters)};
+  \draw (9,-0.5) rectangle (12,1.5) node[pos=.5, text width=2.5cm, align=center] {Counter Machine \\ 4 Counters};
+  \draw (13,-0.5) rectangle (16,1.5) node[pos=.5, text width=2.5cm, align=center] {Counter Machine \\ 2 Counters};
+  \draw [->, >=stealth] (2,0.5) -- (3,0.5);
+  \draw [->, >=stealth] (5,0.5) -- (6,0.5);
+  \draw [->, >=stealth] (8,0.5) -- (9,0.5);
+  \draw [->, >=stealth] (12,0.5) -- (13,0.5);
 \end{tikzpicture}
+
+Any two consecutive models have automatic translation, so we may wish to~start with any program written
+in Brainfuck, Turing Machine, 2 stack PDA or~4 Counter Machine and receive an~equivalent 2 Counter Machine.
+Similarly we may stop at any point of~translations, so it is possible to generate an equvalent program
+in 2 stack PDA model from a~program written in Turing Machine model.
+
+The~flexibility in running the~pipeline gives us possibility to prove (as~side-effect)
+the~original Church-Turing thesis. Any~modern program (written in Brainfuck) may be executed
+on a~theoretical Turing Machine model.
+
 
 \todo{Co to są \sout{maszyny Turinga, Mińskiego, Brainfuck, Turning-zupełność, hipoteza Churcha}}
 
