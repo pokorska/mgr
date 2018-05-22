@@ -618,6 +618,48 @@ Input/Output is handled the same way it is handled in Counter Machine with 4 cou
 
 \chapter{Theoretical underpinnings}
 
+\section {Reduction from Brainfuck to Turing Machine}
+
+Brainfuck is really similar to Turing Machine, so it is relatively easy to build
+a~translation. They both have a~tape and both can read and update symbols in any
+cell of the~tape. There are two main differences: representation of states and
+input/output handling.
+
+\textit{States representation.}
+Brainfuck has a~sequence of instructions that need to~be
+executed one by~one in the~given order, while Turing Machine has unordered set
+of states and transition function (defining how to move between them). Solution
+is to give a~unique name to each instruction and specify transitions between
+consecutive instructions. The only exception is a~loop, where depending on
+symbol stored in current cell we perform transition to $1$ of $2$ different states.
+This is exactly what Turing Machine model provides -- depending on the~symbol
+within current cell we apply appropriate transition.
+
+\textit{Input/Output handling.}
+Turing Machine can either accept or~reject given input, so it is necessary to
+extend this theoretical model to allow side-effects like reading standard
+input and writing to standard output. Even though there is a~way to give
+input word (it should be initially written on the tape), this thesis assumes
+there is separate source and separate destination for I/O operations.
+It means that at any point we may load a~symbol into current cell or~send
+any symbol (not necessary the one from current cell) to the~screen. This
+way Brainfuck itself handles I/O as well which makes translation straightforward.
+
+\section {Reduction from Turing Machine to 2 stack PDA}
+
+Turing Machine operates on the~tape, while 2 stack PDA operates on 2 stacks, so we need
+to come up with some idea how to represent a~tape using 2 stacks. This idea is well-known:
+we cut the~tape into two pieces so that current cell is at the~top of left stack and all
+the cells from left side are lower in left stack and similarly all cells from right side
+are stored in right stack (cell to the right of current cell is the top of right stack).
+
+The only problem is the~fact that Turing Machine tape is infinite in one direction.
+There is an~exact cell that contains the very last non-blank symbol, so we make the~tape
+end at this symbol to perform our cut. If Turing machine at any point decides to extend
+the tape it needs to first move into new cell (make this cell top of left stack), so
+at this point 2 stack PDA model can simply insert additional new element to the left
+stack performing this extension.
+
 \todo{O tym, jak te redukcje działają}
 
 \chapter{Implementation}
