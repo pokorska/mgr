@@ -262,38 +262,9 @@
 
 % Bibliografia pojawia sie jako nienumerowany rozdzial w spisie tresci
 
-\renewenvironment{thebibliography}[1]
- {\chapter*{\bibname}%
 
-  \@mkboth{\MakeUppercase\bibname}{\MakeUppercase\bibname}%
-
-  \list{\@biblabel{\@arabic\c@enumiv}}%
-
-   {\settowidth\labelwidth{\@biblabel{#1}}%
-
-    \leftmargin\labelwidth
-
-    \advance\leftmargin\labelsep
-
-    \@openbib@code
-
-    \usecounter{enumiv}%
-
-    \let\p@enumiv\@empty
-
-    \renewcommand\theenumiv{\@arabic\c@enumiv}}%
-
-  \sloppy
-
-  \clubpenalty4000
-
-  \@clubpenalty \clubpenalty
-
-  \widowpenalty4000%
-
-  \sfcode`\.\@m%
-
-  \addcontentsline{toc}{chapter}{\bibname}}
+  
+  
 
  {\def\@noitemerr
 
