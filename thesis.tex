@@ -631,7 +631,7 @@ executed one by~one in the~given order, while Turing Machine has unordered set
 of states and transition function (defining how to move between them). Solution
 is to give a~unique name to each instruction and specify transitions between
 consecutive instructions. The only exception is a~loop, where depending on
-symbol stored in current cell we perform transition to $1$ of $2$ different states.
+symbol stored in current cell we perform transition to $1$ out of $2$ different states.
 This is exactly what Turing Machine model provides -- depending on the~symbol
 within current cell we apply appropriate transition.
 
@@ -647,18 +647,76 @@ way Brainfuck itself handles I/O as well which makes translation straightforward
 
 \section {Reduction from Turing Machine to 2 stack PDA}
 
-Turing Machine operates on the~tape, while 2 stack PDA operates on 2 stacks, so we need
+Turing Machine operates on a~tape, while 2 stack PDA operates on 2 stacks, so we need
 to come up with some idea how to represent a~tape using 2 stacks. This idea is well-known:
-we cut the~tape into two pieces so that current cell is at the~top of left stack and all
-the cells from left side are lower in left stack and similarly all cells from right side
-are stored in right stack (cell to the right of current cell is the top of right stack).
+we cut the~tape into two pieces in a~way that current cell is at the~top of the~left stack and all
+the cells from the~left side are lower in the~left stack and similarly all cells from the~right side
+are stored in the~right stack (cell to the right of the~current cell is the top of the~right stack).
 
 The only problem is the~fact that Turing Machine tape is infinite in one direction.
-There is an~exact cell that contains the very last non-blank symbol, so we make the~tape
-end at this symbol to perform our cut. If Turing machine at any point decides to extend
-the tape it needs to first move into new cell (make this cell top of left stack), so
-at this point 2 stack PDA model can simply insert additional new element to the left
+There is an~exact cell that contains the very last non-blank symbol, so we assume the~tape
+ends at this symbol to perform our cut. If Turing machine at any point decides to extend
+the tape it needs to first move into new cell (make this cell top of the~left stack in our PDA),
+so at this point 2 stack PDA model can simply insert additional new element to the left
 stack performing this extension.
+
+It is clear what are the equivalent operations to the ones a~Turing Machine performs.
+For example equivalent operation to updating current cell is taking one symbol from
+the~top of left stack and push new symbol in its place. Moving one cell to the~right
+is equivalent to taking one symbol from the~top of the~right stack and pushing it
+into the~left stack -- if the~right stack is empty then we just push new blank symbol
+to the~left stack.
+
+\section {Reduction from 2 stack PDA to $4$ Counter Machine}
+
+Similarly to the~reduction from Turing Machine to 2 stack PDA we need to simulate
+one memory model with the~other one. In this case we need to simulate $2$ stacks
+with $4$ counters. More precisely, it is enough to show how to simulate $1$ stack
+with $2$ counters.
+
+Stack alphabet $\Gamma$ is finite and is of size $N = |\Gamma|$. Each symbol from $\Gamma$ may
+be assigned a~unique number starting from $1$ up to $N$ ($0$ is problematic -- it will be
+explained later). A~stack is a~sequence of numbers $a = a_0 a_1 a_2 \dots a_{k-1}$ (where $a_0$
+is the~top of the~stack). Such a~sequence we may represent as a~single number in a~numeral system
+with base $\bar{N} = N+1$:
+
+$$ a_0 \cdot \bar{N}^0 + a_1 \cdot \bar{N}^1 + \dots + a_{k-1} \cdot \bar{N}^{k-1}
+    = \sum_{i=0}^{k-1} a_i \cdot \bar{N}^i $$
+
+Our left counter will hold whole stack as a~single number and our right counter will be used
+to perform operations on the~left one. We will need a~few stack operations (and their equivalent
+mathods using counters):
+\begin{itemize}
+  \item \textbf{pop} one symbol from the~top,
+  \item \textbf{push} one symbol to the~top,
+  \item \textbf{check} what is the~symbol at the~top.
+\end{itemize}
+
+To \textbf{pop} one symbol from the~stack we just perform an~integer division by $\bar{N}$ on
+the~counter.
+
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{decorations.text}
+\usetikzlibrary{decorations.pathmorphing}
+\begin{tikzpicture}[stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center}]
+\node[stack=5] at (0,0) {
+\nodepart{one}$a_0$
+\nodepart{two}$a_1$
+\nodepart{three}$a_2$
+\nodepart{four}$\dots$
+\nodepart{five}$a_{k-1}$
+};
+
+\node[stack=4] at (5,0) {
+\nodepart{one}$a_1$
+\nodepart{two}$a_2$
+\nodepart{three}$\dots$
+\nodepart{four}$a_{k-1}$
+};
+
+%\draw [->, >=stealth, decoration={text along path,text={pop},text align={center}},decorate] (1,0) -- (4,0);
+\draw [->, >=stealth] (1,0) -- (4,0);
+\end{tikzpicture}
 
 \todo{O tym, jak te redukcje działają}
 
