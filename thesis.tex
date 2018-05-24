@@ -7,6 +7,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{ulem}
 \usepackage{amsthm}
+\usepackage{subcaption}
 
 %%%%% DANE DO STRONY TYTUŁOWEJ
 % Niezaleznie od jezyka pracy wybranego w opcjach klasy, tytul i streszczenie
@@ -693,30 +694,70 @@ mathods using counters):
 \end{itemize}
 
 To \textbf{pop} one symbol from the~stack we just perform an~integer division by $\bar{N}$ on
-the~counter.
+the~counter. To~perform this division we will decrease counter by $1$ at each step and every
+$\bar{N}$-th step will increase the~helper counter by $1$. When the~original counter becomes empty
+then in the~helper counter there is the~result of integer division by $\bar{N}$. Now we just
+need to copy the~result from helper counter into the~original one. Whole operation is shown in
+Figure 3.1.
 
 \usetikzlibrary{shapes.multipart}
 \usetikzlibrary{decorations.text}
-\usetikzlibrary{decorations.pathmorphing}
-\begin{tikzpicture}[stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center}]
-\node[stack=5] at (0,0) {
-\nodepart{one}$a_0$
-\nodepart{two}$a_1$
-\nodepart{three}$a_2$
-\nodepart{four}$\dots$
-\nodepart{five}$a_{k-1}$
-};
+\begin{figure}
+  \begin{subfigure}[b]{0.4\textwidth}
+    \centering
+    \begin{tikzpicture}[stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center}]
+      \node[stack=5] at (0,0) {
+        \nodepart{one}$a_0$
+        \nodepart{two}$a_1$
+        \nodepart{three}$a_2$
+        \nodepart{four}$\dots$
+        \nodepart{five}$a_{k-1}$
+      };
 
-\node[stack=4] at (5,0) {
-\nodepart{one}$a_1$
-\nodepart{two}$a_2$
-\nodepart{three}$\dots$
-\nodepart{four}$a_{k-1}$
-};
+      \node[stack=4] at (5,0) {
+        \nodepart{one}$a_1$
+        \nodepart{two}$a_2$
+        \nodepart{three}$\dots$
+        \nodepart{four}$a_{k-1}$
+      };
 
-%\draw [->, >=stealth, decoration={text along path,text={pop},text align={center}},decorate] (1,0) -- (4,0);
-\draw [->, >=stealth] (1,0) -- (4,0);
-\end{tikzpicture}
+      \draw [->, >=stealth] (1,0) -- (4,0) node [midway, above, sloped] (TextNode) {\textbf{pop}};
+    \end{tikzpicture}
+
+    \captionsetup{font=footnotesize}
+    \caption{Pop element $a_0$ from the top.}
+
+  \end{subfigure}
+  \begin{subfigure}[b]{0.6\textwidth}
+    \centering
+    \begin{tikzpicture}[stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center}]
+
+      \node[stack=1] at (0,0) {
+        \nodepart{one}$S$
+      };
+
+      \node[stack=1] at (5,0) {
+        \nodepart{one}$S'$
+      };
+
+      \def\myshift#1{\raisebox{.5ex}}
+      \draw [->,>=stealth,postaction={decorate,decoration={text along path,text align=center,text={|\myshift|divide by {$\bar{N}$}}}}]
+      (0.5,0.1) to[bend left=45] (4.5,0.1);
+
+      \def\myshift#1{\raisebox{.5ex}}
+      \draw [<-,>=stealth,postaction={decorate,decoration={text along path,text align=center,text={|\myshift|copy}}}]
+      (0.5,-0.1) to[bend right=45] (4.5,-0.1);
+
+    \end{tikzpicture}
+
+    \captionsetup{font=footnotesize}
+    \caption{Pop element from the~stack described as number $S$.}
+
+  \end{subfigure}
+
+  \caption{Stack vs. counter --- \textbf{pop} operation.}
+
+\end{figure}
 
 \todo{O tym, jak te redukcje działają}
 
