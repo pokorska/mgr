@@ -11,6 +11,7 @@
 *.auc
 *.out
 *.toc
+thesis.pdf
 location.hh
 position.hh
 stack.hh
