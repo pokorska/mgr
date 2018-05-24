@@ -8,6 +8,13 @@
 \usepackage{ulem}
 \usepackage{amsthm}
 \usepackage{subcaption}
+\usepackage{cite}
+\usepackage{float}
+
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{decorations.text}
+\usetikzlibrary{automata}
+
 
 %%%%% DANE DO STRONY TYTUŁOWEJ
 % Niezaleznie od jezyka pracy wybranego w opcjach klasy, tytul i streszczenie
@@ -70,7 +77,8 @@ processor model, input/output communication protocols and many others. This is w
 to~state or proof anything about the behaviour of computer programs then we need to~find a~common
 language and~general theoretical model representing any type of "computer".
 
-The model is known since 1936 when Alan Turing proposed something called \textbf{Turing Machine}
+The model is known since 1936 \cite{sipser2012ChurchTuring} when Alan Turing proposed something
+called \textbf{Turing Machine}
 to represent a~machine that is able to~execute any computations expressible in~terms of~computer program.
 It has all positive and~negative properties which belong to~modern programs, i.e. it~is possible
 to create a~program which will never stop or~consume infinite amount of memory. The model does not allow
@@ -131,7 +139,7 @@ A~good example could be~a~mathematical problem of~generating prime numbers -- it
 to~think of~a~method of~generating prime numbers by checking lager and~larger numbers and~checking
 their all possible divisors. We~are able to~precisely say what this algorithm looks like and~if
 we think for a~while we would probably be able to~express it in terms of Turing Machines. That
-is~exactly what \textbf{Church-Turing thesis} states:
+is~exactly what \textbf{Church-Turing thesis} \cite{sipser2012ChurchTuring} states:
 
 \begin{hypothesis}
   Intuitive definition of~any~algorithm is~equivalent to~some description of~Turing Machine.
@@ -155,8 +163,8 @@ language if and only if there exists some equivalent Turing Machine description.
 We have so far theoretical model -- Turing Machine -- which has the~same power of~expression
 as~modern languages and~it turns out there are many others we~can describe and~prove they are
 equivalent to Turing Machine (so~to~modern languages as~well). One of~such alternatives
-is~\textbf{Counter Machine} (sometimes called \textbf{Minsky Machine}) which is~really basic
-in~its construction.
+is~\textbf{Counter Machine} (sometimes called \textbf{Minsky Machine}) \cite{minsky_67}
+which is~really basic in~its construction.
 
 Similarly to~Turing Machine, Counter Machine has~finite description -- finite set of~states $Q$
 and~transition function $\delta$ defining when the~machine may move from one state to~another.
@@ -173,12 +181,12 @@ $1$ counter which is~not able to~express everything a~$2$ Counter Machine can. A
 we may say that halting problem for $1$ Counter Machine is~decidable -- it is possible to~check
 in~polynomial time whether given description of $1$ Counter Machine will loop forever or~not.
 Of~course halting problem for $2$ Counter Machine (which is~equivalent to~Turing Machine model)
-is proven to~be not decidable. (TODO: cite)
+is proven to~be not decidable. \cite{minsky_67}
 
 \section {2 stack pushdown automaton (2 stack PDA)}
 
-Similarly to~Counter Machine, finite description of a~2~stack pusdown automaton contains
-number of~states and~transition function $\delta$, but~counters are replaced with 2 stacks.
+Similarly to~Counter Machine, finite description of a~2~stack pushdown automaton \cite{sipser2012PDA}
+contains number of~states and~transition function $\delta$, but~counters are replaced with 2 stacks.
 These 2~stacks use stack alphabet $\Gamma$ and the~automaton may change their state
 by~pushing zero or~more symbols at the~top or~removing \textbf{exactly one} symbol from
 the~top.
@@ -211,8 +219,9 @@ defined is applied.
 \section{Brainfuck}
 
 As~we defined above Counter Machine is~a~minimalistic model of~computations, the~same way
-\textbf{Brainfuck} is a~minimalistic programming language which recalls the~definition
-of~Turing Machine -- program operates on~a~tape containing numbers, it~is possible
+\textbf{Brainfuck} \cite{brainfuckWiki} is a~minimalistic (only 8 instructions) programming
+language which recalls
+the~definition of~Turing Machine -- program operates on~a~tape containing numbers, it~is possible
 to~explicitly read and~change values in~cells. A~program operates on~a~data pointer which
 points to~the~current focus cell, so~that it~is able to~freely move around. The~main difference
 between Turing Machine and~Brainfuck is~lack of~states and~transitions, instead a~program
@@ -668,7 +677,7 @@ is equivalent to taking one symbol from the~top of the~right stack and pushing i
 into the~left stack -- if the~right stack is empty then we just push new blank symbol
 to the~left stack.
 
-\section {Reduction from 2 stack PDA to $4$ Counter Machine}
+\section {Reduction from 2 stack PDA to 4 Counter Machine}
 
 Similarly to the~reduction from Turing Machine to 2 stack PDA we need to simulate
 one memory model with the~other one. In this case we need to simulate $2$ stacks
@@ -698,11 +707,9 @@ the~counter. To~perform this division we will decrease counter by $1$ at each st
 $\bar{N}$-th step will increase the~helper counter by $1$. When the~original counter becomes empty
 then in the~helper counter there is the~result of integer division by $\bar{N}$. Now we just
 need to copy the~result from helper counter into the~original one. Whole operation is shown in
-Figure 3.1.
+Figure \ref{fig:pop_operation}.
 
-\usetikzlibrary{shapes.multipart}
-\usetikzlibrary{decorations.text}
-\begin{figure}
+\begin{figure}[H]
   \begin{subfigure}[b]{0.4\textwidth}
     \centering
     \begin{tikzpicture}[stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center}]
@@ -714,14 +721,14 @@ Figure 3.1.
         \nodepart{five}$a_{k-1}$
       };
 
-      \node[stack=4] at (5,0) {
+      \node[stack=4] at (4,0) {
         \nodepart{one}$a_1$
         \nodepart{two}$a_2$
         \nodepart{three}$\dots$
         \nodepart{four}$a_{k-1}$
       };
 
-      \draw [->, >=stealth] (1,0) -- (4,0) node [midway, above, sloped] (TextNode) {\textbf{pop}};
+      \draw [->, >=stealth] (1,0) -- (3,0) node [midway, above, sloped] (TextNode) {\textbf{pop}};
     \end{tikzpicture}
 
     \captionsetup{font=footnotesize}
@@ -741,11 +748,14 @@ Figure 3.1.
       };
 
       \def\myshift#1{\raisebox{.5ex}}
-      \draw [->,>=stealth,postaction={decorate,decoration={text along path,text align=center,text={|\myshift|divide by {$\bar{N}$}}}}]
+      \draw [->,>=stealth,postaction={decorate,
+          decoration={text along path,text align=center,
+          text={|\myshift|divide by {$\bar{N}$}}}}]
       (0.5,0.1) to[bend left=45] (4.5,0.1);
 
-      \def\myshift#1{\raisebox{.5ex}}
-      \draw [<-,>=stealth,postaction={decorate,decoration={text along path,text align=center,text={|\myshift|copy}}}]
+      \draw [<-,>=stealth,postaction={decorate,
+          decoration={text along path,text align=center,
+          text={|\myshift|copy}}}]
       (0.5,-0.1) to[bend right=45] (4.5,-0.1);
 
     \end{tikzpicture}
@@ -756,8 +766,146 @@ Figure 3.1.
   \end{subfigure}
 
   \caption{Stack vs. counter --- \textbf{pop} operation.}
+  \label{fig:pop_operation}
 
 \end{figure}
+
+To \textbf{push} symbol $b$ to the~top of the stack we need to multiply the~counter
+by $\bar{N}$ and add number $\bar{b}$ corresponding to symbol $b$:
+$$ \bar{b} + \bar{N} \cdot
+    \Big[ a_0 \cdot \bar{N}^0 + a_1 \cdot \bar{N}^1 + \dots
+    + a_{k-1} \cdot \bar{N}^{k-1} \Big]
+    = \bar{b} + \sum_{i=0}^{k-1} a_i \cdot \bar{N}^{i+1} $$
+Schematic operations to push stack symbol into a~stack represented as a~number is
+shown in Fugure \ref{fig:push_operation}.
+
+\begin{figure}[H]
+  \begin{subfigure}[b]{0.4\textwidth}
+    \centering
+    \begin{tikzpicture}[stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center}]
+      \node[stack=4] at (0,0) {
+        \nodepart{one}$a_0$
+        \nodepart{two}$a_1$
+        \nodepart{three}$\dots$
+        \nodepart{four}$a_{k-1}$
+      };
+
+      \node[stack=5] at (4,0) {
+        \nodepart{one}$b$
+        \nodepart{two}$a_0$
+        \nodepart{three}$a_1$
+        \nodepart{four}$\dots$
+        \nodepart{five}$a_{k-1}$
+      };
+
+      \draw [->, >=stealth] (1,0) -- (3,0) node [midway, above, sloped] (TextNode) {\textbf{push} $b$};
+    \end{tikzpicture}
+
+    \captionsetup{font=footnotesize}
+    \caption{Push element $b$ to the top.}
+
+  \end{subfigure}
+  \begin{subfigure}[b]{0.6\textwidth}
+    \centering
+    \begin{tikzpicture}[stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center}]
+
+      \node[stack=1] at (0,0) {
+        \nodepart{one}$S$
+      };
+
+      \node[stack=1] at (5,0) {
+        \nodepart{one}$S'$
+      };
+
+      \def\myshift#1{\raisebox{.5ex}}
+      \draw [->,>=stealth,postaction={decorate,
+          decoration={text along path,text align=center,
+          text={|\myshift|multiply by {$\bar{N}$}}}}]
+      (0.5,0.1) to[bend left=45] (4.5,0.1);
+
+      \draw [<-,>=stealth,postaction={decorate,
+          decoration={text along path,text align=center,
+          text={|\myshift|copy}}}]
+      (0.5,-0.1) to[bend right=45] (4.5,-0.1);
+
+      \def\myshift#1{\raisebox{.5ex}}
+      \draw [->,shorten <=5pt,shorten >=5pt,>=stealth,postaction={decorate,
+          decoration={text along path,text align=center,
+          text={|\myshift|add {$b$}}}}]
+      (5.5,0.1) arc (180:-180:0.7);
+
+    \end{tikzpicture}
+
+    \captionsetup{font=footnotesize}
+    \caption{Push element $b$ to the~stack described as number $S$.}
+
+  \end{subfigure}
+
+  \caption{Stack vs. counter --- \textbf{push} operation.}
+  \label{fig:push_operation}
+
+\end{figure}
+
+
+The hardest part is to recognize what is the~top symbol -- \textbf{check} operation.
+The idea is simple -- we need to calculate the~remainder from division by $\bar{N}$:
+$$ \Bigg( \sum_{i=0}^{k-1} a_i \cdot \bar{N}^i \Bigg) \ \mathrm{mod} \ \bar{N} = a_0 $$
+The only place we can remember any information are states. This means that we need
+to end up within different state for each remainder -- we call a~state $R_i$ if
+recognized symbol has number $i$. Consider example alphabet having $9$ symbols -- Figure
+\ref{fig:check} shows all states and transitions needed to~recognize it. Each
+transition labelled with $0$ is applied only when counter is empty, similarly
+all those labelled with $1$ apply when it is not empty. Additionally when we move around
+the~circle (apply transition labelled with $1$) we always decrease the~counter.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\foreach \a in {0,1,...,9}{
+  \ifnum\a=0 {
+    \node [state,initial] (q0) at (180: 2.5cm) {$q_0$};
+  }
+  \else{
+    \node [state] (q\a) at (-\a*360/10 + 180: 2.5cm) {$q_{\a}$};
+  }\fi
+}
+
+\foreach \a in {1,2,...,9}{
+  \xdef \textplace {right}
+  \ifnum\a>4 {\xdef \textplace {left}}\fi
+  \ifnum\a=1 {\xdef \textplace {above}}\fi
+  \ifnum\a=4 {\xdef \textplace {above}}\fi
+  \ifnum\a=5 {\xdef \textplace {above}}\fi
+  \ifnum\a=6 {\xdef \textplace {below}}\fi
+  \ifnum\a=9 {\xdef \textplace {below}}\fi
+  \node [state,accepting] (R\a) at (-\a*360/10 + 180: 5cm) {$R_{\a}$};
+  \path[->] (q\a) edge node [\textplace] {0} (R\a);
+}
+
+\foreach \a in {0,1,...,9}{
+  \xdef \textplace {above}
+  \ifnum\a>4 {\xdef \textplace {below}}\fi
+  \ifnum\a=0 {\xdef \textplace {left}}\fi
+  \ifnum\a=9 {\xdef \textplace {left}}\fi
+  \ifnum\a=4 {\xdef \textplace {right}}\fi
+  \ifnum\a=5 {\xdef \textplace {right}}\fi
+  \path[->] (q\a) edge [bend left=20] node [\textplace] {1} (q\intcalcMod{\a+1}{10});
+}
+\end{tikzpicture}
+
+\caption{Recognizing symbol from alphabet of size $9$. $R_i$ is the~state with recognized
+  symbol $i$, labels on paths define whether counter is empty (0) or not (1).}
+\label{fig:check}
+
+\end{figure}
+
+When counter value becomes $0$ then we move to some regognized state $R_i$ (notice that for
+correct representations of stacks we never get remainder $0$, so we never end within $q_0$).
+If we do not want to destroy original counter value (which is stack representation) we need
+to copy it into our counter for computations and after regognizing symbol at the~top
+we need to copy it back to original counter.
+
+
 
 \todo{O tym, jak te redukcje działają}
 
@@ -788,15 +936,12 @@ Porównanie czasów
 Tabelka
 
 
-\cite{sipser2012introduction}
 \section{Optymalizacje}
 
 \chapter{Podsumowanie, wnioski, możliwości kontynuowania}
 
- 
 \bibliographystyle{plain}
-%\bibliography{plain}
-\bibliography{citations}
+\bibliography{thesis}{}
 
 \appendix
 
