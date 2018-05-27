@@ -682,7 +682,7 @@ to the~left stack.
 Similarly to the~reduction from Turing Machine to 2 stack PDA we need to simulate
 one memory model with the~other one. In this case we need to simulate $2$ stacks
 with $4$ counters. More precisely, it is enough to show how to simulate $1$ stack
-with $2$ counters.
+with $2$ counters and then apply the~same idea to both stacks.
 
 Stack alphabet $\Gamma$ is finite and is of size $N = |\Gamma|$. Each symbol from $\Gamma$ may
 be assigned a~unique number starting from $1$ up to $N$ ($0$ is problematic -- it will be
@@ -694,8 +694,13 @@ $$ a_0 \cdot \bar{N}^0 + a_1 \cdot \bar{N}^1 + \dots + a_{k-1} \cdot \bar{N}^{k-
     = \sum_{i=0}^{k-1} a_i \cdot \bar{N}^i $$
 
 Our left counter will hold whole stack as a~single number and our right counter will be used
-to perform operations on the~left one. We will need a~few stack operations (and their equivalent
-mathods using counters):
+to perform operations on the~left one. Because of this representation if we had some symbol $a$
+with value $0$ then we would not distinguish between an~empty stack and the~one containing
+a single $a$ (more precisely $0$ could represent a~stack containing any number of $a$'s
+stored on this stack).
+
+We will need a~few stack operations (and their equivalent
+mathods on counters):
 \begin{itemize}
   \item \textbf{pop} one symbol from the~top,
   \item \textbf{push} one symbol to the~top,
@@ -899,15 +904,62 @@ the~circle (apply transition labelled with $1$) we always decrease the~counter.
 
 \end{figure}
 
-When counter value becomes $0$ then we move to some regognized state $R_i$ (notice that for
-correct representations of stacks we never get remainder $0$, so we never end within $q_0$).
+When a~counter value decreases to $0$ then we move to some state $R_i$ (notice that for
+correct representations of stacks we never get a~remainder equal $0$, so we never end within $q_0$).
 If we do not want to destroy original counter value (which is stack representation) we need
 to copy it into our counter for computations and after regognizing symbol at the~top
-we need to copy it back to original counter.
+we need to copy it back to the original counter.
+
+\textit{How to put it all together?}
+
+Because all transitions (in any presented model) are independent, we may focus on a~single
+transition and when we build a~translation for it then we can build a~translation for the~whole
+program (as long as we keep the~order of transitions).
+
+Each 2 stack PDA transition \texttt{T} has a~\texttt{state} the~model needs to be within,
+an~\texttt{other\_state} to which the~model moves into \textbf{if both stack symbol match
+the~patterns}.
+
+\begin{verbatim}
+state left_symbol right_symbol -> other_state [...]
+\end{verbatim}
+
+We will keep state names and build a~new 4 Counter Machine model that will operate as well
+on states \texttt{state} and \texttt{other\_state}, but it will have some additional ones
+in between. When we want to check whether $T$ should be applied then we perform two
+\textbf{check} operations. Because both symbols need to match, after recognizing first symbol
+we need to recognize the other without loosing the information about the~first one. This
+means that we build a~structure from Figure \ref{fig:check} and in place of each $R_i$ we
+paste the same structure for symbols recognition. All unsuccessful paths (symbols not matched)
+return to \texttt{state} and successful ones end up within \texttt{other\_state}.
+
+This idea gives O($m^2$) new transitions, where $m$ is the~number of transitions in 2 stack PDA
+program. If we consider input counter (which is yet another input stack) then we get O($m^3$)
+transitions that we generate. (Fortunately implementation optimizations make it O($m^2$).)
+
+There are still a~few more details to handle:
+\begin{itemize}
+  \item each applied transition performs a~\textbf{pop} (it always pops a~top element),
+  \item transitions may push some items to the stacks (these items may contain symbols that
+      were just popped),
+  \item a~transition may contain output instruction.
+\end{itemize}
+
+Notice that pushing symbols (even few ones) is easy -- we need to apply \textbf{push} operation
+multiple times, no matter if it is a~stack or an~output. It is worth to notice
+that building this structure takes O($N$) new states assuming the~number of symbols
+to push is a~constant. The whole transition $T$ takes O($N \cdot m^2$) newly
+generated states.
+
+In practice we want to pop elements together with recognizing them, but now we define the~idea, so
+is is enough to say that we perform a~\textbf{pop} after making sure we should apply transition $T$.
+
+\section {Reduction from 4 Counter Machine to 2 Counter Machine}
+
+\todo{Opis}
 
 
-
-\todo{O tym, jak te redukcje działają}
+\todo{\sout{O tym, jak te redukcje działają}}
 
 \chapter{Implementation}
 

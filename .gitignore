@@ -11,6 +11,8 @@
 *.auc
 *.out
 *.toc
+*.bbl
+*.blg
 thesis.pdf
 location.hh
 position.hh
