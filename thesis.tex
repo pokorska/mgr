@@ -965,21 +965,126 @@ is is enough to say that we perform a~\textbf{pop} after making sure we should a
 
 \chapter{Implementation}
 
-\section{Ogólny wstęp}
+\section{Intruduction}
 
-\todo{Uzasadnienie doboru narzędzi}
+Language chosen for the entire project is C++, mainly because of its efficiency. Counter Machine
+is a~basic model, so any translated program is expected to be very long. These amounts of information
+need to be stored and accessed efficiently, so STL library and its containers like hashing table
+and hashing set are used havily in this project.
+
+For translation purposes we need to have access to abstract syntax trees of original programs which
+means that we should be able to parse a~source code. Most common tools in C++ are Flex and Bison,
+for lexing and parsing respectively, which are used in this project. We have several translations
+between several different models, so at every step (i.e. Turing Machine to 2 stack PDA) Flex and Bison
+are applied to parse a~source code (i.e. in Turing Machine model) and produce abstract syntax tree.
+This tree is later used either for evaluation (if we want to execute) or translation to the~next
+model in the~pipeline (i.e. 2 stack PDA).
+
+Most of the translations were pretty straightforward and required only basic tricks like
+generating unique state names. The~most interesting one was 2 stack PDA to 4 Counter Machine,
+which required putting large part of a~program logic into states, so it is important
+to notice the~structure of the~logic to come up with reasonable translation algorithm.
+It turns out that Brainfuck has very specific instructions that allow to make optimizations
+to the~translation process.
+
+Few examples:
+\begin{itemize}
+  \item Input is always a~single symbol and it is directly stored within one of the~memory cells,
+      which means we do not need to recognize what is read -- we just blindly store it in memory.
+      This is the~optimization mentioned earlier -- we may use only O($m^2$) new states to translate
+      a~single 2 stack PDA transition.
+  \item From a~given state there might be multiple outgoing paths (a~few different states depending
+      on the~stack symbols), but there is no need to build the~whole circle structure for every one.
+      We can aggregate all of them and make appropriate outgoing paths to end up within correct
+      next states. Notice that for a~single 2 stack PDA transition with explicit symbols (no patterns)
+      there is only one outgoing path from our circle structure. In this case instead of wasting all
+      the other states $R_i$ we may connect them to appropriate other 2 stack PDA transitions.
+      What is more, for all those outgoing paths that do not match any 2 stack PDA transition
+      we may just end execution (go to \texttt{END} state).
+  \item (not implemented) If stack is completely ignored by a~transition, there is no point
+      to recognize a~symbol on top of it. For example instructions \texttt{>} and \texttt{<}
+      in Brainfuck just move to next/previous cell, which in practice ignores one of the~stacks.
+\end{itemize}
+
+The amount of generated information is very big even for simplest programs, which is not a suprise.
+After analyzing for example classical \textit{Hello World!} it turns out that a~human can
+significantly reduce the~required logic. Automatic translation will store single letters
+in memory (on a~tape or on a~stack) and then print it out, while we may directly use output
+tape/stack/counter. This is a~remainding influence of Brainfuck, where the only thing we can do
+is modifying the~memory and then output what is within this memory.
+
+\todo{Problemy z Bison'em - zjada dużo pamięci stosowej.}
+
+\todo{\sout{Uzasadnienie doboru narzędzi}}
 
 \todo{Najciekawsze wyzwania}
 
 \todo{Wszystko, co było ciekawe}
 
-\section{Szczegóły techniczne}
+\section{Technical details}
 
-\todo{Co jest gdzie, jak to się uruchamia, itd. / skrócona instrukcja użytkownika}
+First requirement is installing Flex and Bison:
+
+\texttt{sudo apt-get install flex bison}
+
+Full handling of each single model is implemented within separate directory called
+\texttt{<model>\_parser}, where \texttt{<model>} is short name for the~model
+(i.e. \texttt{tm\_parser}). Each directory is a~stanalone part and contains
+an~own \texttt{makefile}.
+
+There are $2$ operations allowed for each part:
+\begin{itemize}
+  \item parse + run -- parse source code and run it: \texttt{./test.e <path\_to\_source\_code>},
+  \item parse + translate -- parse source code and translate it into a~source code
+      of the~next model: \texttt{./test.e -<next\_model> <path\_to\_source\_code>}.
+\end{itemize}
+
+List of commands within directories:
+\begin{itemize}
+  \item \texttt{bf\_parser}
+    \begin{itemize}
+      \item run Brainfuck source file: \\ \texttt{./test.e ../examples/hello.bf}
+      \item translate Brainfuck to Turing Machine: \\ \texttt{./test.e -turing ../examples/hello.bf}
+    \end{itemize}
+  \item \texttt{tm\_parser}
+    \begin{itemize}
+      \item run Turing Machine source file: \\ \texttt{./test.e ../examples/hello.tm}
+      \item translate Turing Machine to 2 stack PDA: \\ \texttt{./test.e -2stackPDA ../examples/hello.tm}
+    \end{itemize}
+  \item \texttt{2stackPDA\_parser}
+    \begin{itemize}
+      \item run 2 stack PDA source file: \\ \texttt{./test.e ../examples/hello.pda}
+      \item translate 2 stack PDA to 4 Counter Machine: \\ \texttt{./test.e -minsky ../examples/hello.pda}
+    \end{itemize}
+  \item \texttt{mm4\_parser}
+    \begin{itemize}
+      \item run 4 Counter Machine source file: \\ \texttt{./test.e ../examples/hello.mm4}
+    \end{itemize}
+\end{itemize}
+
+When we want to run full pipeline then we need to run script \texttt{full\_pipeline.sh} within
+\texttt{shared\_files} directory: \todo{Extend instructions to Counter Machine}
+
+\texttt{./full\_pipeline.sh -f ../examples/hello.bf -o hello.pda --run}
+
+Options:
+\begin{itemize}
+  \item\textbf{(required)} \texttt{-f <input file path>} or \texttt{--file <input file path>} -- specifies
+      the path to input file written in Brainfuck,
+  \item \texttt{-o <output file path>} or \texttt{--output <output file path>} -- specifies
+      the path to output file (result of translation) written in 2 Stack PDA. If not
+      provided then \texttt{output.pda} is created within current directory,
+  \item \texttt{-r} or \texttt{--run} -- executes translated code (after translation is completed
+      and written to the~specifed output file),
+  \item \texttt{--debug} -- adds additional debugging information when executing program.
+\end{itemize}
+
+
+\todo{\sout{Co jest gdzie, jak to się uruchamia, itd. / skrócona instrukcja użytkownika}}
 
 \todo{Ograniczenia implementacji}
 
-\section{Przykłady}
+\section{Examples}
 
 Dużo przykładów...
 
@@ -990,7 +1095,7 @@ Porównanie czasów
 Tabelka
 
 
-\section{Optymalizacje}
+\section{Optimizations}
 
 \chapter{Podsumowanie, wnioski, możliwości kontynuowania}
 
