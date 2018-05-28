@@ -117,13 +117,14 @@ of~odd length and~we should reject it.
 
 \textbf{Configuration} of~a~Turing Machine consists of ($w$, $q$, $k$), where:
 \begin{itemize}
-  \item $w \in \Sigma^*$ is a~word initially written on~the~tape,
+  \item $w \in \Sigma^*$ is a~word written on~the~tape,
   \item $q$ is a~state of the~machine is~currently within,
   \item $k$ is a~cell number the~machine is currently looking at.
 \end{itemize}
 
 Having a~configuration we can precisely say what is the~program execution progress.
-One configuration is~a~precise step of~computation, so a~sequence of~configurations is called
+One configuration is~a~precise step of~computation, so a~sequence of~configurations (where
+each consecutive pair obeys $\delta$) is called
 a~\textbf{run} of~a~Turing Machine. This sequence may be finite or~infinite the~same way like
 a~program may loop forever or~finish within some number of~steps. Each such run begins with
 a~configuration where some word $w$ is~an~input, $k = 0$ which is the~leftmost cell on~the~tape
@@ -133,7 +134,7 @@ finite and~ends with configuration ($w_n$, $q_n$, $k_n$) then we define the~inpu
 
 \section{Church-Turing thesis and Turing-completeness}
 
-Computers are used to perform calculations for us, more precicely we want them to~execute some
+Computers are used to perform calculations for us. we want them to~execute some
 procedures or~to~perform some process and~we call it an~\textit{algorithm} in~its intuitive meaning.
 A~good example could be~a~mathematical problem of~generating prime numbers -- it~is fairly simple
 to~think of~a~method of~generating prime numbers by checking lager and~larger numbers and~checking
@@ -142,7 +143,8 @@ we think for a~while we would probably be able to~express it in terms of Turing 
 is~exactly what \textbf{Church-Turing thesis} \cite{sipser2012ChurchTuring} states:
 
 \begin{hypothesis}
-  Intuitive definition of~any~algorithm is~equivalent to~some description of~Turing Machine.
+  Intuitive definition of~any~algorithm a~human/computer can follow is~equivalent
+  to~some description of~Turing Machine.
 \end{hypothesis}
 
 This thesis allows us to~think about defining algorithms in~intuitive way while still staying
@@ -171,8 +173,8 @@ and~transition function $\delta$ defining when the~machine may move from one sta
 Instead of~the~infinite tape there are $2$ counters -- each counter works like a~glass of~coins,
 the~machine may throw a~coin (or~several coins) into the~glass, check whether the~glass is~empty
 or~take out a~coin (only one and~only if glass is not empty). Each counter is~basically a~non-negative
-integer, but the~machine is~not allowed to~explicitly check its value, it~just gets boolean
-information about emptiness.
+integer, but the~machine is~not allowed to~explicitly check its value, it~just gets a~boolean
+information about whether it equals $0$.
 
 There are a~few alternative models -- if~we~allow the~machine to~use $3$ counters instead of~$2$
 then we get equivalent model, the~same for $4$ or~more counters. According to~this fact, we~can
@@ -266,7 +268,7 @@ Similarly we may stop at any point of~translations, so it is possible to generat
 in 2 stack PDA model from a~program written in Turing Machine model.
 
 The~flexibility in running the~pipeline gives us possibility to prove (as~side-effect)
-the~original Church-Turing thesis. Any~modern program (written in Brainfuck) may be executed
+the~original Church-Turing thesis for Brainfuck. Any~modern program (written in Brainfuck) may be executed
 on a~theoretical Turing Machine model.
 
 
@@ -345,7 +347,7 @@ ASCII characters have 7 bits (numbers 0-127), so tape symbols have 8 bits
 allowing to hold regular ASCII and special characters (numbers 128-255).
 
         There are few special definitions (so far using regular ASCII,
-but it will be changed to use special characters instead):
+but it will be changed to use special characters instead \todo{revisit}):
 \begin{itemize}
   \item \texttt{BLANK} which represents empty field on the tape
   \item \texttt{*} (ALL) defines all characters (both ASCII and special)
@@ -398,7 +400,7 @@ symbol \texttt{->} in the~state change definition.
         from stdin one character, overwrite \texttt{A} to read value and move
         head one field right.
   \item Writing is done similarly with \texttt{->\^},
-        i.e. \texttt{state1 A ->\^ state2 R NOTHING} which will print symbol
+        i.e. \texttt{state1 A ->\^\ state2 R NOTHING} which will print symbol
         \texttt{A} on stdout and move the~head to the~right.
 \end{itemize}
 
@@ -437,7 +439,7 @@ Explanation:
 \begin{itemize}
   \item \texttt{left\_pattern} is symbol or pattern that should be matched
       for the symbol at the top of the left stack
-  \item \texttt{right\_pattern} is the same as above, but for right stack
+  \item \texttt{right\_pattern} is the same as above, but for the right stack
   \item \texttt{left\_stack\_items} are the list of items that should be pushed
       to the~left stack before moving to \texttt{target\_state}. It might be
       a~single letter \texttt{"a"}, a~sequence of letters \texttt{"abc"}
@@ -445,24 +447,25 @@ Explanation:
       where \texttt{ORIG\_LEFT} means the letter we read from the~left stack (the one matched
       in \texttt{left\_pattern}). Note: If \texttt{+} is used it is required to put
       the~whole sequence in parenthesis
-  \item \texttt{right\_stack\_items} are the same as above, but for items to be pushed into right stack
+  \item \texttt{right\_stack\_items} are the same as above, but for items to be pushed into
+      the right stack
 \end{itemize}
 
 Special references and definitions in transitions:
 \begin{itemize}
   \item \texttt{ORIG\_LEFT} is the letter taken from the left stack
-  \item \texttt{ORIG\_RIGHT} is the letter taken from right stack
-  \item \texttt{INPUT\_CHAR} is the letter taken from input tape
+  \item \texttt{ORIG\_RIGHT} is the letter taken from the right stack
+  \item \texttt{INPUT\_CHAR} is the letter taken from the input tape
       (only in input transition type - see section below)
   \item \texttt{NOTHING} may be used as \texttt{left\_stack\_items} or \texttt{right\_stack\_items}
-      and means that nothing is pushed into left/right stack
+      and means that nothing is pushed into the left/right stack
   \item \texttt{END} is special state name into which the transition is made if no other transition is specified
-  \item \texttt{\$} is the symbol of the empty stack
+  \item \texttt{\$} is the symbol of the stack bottom.
 \end{itemize}
 
 \subsection {Extensions of the theoretical model}
 
-Input/Output handling is done similarly to Turing Machine - We change \texttt{->} in transition
+Input/Output handling is done similarly to Turing Machine: we change \texttt{->} in transition
 to \texttt{->*} or \texttt{->\^}.
 
 When defining input transition it is allowed to use \texttt{INPUT\_CHAR} in any items
@@ -518,11 +521,10 @@ Where:
 \begin{itemize}
   \item \texttt{state\_name} is the state in which counter machine needs to be
       within for this transition to be applied,
-  \item \texttt{pattern} is one of values \texttt{0}, \texttt{1} or \texttt{\_}
-      meaning empty counter, non-empty counter and any counter state and defines
-      what is expected state of the~given counter - the transition may be applied
-      only when all counter states are matched (Notice that symbol \texttt{\_}
-      is matched with any state of the counter),
+  \item \texttt{pattern} is one of values \texttt{0}, \texttt{1} or \texttt{\_}.
+      \texttt{0} means we expect empty counter, \texttt{1} means we expect non-empty
+      counter and \texttt{\_} means that this counter state does not matter, so
+      this transition should be applied regardless of this counter state.
   \item \texttt{target state} is the state in which machine will be after
       applying the transition,
   \item \texttt{number} is an~integer from the~range \texttt{[-1, MAX\_INT]} specifying
@@ -630,7 +632,7 @@ Input/Output is handled the same way it is handled in Counter Machine with 4 cou
 
 \section {Reduction from Brainfuck to Turing Machine}
 
-Brainfuck is really similar to Turing Machine, so it is relatively easy to build
+Brainfuck is very similar to Turing Machine, so it is relatively easy to build
 a~translation. They both have a~tape and both can read and update symbols in any
 cell of the~tape. There are two main differences: representation of states and
 input/output handling.
