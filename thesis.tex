@@ -24,14 +24,25 @@
 % polecenia \fmlinebreak.
 \polishtitle    {Tłumaczenie współczesnego języka programowania\fmlinebreak do Maszyny Minsky'ego.}
 \englishtitle   {Modern programming language translation to the theoretical model of Minsky Machine (Counter Machine).}
-\polishabstract {TODO: polishabstract}
-\englishabstract{
-Counter Machine (a machine with finite state set, two counters and input/output tape) is~able to express any
-computations done by~modern programming languages. This is~the~well-known theorem, just like computations
-performed using Turing Machine and~means that anything written in a~modern programming language is possible
-to~translate into the~theoretical model of Minsky Machine (as well as into Turing Machine).
+\polishabstract {
+Maszyna Mińskiego (definiowana jako skończony zbiór stanów i~przejść mięszy nimi, korzystająca
+z~dwóch liczników jako pamięcie oraz osobnych liczników odpowiadających za wejście/wyjście) ma
+taką samą siłę wyrazu co współczesne języki programowania. To jest znany już fakt, bardziej
+popularny w~wersji z Maszyną Turinga. Oznacza to, że dowolny współczesny program da się
+przetłumaczyć na teoretyczny model Maszyny Mińskiego (to samo dotyczy Maszyny Turinga).
 
-My goal is to build automatic translation from a~modern programming language (C++) to Minsky Machine.
+Moim celem jest zatem zbudowanie automatycznego narzędzia tłumaczącego współczesny język
+programowania (Brainfuck) do Maszyny Mińskiego.
+}
+\englishabstract{
+Counter Machine (a machine with finite state set, two counters and input/output counters) is~able
+to express any computations done by~modern programming languages. This is the~well-known theorem,
+just like computations performed using Turing Machine and means that anything written in a~modern
+programming language is possible to~translate into the~theoretical model of Counter Machine
+(as well as into Turing Machine).
+
+My goal is to build automatic translation from a~modern programming language (Brainfuck)
+to a~Counter Machine.
 }
 % w pracach wielu autorow nazwiska mozna oddzielic poleceniem \and
 \author         {Jadwiga Pokorska}
@@ -85,39 +96,50 @@ to create a~program which will never stop or~consume infinite amount of memory. 
 to~solve all the problems -- it~has got the~same limitations in~sense of~creating algorithms
 like a~regular computer.
 
-Turing Machine is~a~finite description of~an~algorithm and~uses potentially infinite tape
-as~its memory -- we have some amount of~tape at~the beginning, but~we may extend this tape
-(glue additional tape cells) to~the right end if necessary. All cells are either blank
-or~contain a~single letter -- when machine starts its work there is an~input word
-written on~the tape, during computations the~machine is allowed to~change all the available
-cells and~after it finishes (if it finishes at all) it can either \textit{accept}
-or~\textit{reject} original input word.
+Turing Machine is~a~finite description of~an~algorithm. To perform calculations it uses
+a~potentially infinite tape as~its memory -- we have some amount of~tape at~the beginning,
+but~we may extend this tape (glue additional tape cells) to~the right end if necessary.
+All cells are either blank or~contain a~single letter -- when a~machine starts its
+work it has access to $3$ different tapes: \textit{input tape}, \textit{output tape} and
+its own tape for calculations.
+\textit{Input tape} is readonly and it gives symbols one by one until the~end of an~input word
+(we can not move left or right explicitly). Similarly \textit{output tape} is writeonly and
+when a~machine finishes its work there is output word written (if any is needed). Using its regular
+tape for computations a~machine can do anything: write, read, move and extend the~tape.
+After a~machine finishes (if it finishes at all) it can either \textit{accept}
+or~\textit{reject} original input word and there may be an~output word written on output tape
+(for simplicity it is usually assumed that there is no output word).
 
-As~an~example we can try to construct Turing Machine recognizing all binary palindromes of~even length,
-which is~formally set $A = \{ ww^R : w \in \{0,1\}^* \}$ (where $^R$ means reversing given word).
+As~an~example we can try to construct a~Turing Machine recognizing all binary palindromes of~even length,
+formally defined as a~set $A = \{ ww^R : w \in \{0,1\}^* \}$ (where $^R$ means reversing given word).
 
-Because we need to use finite description to~define behaviour we say that the~machine should
-check first letter $a_1$ with last one $a_n$ -- if these cells contain different letters machine
-should reject the whole word, otherwise it should mark them as checked (i.e. write $\#$ symbol in~their cells)
-and~continue with $a_2$ and~$a_{n-1}$. At~the~end we should have tape full of $\#$s and~the~machine
+Because we need to use finite description we say that the~machine should read whole input word
+from the~input tape, store it on its computations tape and move to the~beginning of its tape.
+Then the~machine should check the~first letter $a_1$ with the~last one $a_n$ -- if these cells
+contain different letters then the~machine should immediately reject the whole word,
+otherwise it should mark both $a_1$ and $a_n$ as checked (i.e. write $\#$ symbol in~their cells)
+and~continue with $a_2$ and~$a_{n-1}$. At~the~end we should have a~tape full of $\#$s and~the~machine
 should accept given word. If there is just one unchanged cell left then it was a~palindrome
 of~odd length and~we should reject it.
 
-\textbf{Turing Machine} is a~$6$-tuple $(Q,\Sigma,\Gamma,\delta,q_0,P)$ where:
+For simplicity we assume we do not have the~output tape -- a~machine may either accept or reject
+an~input word written on the~input tape. \textbf{Turing Machine} is a~$6$-tuple
+$(Q,\Sigma,\Gamma,\delta,q_0,P)$ where:
 \begin{itemize}
   \item $Q$ is~a~finite set of~states the~machine can be within,
   \item $\Sigma$ is~a~finite input alphabet (does not contain blank),
   \item $\Gamma$ is~a~finite tape alphabet and~$\Sigma \subset \Gamma$,
-  \item $\delta: Q \times \Gamma \rightarrow Q \times \Gamma \times \{L,R\}$ is~a~finite
-      transition function, $L$ and~$R$ mean the~machine should move one cell left or~right
-      respectively,
+  \item $\delta: Q \times \Gamma \times \left( \Sigma \cup \{\perp\} \right)
+      \rightarrow Q \times \Gamma \times \{L,R\}$ is~a~finite
+      transition function, $L$ and~$R$ mean the~machine should move one cell
+      left or~right respectively,
   \item $q_0$ is~the~initial state the~machine starts within,
   \item $P$ is~a~finite set of~states which accept the~input word.
 \end{itemize}
 
 \textbf{Configuration} of~a~Turing Machine consists of ($w$, $q$, $k$), where:
 \begin{itemize}
-  \item $w \in \Sigma^*$ is a~word written on~the~tape,
+  \item $w \in \Gamma^*$ is a~word written on~the~computations tape,
   \item $q$ is a~state of the~machine is~currently within,
   \item $k$ is a~cell number the~machine is currently looking at.
 \end{itemize}
