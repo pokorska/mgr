@@ -88,7 +88,7 @@ processor model, input/output communication protocols and many others. This is w
 to~state or proof anything about the behaviour of computer programs then we need to~find a~common
 language and~general theoretical model representing any type of "computer".
 
-The model is known since 1936 \cite{sipser2012ChurchTuring} when Alan Turing proposed something
+The model is known since 1936 \cite{turing1937computable} when Alan Turing proposed something
 called \textbf{Turing Machine}
 to represent a~machine that is able to~execute any computations expressible in~terms of~computer program.
 It has all positive and~negative properties which belong to~modern programs, i.e. it~is possible
@@ -130,9 +130,9 @@ $(Q,\Sigma,\Gamma,\delta,q_0,P)$ where:
   \item $\Sigma$ is~a~finite input alphabet (does not contain blank),
   \item $\Gamma$ is~a~finite tape alphabet and~$\Sigma \subset \Gamma$,
   \item $\delta: Q \times \Gamma \times \left( \Sigma \cup \{\perp\} \right)
-      \rightarrow Q \times \Gamma \times \{L,R\}$ is~a~finite
+      \rightarrow Q \times \Gamma \times \{L,R\} \times \{-,R\}$  is~a~finite
       transition function, $L$ and~$R$ mean the~machine should move one cell
-      left or~right respectively,
+      left or~right respectively, \todo{rethink input tape}
   \item $q_0$ is~the~initial state the~machine starts within,
   \item $P$ is~a~finite set of~states which accept the~input word.
 \end{itemize}
@@ -162,7 +162,7 @@ A~good example could be~a~mathematical problem of~generating prime numbers -- it
 to~think of~a~method of~generating prime numbers by checking lager and~larger numbers and~checking
 their all possible divisors. We~are able to~precisely say what this algorithm looks like and~if
 we think for a~while we would probably be able to~express it in terms of Turing Machines. That
-is~exactly what \textbf{Church-Turing thesis} \cite{sipser2012ChurchTuring} states:
+is~exactly what \textbf{Church-Turing thesis} (see Chapter Church-Turing Thesis of \cite{sipser2012ChurchTuring}) states:
 
 \begin{hypothesis}
   Intuitive definition of~any~algorithm a~human/computer can follow is~equivalent
@@ -209,7 +209,7 @@ is proven to~be not decidable. \cite{minsky_67}
 
 \section {2 stack pushdown automaton (2 stack PDA)}
 
-Similarly to~Counter Machine, finite description of a~2~stack pushdown automaton \cite{sipser2012PDA}
+Similarly to~Counter Machine, finite description of a~2~stack pushdown automaton (see Chapter Context-Free Languages, Pushdown Automata of \cite{sipser2012ChurchTuring})
 contains number of~states and~transition function $\delta$, but~counters are replaced with 2 stacks.
 These 2~stacks use stack alphabet $\Gamma$ and the~automaton may change their state
 by~pushing zero or~more symbols at the~top or~removing \textbf{exactly one} symbol from
@@ -294,17 +294,13 @@ the~original Church-Turing thesis for Brainfuck. Any~modern program (written in 
 on a~theoretical Turing Machine model.
 
 
-\todo{Co to są \sout{maszyny Turinga, Mińskiego, Brainfuck, Turning-zupełność, hipoteza Churcha}}
-
-\todo{O czym jest ta praca - lista kontrybucji}
-
-\todo{\sout{Po co jest ta praca --- ,,proof of concept''; ,,walory dydaktyczne'', }\dots}
-
-\todo{,,Related work''}
-
-\todo{Plan pracy}
+\todo{
+This paper is organized as follows. Section 2 contains .... Section 3 contains .... Section 4 contains .... In Section 5 we discuss .... 
+}
 
 \ldots
+
+\todo{,,Related work''}
 
 \chapter {Preliminaries}
 
@@ -806,7 +802,7 @@ $$ \bar{b} + \bar{N} \cdot
     + a_{k-1} \cdot \bar{N}^{k-1} \Big]
     = \bar{b} + \sum_{i=0}^{k-1} a_i \cdot \bar{N}^{i+1} $$
 Schematic operations to push stack symbol into a~stack represented as a~number is
-shown in Fugure \ref{fig:push_operation}.
+shown in Figure \ref{fig:push_operation}.
 
 \begin{figure}[H]
   \begin{subfigure}[b]{0.4\textwidth}
@@ -1037,10 +1033,6 @@ is modifying the~memory and then output what is within this memory.
 
 \todo{Problemy z Bison'em - zjada dużo pamięci stosowej.}
 
-\todo{\sout{Uzasadnienie doboru narzędzi}}
-
-\todo{Najciekawsze wyzwania}
-
 \todo{Wszystko, co było ciekawe}
 
 \section{Technical details}
@@ -1101,38 +1093,53 @@ Options:
   \item \texttt{--debug} -- adds additional debugging information when executing program.
 \end{itemize}
 
-
-\todo{\sout{Co jest gdzie, jak to się uruchamia, itd. / skrócona instrukcja użytkownika}}
-
 \todo{Ograniczenia implementacji}
 
 \section{Examples}
 
 Dużo przykładów...
 
-\section{Ewaluacja}
+\subsection{Ewaluacja}
 
-Porównanie czasów
+Porównanie czasów, rozmiarów (na przykładach, nie musi być ,,zupełne'')
 
-Tabelka
+See Table~\ref{t:my-label}.
 
-
-\section{Optimizations}
+\begin{table}[]
+\centering
+\caption{Size of translated programs\\
+Translation time\\
+Running time
+}
+\label{t:my-label}
+\begin{tabular}{llllll}
+Program & Brainfuck & TM & 2PDA & 4CM & 2CM \\ 
+hello.bf & 30 & 50 & 60 & 250 & 300\\
+ & 1.05s & 2s & 3s & 3s & 60s \\
+ &  &  &  & & 
+\end{tabular}
+\end{table}
 
 \chapter{Podsumowanie, wnioski, możliwości kontynuowania}
 
+
+In this thesis we provided...
+
+The obtained implementation is indeed a proof of ... And it works... and not toooooo slow. What have we learned...
+
+Czy bezpośrednie tłumaczenie byłoby lepsze?
+
+
+Future work...
+\begin{itemize}
+\item 
+Rozwój ,,z lewej strony obrazka'' -- tłumaczenie z c++ czy czego kto tam chce
+\item 
+Interfejs graficzny - walory dydaktyczne
+\item 
+? Optymalizacja
+\end{itemize}
+
 \bibliographystyle{plain}
 \bibliography{thesis}{}
-
-\appendix
-
-\chapter{Szczegółowy sposób instalacji i konfiguracji lub dostępu do działającego systemu oraz podręcznik użytkownika systemu.}
-
-%%%%% BIBLIOGRAFIA
-
-
-
-
-
-
 \end{document}
