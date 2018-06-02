@@ -132,7 +132,7 @@ $(Q,\Sigma,\Gamma,\delta,q_0,P)$ where:
   \item $\delta: Q \times \Gamma \times \left( \Sigma \cup \{\perp\} \right)
       \rightarrow Q \times \Gamma \times \{L,R\} \times \{-,R\}$  is~a~finite
       transition function, $L$ and~$R$ mean the~machine should move one cell
-      left or~right respectively, \todo{rethink input tape}
+      left or~right respectively,
   \item $q_0$ is~the~initial state the~machine starts within,
   \item $P$ is~a~finite set of~states which accept the~input word.
 \end{itemize}
@@ -293,10 +293,13 @@ The~flexibility in running the~pipeline gives us possibility to prove (as~side-e
 the~original Church-Turing thesis for Brainfuck. Any~modern program (written in Brainfuck) may be executed
 on a~theoretical Turing Machine model.
 
-
-\todo{
-This paper is organized as follows. Section 2 contains .... Section 3 contains .... Section 4 contains .... In Section 5 we discuss .... 
-}
+This paper is organized as follows: Section 2 contains exact specification of all the~models used in translations.
+It contains descriptions of how to write source code in each model (i.e. Turing Machine source code). Section 3
+explains how we approach each separate translation -- general algorithm to~move from a~source code in one model
+to a~source code in the~next one. Section 4 contains technical details about the~implementation -- what tools
+were chosen to~this project and how to use the~prepared code. It also discusses encountered problems and presents
+a~summary of received results. In section 5 we discuss the~outcome of the~whole work, what could be extended in the~future
+and what could be done better with the~current knowledge.
 
 \ldots
 
@@ -978,8 +981,6 @@ is is enough to say that we perform a~\textbf{pop} after making sure we should a
 
 \todo{Opis}
 
-
-\todo{\sout{O tym, jak te redukcje działają}}
 
 \chapter{Implementation}
 
