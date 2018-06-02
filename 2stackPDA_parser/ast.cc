@@ -50,10 +50,6 @@ void TransitionMap::PushToStack(std::stack<int>* stack,
     int orig_right, char input_char) {
   for (StackSymbol* elem : elems) {
     int to_push = elem->evaluate(orig_left, orig_right, input_char);
-    if (stack->empty() && to_push != mgr::EMPTY_STACK_VALUE) {
-      //std::cout << "Pushing empty stack char first.\n";
-      stack->push(mgr::EMPTY_STACK_VALUE);
-    }
     //std::cout << "Pushing to stack: " << (char)to_push << " value " << to_push << "\n";
     stack->push(to_push);
   }
@@ -83,7 +79,8 @@ void TransitionMap::evaluate() {
   std::string curr_state = init_state;
   while (curr_state != mgr::END_STATE) {
     int left_top = left_stack.top(), right_top = right_stack.top();
-    left_stack.pop(); right_stack.pop();
+    if (left_top != mgr::EMPTY_STACK_VALUE) left_stack.pop();
+    if (right_top != mgr::EMPTY_STACK_VALUE) right_stack.pop();
     const TransitionRaw& transition = FindTransition(curr_state, left_top, right_top);
     char c = mgr::NO_CHAR;
     if (transition.type == TransitionRaw::Input) {
@@ -96,8 +93,6 @@ void TransitionMap::evaluate() {
     PushToStack(&left_stack, transition.left_stack, left_top, right_top, c);
     PushToStack(&right_stack, transition.right_stack, left_top, right_top, c);
     curr_state = transition.next_state;
-    if (left_stack.empty()) left_stack.push(mgr::EMPTY_STACK_VALUE);
-    if (right_stack.empty()) right_stack.push(mgr::EMPTY_STACK_VALUE);
 
     if (debug) {
       std::cout << "  Left stack: ";
