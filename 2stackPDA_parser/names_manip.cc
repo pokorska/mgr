@@ -86,6 +86,8 @@ void insert_interpreted_chars(char pattern, unordered_set<int>* chars, int alph_
       chars->insert(i);
   else if (pattern == mgr::ZERO)
     chars->insert(1);
+  else if (pattern == mgr::EMPTY_STACK_CHAR)
+    chars->insert(0);
   else
     chars->insert((int)pattern + 1);
 }
@@ -100,6 +102,8 @@ vector<int> get_all_chars(char pattern, int alph_size) {
       result.push_back(i);
   else if (pattern == mgr::ZERO)
     result.push_back(1);
+  else if (pattern == mgr::EMPTY_STACK_CHAR)
+    result.push_back(0);
   else
     result.push_back((int)pattern + 1);
   return result;

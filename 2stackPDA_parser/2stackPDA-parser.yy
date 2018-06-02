@@ -121,7 +121,7 @@ item_no_input:
 | ORIG_LEFT { $$ = std::vector<StackSymbol*>(1, new SymbolOrigLeft()); }
 | ORIG_RIGHT { $$ = std::vector<StackSymbol*>(1, new SymbolOrigRight()); }
 | "B" { $$ = std::vector<StackSymbol*>(1, new SymbolRaw(mgr::BLANK)); }
-| EMPTY_STACK { $$ = std::vector<StackSymbol*>(1, new SymbolRaw(mgr::EMPTY_STACK_CHAR)); }
+| EMPTY_STACK { $$ = std::vector<StackSymbol*>(1, new SymbolRaw(mgr::EMPTY_STACK_CHAR)); } // It is treated as a regular symbol here.
 | NEXT "(" item_no_input ")" { $$ = std::vector<StackSymbol*>(1, new SymbolNext($3[0])); } // TODO: fix
 | PREV "(" item_no_input ")" { $$ = std::vector<StackSymbol*>(1, new SymbolPrev($3[0])); } // TODO: fix
 

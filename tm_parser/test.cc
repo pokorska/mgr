@@ -10,7 +10,7 @@ int main (int argc, char *argv[])
       driver.trace_parsing = true;
     else if (argv[i] == std::string ("-s"))
       driver.trace_scanning = true;
-    else if (argv[i] == std::string ("-2StackPDA"))
+    else if (argv[i] == std::string ("-2StackPDA") || argv[i] == std::string("-2stackPDA"))
       driver._2stackPDA = true;
     else if (!driver.parse (argv[i]))
       driver.run();

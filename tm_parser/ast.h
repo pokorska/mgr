@@ -144,7 +144,7 @@ class TransitionMap {
     std::string output_char_section = (t.type == TransitionRaw::Output) ? " Output: ORIG_LEFT" : "";
     result += t.curr_state + " " + t.pattern + " " + EMPTY_STACK_CHAR + " " +
               transitionTypeToString(t.type) + " " + t.next_state + " (" + input_handling + " + BLANK) " +
-              EMPTY_STACK_CHAR + output_char_section;
+              "NOTHING" + output_char_section;
     return result;
   }
 
