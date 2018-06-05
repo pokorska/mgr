@@ -709,12 +709,12 @@ with $2$ counters and then apply the~same idea to both stacks.
 
 Stack alphabet $\Gamma$ is finite and is of size $N = |\Gamma|$. Each symbol from $\Gamma$ may
 be assigned a~unique number starting from $1$ up to $N$ ($0$ is problematic -- it will be
-explained later). A~stack is a~sequence of numbers $a = a_0 a_1 a_2 \dots a_{k-1}$ (where $a_0$
-is the~top of the~stack). Such a~sequence we may represent as a~single number in a~numeral system
-with base $\bar{N} = N+1$:
+explained later). A~stack is a~sequence of numbers $a = a_0 a_1 a_2 \dots a_{k}$ (where $a_0$
+is the~top of the~stack and $a_k = \perp = 0$ is the~stack bottom). Such a~sequence we may
+represent as a~single number in a~numeral system with base $\bar{N} = N+1$:
 
-$$ a_0 \cdot \bar{N}^0 + a_1 \cdot \bar{N}^1 + \dots + a_{k-1} \cdot \bar{N}^{k-1}
-    = \sum_{i=0}^{k-1} a_i \cdot \bar{N}^i $$
+$$ a_0 \cdot \bar{N}^0 + a_1 \cdot \bar{N}^1 + \dots + a_{k} \cdot \bar{N}^{k}
+    = \sum_{i=0}^{k} a_i \cdot \bar{N}^i $$
 
 Our left counter will hold whole stack as a~single number and our right counter will be used
 to perform operations on the~left one. Because of this representation if we had some symbol $a$
@@ -746,14 +746,14 @@ Figure \ref{fig:pop_operation}.
         \nodepart{two}$a_1$
         \nodepart{three}$a_2$
         \nodepart{four}$\dots$
-        \nodepart{five}$a_{k-1}$
+        \nodepart{five}$a_{k}$
       };
 
       \node[stack=4] at (4,0) {
         \nodepart{one}$a_1$
         \nodepart{two}$a_2$
         \nodepart{three}$\dots$
-        \nodepart{four}$a_{k-1}$
+        \nodepart{four}$a_{k}$
       };
 
       \draw [->, >=stealth] (1,0) -- (3,0) node [midway, above, sloped] (TextNode) {\textbf{pop}};
@@ -767,29 +767,22 @@ Figure \ref{fig:pop_operation}.
     \centering
     \begin{tikzpicture}[stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center}]
 
-      \node[stack=1] at (0,0) {
-        \nodepart{one}$S$
-      };
+      \node[stack=1] at (0,2) { \nodepart{one}$C_0$ };
+      \node[stack=1] at (5,2) { \nodepart{one}$0$ };
 
-      \node[stack=1] at (5,0) {
-        \nodepart{one}$S'$
-      };
+      \node[stack=1] at (0,1) { \nodepart{one}$0$ };
+      \node[stack=1] at (5,1) { \nodepart{one}$C_1$ };
 
-      \def\myshift#1{\raisebox{.5ex}}
-      \draw [->,>=stealth,postaction={decorate,
-          decoration={text along path,text align=center,
-          text={|\myshift|divide by {$\bar{N}$}}}}]
-      (0.5,0.1) to[bend left=45] (4.5,0.1);
+      \node[stack=1] at (0,0) { \nodepart{one}$C_2$ };
+      \node[stack=1] at (5,0) { \nodepart{one}$0$ };
 
-      \draw [<-,>=stealth,postaction={decorate,
-          decoration={text along path,text align=center,
-          text={|\myshift|copy}}}]
-      (0.5,-0.1) to[bend right=45] (4.5,-0.1);
+      \draw [->, >=stealth] (0.5,2) -- (4.5,1.1) node [midway, above, sloped] (TextNode) {\textbf{divide by $\bar{N}$}};
+      \draw [->, >=stealth] (4.5,0.8) -- (0.5,0) node [midway, above, sloped] (TextNode) {\textbf{copy}};
 
     \end{tikzpicture}
 
     \captionsetup{font=footnotesize}
-    \caption{Pop element from the~stack described as number $S$.}
+    \caption{Pop element from the~stack encoded in counter $C_0$.}
 
   \end{subfigure}
 
@@ -802,8 +795,8 @@ To \textbf{push} symbol $b$ to the~top of the stack we need to multiply the~coun
 by $\bar{N}$ and add number $\bar{b}$ corresponding to symbol $b$:
 $$ \bar{b} + \bar{N} \cdot
     \Big[ a_0 \cdot \bar{N}^0 + a_1 \cdot \bar{N}^1 + \dots
-    + a_{k-1} \cdot \bar{N}^{k-1} \Big]
-    = \bar{b} + \sum_{i=0}^{k-1} a_i \cdot \bar{N}^{i+1} $$
+    + a_{k} \cdot \bar{N}^{k} \Big]
+    = \bar{b} + \sum_{i=0}^{k} a_i \cdot \bar{N}^{i+1} $$
 Schematic operations to push stack symbol into a~stack represented as a~number is
 shown in Figure \ref{fig:push_operation}.
 
@@ -815,7 +808,7 @@ shown in Figure \ref{fig:push_operation}.
         \nodepart{one}$a_0$
         \nodepart{two}$a_1$
         \nodepart{three}$\dots$
-        \nodepart{four}$a_{k-1}$
+        \nodepart{four}$a_{k}$
       };
 
       \node[stack=5] at (4,0) {
@@ -823,7 +816,7 @@ shown in Figure \ref{fig:push_operation}.
         \nodepart{two}$a_0$
         \nodepart{three}$a_1$
         \nodepart{four}$\dots$
-        \nodepart{five}$a_{k-1}$
+        \nodepart{five}$a_{k}$
       };
 
       \draw [->, >=stealth] (1,0) -- (3,0) node [midway, above, sloped] (TextNode) {\textbf{push} $b$};
@@ -837,35 +830,26 @@ shown in Figure \ref{fig:push_operation}.
     \centering
     \begin{tikzpicture}[stack/.style={rectangle split, rectangle split parts=#1,draw, anchor=center}]
 
-      \node[stack=1] at (0,0) {
-        \nodepart{one}$S$
-      };
+      \node[stack=1] at (0,4) { \nodepart{one}$C_0$ };
+      \node[stack=1] at (5,4) { \nodepart{one}$0$ };
 
-      \node[stack=1] at (5,0) {
-        \nodepart{one}$S'$
-      };
+      \node[stack=1] at (0,3) { \nodepart{one}$0$ };
+      \node[stack=1] at (5,3) { \nodepart{one}$C_1$ };
 
-      \def\myshift#1{\raisebox{.5ex}}
-      \draw [->,>=stealth,postaction={decorate,
-          decoration={text along path,text align=center,
-          text={|\myshift|multiply by {$\bar{N}$}}}}]
-      (0.5,0.1) to[bend left=45] (4.5,0.1);
+      \node[stack=1] at (0,1) { \nodepart{one}$0$ };
+      \node[stack=1] at (5,1) { \nodepart{one}$C_2$ };
 
-      \draw [<-,>=stealth,postaction={decorate,
-          decoration={text along path,text align=center,
-          text={|\myshift|copy}}}]
-      (0.5,-0.1) to[bend right=45] (4.5,-0.1);
+      \node[stack=1] at (0,0) { \nodepart{one}$C_3$ };
+      \node[stack=1] at (5,0) { \nodepart{one}$0$ };
 
-      \def\myshift#1{\raisebox{.5ex}}
-      \draw [->,shorten <=5pt,shorten >=5pt,>=stealth,postaction={decorate,
-          decoration={text along path,text align=center,
-          text={|\myshift|add {$b$}}}}]
-      (5.5,0.1) arc (180:-180:0.7);
+      \draw [->, >=stealth] (0.5,4) -- (4.5,3) node [midway, above, sloped] (TextNode) {\textbf{multiply by $\bar{N}$}};
+      \draw [->, >=stealth] (5,2.6) -- (5,1.4) node [midway, right] (TextNode) {\textbf{add} $b$};
+      \draw [->, >=stealth] (4.5,1) -- (0.5,0) node [midway, above, sloped] (TextNode) {\textbf{copy}};
 
     \end{tikzpicture}
 
     \captionsetup{font=footnotesize}
-    \caption{Push element $b$ to the~stack described as number $S$.}
+    \caption{Push element $b$ to the~stack encoded in counter $C_0$.}
 
   \end{subfigure}
 
@@ -877,7 +861,7 @@ shown in Figure \ref{fig:push_operation}.
 
 The hardest part is to recognize what is the~top symbol -- \textbf{check} operation.
 The idea is simple -- we need to calculate the~remainder from division by $\bar{N}$:
-$$ \Bigg( \sum_{i=0}^{k-1} a_i \cdot \bar{N}^i \Bigg) \ \mathrm{mod} \ \bar{N} = a_0 $$
+$$ \Bigg( \sum_{i=0}^{k} a_i \cdot \bar{N}^i \Bigg) \ \mathrm{mod} \ \bar{N} = a_0 $$
 The only place we can remember any information are states. This means that we need
 to end up within different state for each remainder -- we call a~state $R_i$ if
 recognized symbol has number $i$. Consider example alphabet having $9$ symbols -- Figure
@@ -999,7 +983,7 @@ are applied to parse a~source code (i.e. in Turing Machine model) and produce ab
 This tree is later used either for evaluation (if we want to execute) or translation to the~next
 model in the~pipeline (i.e. 2 stack PDA).
 
-Most of the translations were pretty straightforward and required only basic tricks like
+Most of the translations were pretty straightforward and require only basic tricks like
 generating unique state names. The~most interesting one was 2 stack PDA to 4 Counter Machine,
 which required putting large part of a~program logic into states, so it is important
 to notice the~structure of the~logic to come up with reasonable translation algorithm.
@@ -1037,6 +1021,9 @@ is modifying the~memory and then output what is within this memory.
 \todo{Wszystko, co było ciekawe}
 
 \section{Technical details}
+
+It is assumed that operating system is Linux -- Debian based distribution. Whole implementation
+was tested on Ubuntu and there is no guarantee to work on other platforms.
 
 First requirement is installing Flex and Bison:
 
@@ -1093,6 +1080,8 @@ Options:
       and written to the~specifed output file),
   \item \texttt{--debug} -- adds additional debugging information when executing program.
 \end{itemize}
+
+For details see README.md file included in the~implementation.
 
 \todo{Ograniczenia implementacji}
 
