@@ -45,20 +45,25 @@ cp test.e ../shared_files/tm_to_pda.e;
 
 cd ../2stackPDA_parser/;
 make all;
-cp test.e ../shared_files/pda_to_cm.e;
+cp test.e ../shared_files/pda_to_cm4.e;
+
+cd ../mm4_parser/;
+make all;
+cp test.e ../shared_files/cm4_to_cm2.e;
 
 cd ../shared_files/;
 
 ./bf_to_tm.e -turing $FILE > tmp.code;
-./tm_to_pda.e -2StackPDA tmp.code > $OUTPUT
+./tm_to_pda.e -2StackPDA tmp.code > tmp2.code
+./pda_to_cm4.e -minsky tmp2.code > $OUTPUT
 
 if [ $RUN = true ]; then
   echo "> Running the translated code";
   if [ $DEBUG = true ]; then
-    ./pda_to_cm.e --debug $OUTPUT;
+    ./cm4_to_cm2.e --debug $OUTPUT;
   else
-    ./pda_to_cm.e $OUTPUT;
+    ./cm4_to_cm2.e $OUTPUT;
   fi
 fi
 
-rm bf_to_tm.e tm_to_pda.e pda_to_cm.e tmp.code
+rm bf_to_tm.e tm_to_pda.e pda_to_cm4.e cm4_to_cm2.e tmp.code tmp2.code

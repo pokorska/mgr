@@ -60,13 +60,13 @@ class mm4_driver;
 %type <Statement*> transition
 %type <Statement*> transitions
 %type <Statement*> statements
-%type <TransitionMap*> mm4_unit
+%type <Statement*> mm4_unit
 
 %printer { yyoutput << $$; } <*>;
 
 %%
 %start mm4_unit;
-mm4_unit: statements { driver.ast = new TransitionMap($1); $$ = driver.ast; }
+mm4_unit: statements { $$ = $1; driver.tmp_ast = $$; }
 
 //TODO: disallow negative numbers (except -1) to be parsed at all.
 
@@ -78,7 +78,7 @@ statements:
 
 transitions:
   transition { $$ = $1; }
-| transition transitions { $$ = new Sequence($1, $2); }
+| transitions transition { $$ = new Sequence($1, $2); }
 
 init_state: "INIT" STATE_NAME { $$ = new InitState($2); }
 

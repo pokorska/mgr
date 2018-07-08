@@ -88,15 +88,21 @@ class TransitionMap {
   TransitionMap (Statement* stm_sequence) {
     stm_sequence->convert_to_transition_map(this);
     if (init_state.empty()) {
-      printf("No init state defined");
-      throw "No init state defined";
+      std::cout << "Warning: No init state defined.\n";
     }
+  }
+
+  void Extend(Statement* tmp_sequence) {
+    tmp_sequence->convert_to_transition_map(this);
   }
 
   void AddTransition(TransitionRaw t) {
     transitions[t.curr_state].push_back(t);
   }
   void AddInitState(std::string name) {
+    if (!init_state.empty())
+      std::cout << "Warning: Overwriting init state " << init_state
+                << " with new value: " << name << "\n";
     init_state = name;
   }
 
@@ -121,6 +127,7 @@ class TransitionMap {
   }
 
   void evaluate() {
+    //std::cout << "Evaluation. Temporarily turned off.\n"; return;
     // REMEMBER: match_mask specifies what counters should be taken into account.
     long long counters[4] = { 0LL, 0LL, 0LL, 0LL };
     long long input_counter = 0LL, output_counter = 0LL;

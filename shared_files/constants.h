@@ -21,6 +21,7 @@ const int ORIG_RIGHT = -3;
 const int EMPTY_STACK_VALUE = -4;
 
 const int DEFAULT_ALPHABET_SIZE = 140;
+const int DEFAULT_CHUNK_SIZE = 10000;
 
 class SequenceGenerator {
  private:

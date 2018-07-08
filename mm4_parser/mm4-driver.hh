@@ -3,6 +3,7 @@
 # include <string>
 # include <map>
 # include "mm4-parser.out.hh"
+#include "../shared_files/constants.h"
 // Tell Flex the lexer's prototype ...
 # define YY_DECL \
   yy::mm4_parser::symbol_type yylex (mm4_driver& driver)
@@ -16,6 +17,7 @@ public:
   virtual ~mm4_driver ();
 
   TransitionMap* ast;
+  Statement* tmp_ast;
 // Handling the scanner.
   void scan_begin ();
   void scan_end ();
@@ -23,6 +25,9 @@ public:
   // Run the parser on file F.
   // Return 0 on success.
   int parse (const std::string& f);
+  int parse_whole(const std::string& f);
+  int parse_in_chunks(const std::string& f);
+  int parse_helper();
   // The name of the file being parsed.
   // Used later to pass the file name to the location tracker.
   std::string file;
@@ -34,5 +39,8 @@ public:
 
   bool _minsky;
   void run();
+
+  bool enable_chunks;
+  int chunk_size = mgr::DEFAULT_CHUNK_SIZE;
 };
 #endif // ! BF_DRIVER_HH
