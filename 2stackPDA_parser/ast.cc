@@ -2,6 +2,7 @@
 
 #include <unordered_set>
 #include <unordered_map>
+#include <fstream>
 
 #include "names_manip.h"
 #include "translation.h"
@@ -104,6 +105,16 @@ void TransitionMap::evaluate() {
   }
 }
 
+std::string TransitionMap::translateSingleTransition(
+    const std::string& state, const std::vector<TransitionRaw>& transitions) {
+  std::vector<std::string> result_transitions;
+  build_items_recognition(state, transitions, &result_transitions);
+  std::string result = "";
+  for (const auto& s : result_transitions)
+    result += s + mgr::STATEMENT_SEPARATOR;
+  return result;
+}
+
 std::string TransitionMap::translate() {
   std::vector<std::string> results;
   for (const auto& item : transitions) {
@@ -115,6 +126,15 @@ std::string TransitionMap::translate() {
   for (const std::string& s : results)
     result += s + mgr::STATEMENT_SEPARATOR;
   return result;
+}
+
+void TransitionMap::translateToFile(const std::string& filename) {
+  std::cout << "Translating to " << filename << "\n";
+  std::ofstream file (filename, std::ofstream::out);
+  file << "START: " << init_state << mgr::STATEMENT_SEPARATOR;
+  for (const auto& item : transitions) {
+    file << translateSingleTransition(item.first, item.second);
+  }
 }
 
 void TransitionMap::print_status() const {

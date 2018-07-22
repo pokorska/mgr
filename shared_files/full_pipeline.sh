@@ -55,7 +55,7 @@ cd ../shared_files/;
 
 ./bf_to_tm.e -turing $FILE > tmp.code;
 ./tm_to_pda.e -2StackPDA tmp.code > tmp2.code
-./pda_to_cm4.e -minsky tmp2.code > $OUTPUT
+./pda_to_cm4.e -translateTo $OUTPUT tmp2.code
 
 if [ $RUN = true ]; then
   echo "> Running the translated code";

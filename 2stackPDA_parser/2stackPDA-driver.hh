@@ -29,6 +29,9 @@ public:
   // The name of the file being parsed.
   // Used later to pass the file name to the location tracker.
   std::string file;
+  // The name of the file where output of translation is directly
+  // stored when direct translation option is on.
+  std::string translation_file;
   // Whether parser traces should be generated.
   bool trace_parsing;
   // Printing additional debugging info.
@@ -37,6 +40,7 @@ public:
   void error (const yy::location& l, const std::string& m);
   void error (const std::string& m);
 
+  bool direct_translation;
   bool _minsky;
   void run();
 };

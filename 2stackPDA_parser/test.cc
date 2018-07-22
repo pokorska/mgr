@@ -14,6 +14,14 @@ int main (int argc, char *argv[])
       driver.debug = true;
     else if (argv[i] == std::string ("-minsky"))
       driver._minsky = true;
+    else if (argv[i] == std::string ("-translateTo")) {
+      driver._minsky = true;
+      driver.direct_translation = true;
+      if (i+1 < argc) driver.translation_file = argv[i+1];
+      else std::cout << "Warning: No translation filename provided. "
+                     << "Translating to output.mm4";
+      i++;
+    }
     else if (!driver.parse (argv[i]))
       driver.run();
     else

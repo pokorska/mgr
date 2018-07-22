@@ -5,7 +5,8 @@
 #include <vector>
 
 _2stackPDA_driver::_2stackPDA_driver()
-  : trace_scanning (false), trace_parsing (false), _minsky (false), debug(false) { }
+  : trace_scanning (false), trace_parsing (false), _minsky (false),
+  debug(false), translation_file("output.mm4"), direct_translation(false) { }
 
 _2stackPDA_driver::~_2stackPDA_driver() { }
 
@@ -46,7 +47,10 @@ void _2stackPDA_driver::run() {
 
   if (_minsky) {
     try {
-      std::cout << ast->translate();
+      if (direct_translation)
+        ast->translateToFile(translation_file);
+      else
+        std::cout << ast->translate();
     } catch (const char* msg) {
       std::cout << "ERROR: (translating) " << msg << "\n";
     }

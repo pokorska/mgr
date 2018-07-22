@@ -153,6 +153,8 @@ class TransitionMap {
   bool debug = false;
 
   bool MatchPattern(int letter, char pattern) const;
+  std::string translateSingleTransition(
+      const std::string& state, const std::vector<TransitionRaw>& transitions);
 
  public:
   TransitionMap (Statement* stm_sequence);
@@ -168,6 +170,7 @@ class TransitionMap {
   void print_stack(std::stack<int>* s);
   void evaluate();
   std::string translate();
+  void translateToFile(const std::string& filename);
   void print_status() const;
 };
 
