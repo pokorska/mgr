@@ -25,6 +25,7 @@ public:
   // Run the parser on file F.
   // Return 0 on success.
   int parse (const std::string& f);
+  Statement* parse_to_statement(const std::string& f);
   int parse_whole(const std::string& f);
   int parse_in_chunks(const std::string& f);
   int parse_helper();
@@ -41,6 +42,7 @@ public:
   void run();
 
   bool enable_chunks;
+  bool multifile_input;
   int chunk_size = mgr::DEFAULT_CHUNK_SIZE;
 };
 #endif // ! BF_DRIVER_HH

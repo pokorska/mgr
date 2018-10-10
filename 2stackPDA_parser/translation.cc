@@ -62,6 +62,7 @@ void build_pushing_one_stack(const string& base, int left, int right, int input,
   const vector<StackSymbol*>& items = (stack == Left) ? t.left_stack : t.right_stack;
   for (const StackSymbol* symbol : items) {
     int symbol_to_push = 1 + symbol->evaluate(left-1, right-1, input);
+    if (symbol_to_push < 0) symbol_to_push = alph_size; // This should be handled properly! (hack)
     build_pushing_symbol(base, symbol_to_push, stack, dest, alph_size);
   }
 }

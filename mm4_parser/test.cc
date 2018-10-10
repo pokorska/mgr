@@ -35,6 +35,8 @@ int main (int argc, char *argv[])
       if (i+1 < argc)
         handlePartSizeParam(argv[++i], &driver);
     }
+    else if (argv[i] == std::string("-multifile"))
+      driver.multifile_input = true;
     else if (!driver.parse (argv[i]))
       driver.run();
     else

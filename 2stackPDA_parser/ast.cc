@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <fstream>
+#include <regex>
 
 #include "names_manip.h"
 #include "translation.h"
@@ -134,6 +135,41 @@ void TransitionMap::translateToFile(const std::string& filename) {
   file << "START: " << init_state << mgr::STATEMENT_SEPARATOR;
   for (const auto& item : transitions) {
     file << translateSingleTransition(item.first, item.second);
+  }
+}
+
+void splitString(const std::string& text, const std::string& splitStr,
+    std::vector<std::string>* out) {
+  static const std::regex re{ splitStr };
+    *out = {
+        std::sregex_token_iterator(text.begin(), text.end(), re, -1),
+        std::sregex_token_iterator()
+    };
+}
+
+std::string getStateName(const std::string& transition) {
+  return transition.substr(0, transition.find(' '));
+}
+
+void TransitionMap::translateToManyFiles(const std::string& base) {
+  std::cout << "Translating to many files with base name: " << base << "\n";
+  std::ofstream init_file (base + "_init", std::ofstream::out);
+  init_file << "START: " << init_state << mgr::STATEMENT_SEPARATOR;
+  init_file.close();
+  std::hash<std::string> hash_fn;
+  for (const auto& item : transitions) {
+    std::string mm4_chunk = translateSingleTransition(item.first, item.second);
+    std::vector<std::string> singles;
+    splitString(mm4_chunk, mgr::STATEMENT_SEPARATOR, &singles);
+    for (const auto& mm4_item : singles) {
+      const std::string state = getStateName(mm4_item);
+      //std::cout << "hash of " << state << ": " << hash_fn(state) % mgr::DEFAULT_HASHTABLE_SIZE << "\n";
+      const std::string filename =
+          base + "_" + std::to_string(hash_fn(state) % mgr::DEFAULT_HASHTABLE_SIZE);
+      std::ofstream file (filename, std::ofstream::app);
+      file << mm4_item << mgr::STATEMENT_SEPARATOR;
+      file.close();
+    }
   }
 }
 

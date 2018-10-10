@@ -15,13 +15,12 @@ const char ZERO = '0'; // TODO: CHANGE!
 const char EMPTY_STACK_CHAR = '$';
 const std::string END_STATE = "END";
 
-const int INPUT_SYMBOL = -1;
-const int ORIG_LEFT = -2;
-const int ORIG_RIGHT = -3;
 const int EMPTY_STACK_VALUE = -4;
 
 const int DEFAULT_ALPHABET_SIZE = 140;
 const int DEFAULT_CHUNK_SIZE = 10000;
+const int DEFAULT_HASHTABLE_SIZE = 1009; // How many files are created.
+const int MAX_MAP_SIZE = 100000;
 
 class SequenceGenerator {
  private:

@@ -32,6 +32,9 @@ public:
   // The name of the file where output of translation is directly
   // stored when direct translation option is on.
   std::string translation_file;
+  // Path with base name to be used to store single program translation
+  // within many files.
+  std::string multifile_base;
   // Whether parser traces should be generated.
   bool trace_parsing;
   // Printing additional debugging info.
@@ -41,6 +44,7 @@ public:
   void error (const std::string& m);
 
   bool direct_translation;
+  bool direct_multifile_mode;
   bool _minsky;
   void run();
 };

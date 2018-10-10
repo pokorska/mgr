@@ -4,7 +4,9 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <iostream>
 
+//#include "mm4-driver.hh"
 #include "../shared_files/constants.h"
 
 struct TransitionRaw {
@@ -83,9 +85,12 @@ class TransitionMap {
  private:
   std::map<std::string, std::vector<TransitionRaw>> transitions;
   std::string init_state;
+  bool multifile_mode;
+  std::string multifile_base;
+  int files_added = 0;
 
  public:
-  TransitionMap (Statement* stm_sequence) {
+  TransitionMap (Statement* stm_sequence) : multifile_mode(false) {
     stm_sequence->convert_to_transition_map(this);
     if (init_state.empty()) {
       std::cout << "Warning: No init state defined.\n";
@@ -94,6 +99,14 @@ class TransitionMap {
 
   void Extend(Statement* tmp_sequence) {
     tmp_sequence->convert_to_transition_map(this);
+  }
+
+  // Forwarded to .cc
+  void AddTransitions(const std::string& state);
+
+  void setMultifile(const std::string& base) {
+    multifile_mode = true;
+    multifile_base = base;
   }
 
   void AddTransition(TransitionRaw t) {
@@ -114,6 +127,10 @@ class TransitionMap {
   }
 
   TransitionRaw FindTransition(const std::string& state, long long counters[4], long long input_pattern) {
+    if (transitions.count(state) == 0 && multifile_mode) {
+      AddTransitions(state);
+    }
+
     bool counters_state[] = { counters[0] > 0, counters[1] > 0, counters[2] > 0, counters[3] > 0 };
     bool input_counter_state = input_pattern > 0;
     for (const auto& t : transitions[state]) {
@@ -127,7 +144,6 @@ class TransitionMap {
   }
 
   void evaluate() {
-    //std::cout << "Evaluation. Temporarily turned off.\n"; return;
     // REMEMBER: match_mask specifies what counters should be taken into account.
     long long counters[4] = { 0LL, 0LL, 0LL, 0LL };
     long long input_counter = 0LL, output_counter = 0LL;
@@ -167,6 +183,7 @@ class TransitionMap {
         if (counters[i] < 0)
           std::cout << "ERROR: counter " << i << " negative!\n";
     }
+  //std::cout << "TOTAL FILES ADDED: " << files_added << "\n";
   }
 /*
   std::string transitionTypeToString(TransitionRaw::Type t) {

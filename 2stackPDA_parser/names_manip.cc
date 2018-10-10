@@ -78,6 +78,7 @@ string create_input_MM4(const string& state, int c[4], int in,
 }
 
 void insert_interpreted_chars(char pattern, unordered_set<int>* chars, int alph_size) {
+  alph_size++; // hack for empty stack value.
   if (pattern == mgr::ALL_CHARS)
     for (int i = 0; i < alph_size; ++i)
       chars->insert(i);
@@ -93,6 +94,7 @@ void insert_interpreted_chars(char pattern, unordered_set<int>* chars, int alph_
 }
 
 vector<int> get_all_chars(char pattern, int alph_size) {
+  alph_size++; // hack for empty stack value.
   vector<int> result;
   if (pattern == mgr::ALL_CHARS)
     for (int i = 0; i < alph_size; ++i)

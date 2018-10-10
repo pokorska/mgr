@@ -51,6 +51,7 @@ blank  [ \t]
 {int}       {
               errno = 0;
               long n = strtol (yytext, NULL, 10);
+              if (n < 0) std::cout << "NEGATIVE NUMBER " << n << "\n";
               if (! (INT_MIN <= n && n <= INT_MAX && errno != ERANGE))
               driver.error (loc, "integer is out of range");
               return yy::mm4_parser::make_NUM_0_PLUS(n, loc);

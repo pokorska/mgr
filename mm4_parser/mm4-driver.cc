@@ -6,13 +6,30 @@
 
 mm4_driver::mm4_driver()
   : trace_scanning (false), trace_parsing (false),
-    _minsky (false), ast (nullptr), enable_chunks(true) { }
+    _minsky (false), ast (nullptr), enable_chunks(true),
+    multifile_input(false) { }
 
 mm4_driver::~mm4_driver() { }
 
 int mm4_driver::parse (const std::string& f) {
+  if (multifile_input) {
+    int res = parse_whole(f + "_init");
+    ast->setMultifile(f);
+    return res;
+  }
   if (enable_chunks) return parse_in_chunks(f);
   return parse_whole(f);
+}
+
+Statement* mm4_driver::parse_to_statement(const std::string& f) {
+  file = f;
+  ast = nullptr;
+  scan_begin ();
+  yy::mm4_parser parser (*this);
+  parser.set_debug_level (trace_parsing);
+  int res = parser.parse ();
+  scan_end ();
+  return tmp_ast;
 }
 
 int mm4_driver::parse_whole (const std::string &f)

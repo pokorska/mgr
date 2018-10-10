@@ -83,7 +83,7 @@ class _2stackPDA_driver;
 
 %%
 %start _2stackPDA_unit;
-_2stackPDA_unit: statements { driver.ast = new TransitionMap($1); $$ = driver.ast; }
+_2stackPDA_unit: statements { driver.ast = new TransitionMap($1); $$ = driver.ast; delete $1; }
 
 //_2stackPDA_unit: LPAREN "string" RPAREN { printf("Parsed string constant: %s\n", $2.c_str()); }
 

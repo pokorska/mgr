@@ -6,7 +6,8 @@
 
 _2stackPDA_driver::_2stackPDA_driver()
   : trace_scanning (false), trace_parsing (false), _minsky (false),
-  debug(false), translation_file("output.mm4"), direct_translation(false) { }
+  debug(false), translation_file("output.mm4"), direct_translation(false),
+  direct_multifile_mode(false), multifile_base("outputs/base") { }
 
 _2stackPDA_driver::~_2stackPDA_driver() { }
 
@@ -47,12 +48,19 @@ void _2stackPDA_driver::run() {
 
   if (_minsky) {
     try {
+      if (direct_translation && direct_multifile_mode) {
+        std::cout << "WARNING: Both direct single and multifile modes are set.\n";
+      }
+
       if (direct_translation)
         ast->translateToFile(translation_file);
-      else
+      if (direct_multifile_mode)
+        ast->translateToManyFiles(multifile_base);
+      if (!direct_translation && !direct_multifile_mode)
         std::cout << ast->translate();
     } catch (const char* msg) {
       std::cout << "ERROR: (translating) " << msg << "\n";
+      return;
     }
   } else {
     ast->evaluate();

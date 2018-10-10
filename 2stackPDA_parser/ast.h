@@ -143,7 +143,8 @@ class TransitionMap;
 
 class Statement {
  public:
-  virtual void convert_to_transition_map(TransitionMap* tmap) const = 0;
+  virtual void convert_to_transition_map(TransitionMap* tmap) = 0;
+  virtual ~Statement() { };
 };
 
 class TransitionMap {
@@ -171,6 +172,7 @@ class TransitionMap {
   void evaluate();
   std::string translate();
   void translateToFile(const std::string& filename);
+  void translateToManyFiles(const std::string& base);
   void print_status() const;
 };
 
@@ -179,7 +181,7 @@ class InitState : public Statement {
   std::string state_name;
  public:
   InitState(std::string state_name) : state_name(state_name) { }
-  virtual void convert_to_transition_map(TransitionMap* tmap) const {
+  virtual void convert_to_transition_map(TransitionMap* tmap) {
     tmap->AddInitState(state_name);
   }
 };
@@ -189,7 +191,7 @@ class Transition : public Statement {
   TransitionRaw t;
  public:
   Transition(TransitionRaw t) : t(t) { }
-  virtual void convert_to_transition_map(TransitionMap* tmap) const {
+  virtual void convert_to_transition_map(TransitionMap* tmap) {
     tmap->AddTransition(t);
   }
 };
@@ -199,9 +201,15 @@ class Sequence : public Statement {
   Statement *stm1, *stm2;
  public:
   Sequence(Statement* stm1, Statement* stm2) : stm1(stm1), stm2(stm2) { }
-  virtual void convert_to_transition_map(TransitionMap* tmap) const {
+  ~Sequence() {
+    if (stm1 != nullptr) delete stm1;
+    if (stm2 != nullptr) delete stm2;
+  }
+  virtual void convert_to_transition_map(TransitionMap* tmap) {
     stm1->convert_to_transition_map(tmap);
+    delete stm1; stm1 = nullptr;
     stm2->convert_to_transition_map(tmap);
+    delete stm2; stm2 = nullptr;
   }
 };
 
