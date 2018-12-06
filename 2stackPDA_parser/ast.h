@@ -13,6 +13,7 @@ class StackSymbol {
   virtual int evaluate(int orig_left, int orig_right,
       int input_symbol = mgr::NO_CHAR) const = 0;
   virtual bool isInputChar() const = 0;
+  virtual bool isOriginalRight() const { return false; }
 };
 
 class SymbolRaw : public StackSymbol {
@@ -54,6 +55,7 @@ class SymbolOrigRight : public StackSymbol {
     return orig_right;
   }
   virtual bool isInputChar() const { return false; }
+  virtual bool isOriginalRight() const { return true; }
 };
 
 class SymbolNothing : public StackSymbol {

@@ -31,11 +31,16 @@ void build_pushing_one_stack(const std::string& base, int left, int right, int i
 // and then to the right stack.
 void build_pushing_items(const std::string& start_state, int left, int right, int input,
     const TransitionRaw& t, std::vector<std::string>* dest,
-    int alph_size = mgr::DEFAULT_ALPHABET_SIZE);
+    int alph_size = mgr::DEFAULT_ALPHABET_SIZE, bool ignore_right_stack = false);
 
 // Checks whether it is possible to push input char without recognizing onto left stack.
 // It requires the transition to have INPUT_CHAR as left stack items.
 bool simple_track_possible(const TransitionRaw& t);
+
+// Checks whether it is possible not to recognize right symbol on the stack. If it's
+// removed from the stack and later pushed back (and it's not pushed anywhere else - either
+// on left stack or on output).
+bool simplify_right_possible(const TransitionRaw& t);
 
 // Creates transitions that push input char onto the left stack.
 void build_simple_track(const std::string& state, const TransitionRaw& t, int left, int right,

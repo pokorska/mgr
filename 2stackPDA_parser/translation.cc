@@ -2,6 +2,7 @@
 
 #include <unordered_set>
 #include <unordered_map>
+#include <memory>
 
 using std::string;
 using std::to_string;
@@ -10,6 +11,7 @@ using std::pair;
 using std::make_pair;
 using std::unordered_set;
 using std::unordered_map;
+using std::unique_ptr;
 
 struct pairhash {
 public:
@@ -68,12 +70,12 @@ void build_pushing_one_stack(const string& base, int left, int right, int input,
 }
 
 void build_pushing_items(const string& start_state, int left, int right, int input,
-    const TransitionRaw& t, vector<string>* dest, int alph_size) {
+    const TransitionRaw& t, vector<string>* dest, int alph_size, bool ignore_right_stack) {
   mgr::SequenceGenerator* seq_gen = mgr::SequenceGenerator::getInstance();
   seq_gen->reset();
   dest->push_back(create_no_action_MM4(start_state, gen_next_name(start_state)));
   build_pushing_one_stack(start_state, left, right, input, Left, t, dest, alph_size);
-  build_pushing_one_stack(start_state, left, right, input, Right, t, dest, alph_size);
+  if (!ignore_right_stack) build_pushing_one_stack(start_state, left, right, input, Right, t, dest, alph_size);
   build_output_items(start_state, left, right, t, dest, alph_size);
   build_closing_transition(start_state, t.next_state, dest);
 }
@@ -115,25 +117,51 @@ void build_simple_track(const string& state, const TransitionRaw& t, int left, i
   build_closing_transition(state, t.next_state, dest);
 }
 
+bool simplify_right_possible(const TransitionRaw& t) {
+  if (t.type == TransitionRaw::Input) return false;
+  if (t.right_stack.size() != 1) return false;
+  if (!t.right_stack[0]->isOriginalRight()) return false;
+  for (const auto& item : t.left_stack)
+    if (item->isOriginalRight()) return false;
+  if (t.output_symbol->isOriginalRight()) return false;
+  return true;
+}
+
+struct TransitionOption {
+  bool properTransition;
+  unique_ptr<TransitionRaw> t;
+  TransitionOption(const TransitionRaw& tr) : properTransition(true) {
+    t = unique_ptr<TransitionRaw>(new TransitionRaw(tr));
+  }
+  TransitionOption() : properTransition(false) { }
+};
+
 // Creates recognition of stack items for given state.
 void build_items_recognition(const string& state,
     const vector<TransitionRaw>& transitions, vector<string>* dest) {
   const int alph_size = mgr::DEFAULT_ALPHABET_SIZE; // TODO: It should be given as parameter.
   unordered_map<pair<int,int>, const TransitionRaw*, pairhash> bindings;
   unordered_set<int> left_items;
+  unordered_map<int, TransitionOption> simplify_bindings;
   for (const TransitionRaw& t : transitions) {
     if (t.curr_state != state) continue;
 
     // Generate bindings.
     vector<int> all_left = get_all_chars(t.left_pattern);
     vector<int> all_right = get_all_chars(t.right_pattern);
-    for (int left_char : all_left)
+    bool can_simplify = simplify_right_possible(t);
+    for (int left_char : all_left) {
+      if (simplify_bindings.count(left_char) == 0) {
+        if (can_simplify) simplify_bindings[left_char] = t;
+        else simplify_bindings[left_char] = TransitionOption();
+      }
       for (int right_char : all_right) {
         const pair<int,int> chars = make_pair(left_char, right_char);
         // Making sure it's not yet in the map - first transition on the list should be matched.
         if (bindings.count(chars) == 0)
           bindings[make_pair(left_char, right_char)] = &t;
       }
+    }
 
     // Gather existing characters as left stack items to recognize.
     insert_interpreted_chars(t.left_pattern, &left_items, alph_size);
@@ -147,7 +175,14 @@ void build_items_recognition(const string& state,
       const string tmp_state = build_name(state,i) + "_tmp";
       dest->push_back(create_MM4(build_name(state,i), 0, -1, Left, tmp_state, 0, 0));
       dest->push_back(create_MM4(tmp_state, -1, 1, Left, tmp_state, 1, -1));
-      dest->push_back(create_MM4(tmp_state, -1, 0, Left, build_name(state,i,0), 0, 0));
+      if (simplify_bindings.count(i) > 0 && simplify_bindings[i].properTransition) {
+        const string final_state = build_name(state,i) + "_RECOGNIZED";
+        dest->push_back(create_MM4(tmp_state, -1, 0, Left, final_state, 0, 0));
+        build_pushing_items(final_state, i, mgr::NO_CHAR, mgr::NO_CHAR, *simplify_bindings[i].t, dest, alph_size, true);
+        continue;
+      } else {
+        dest->push_back(create_MM4(tmp_state, -1, 0, Left, build_name(state,i,0), 0, 0));
+      }
       // Build inner circle for recognizing item on the right stack.
       for (int j = 0; j < alph_size; ++j) {
         dest->push_back(create_MM4(build_name(state,i,j), 1, -1, Right,

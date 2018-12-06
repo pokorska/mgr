@@ -1,4 +1,6 @@
-all: names_manip.o translation.o ast.o parser.o lexer.o driver.o test.o
+all: test.e
+
+test.e: names_manip.o translation.o ast.o parser.o lexer.o driver.o test.o
 	g++ -o test.e names_manip.o translation.o ast.o lexer.o parser.o driver.o test.o -std=c++11
 
 names_manip.o:
