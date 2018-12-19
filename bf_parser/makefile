@@ -1,4 +1,6 @@
-all:
+all: test.e
+
+test.e:
 	flex -o generated_scanner.out.c flex-scanner.l
 	bison bf-parser.yy -o bf-parser.out.cc
 	g++ -o test.e test.cc generated_scanner.out.c bf-parser.out.cc bf-driver.cc -std=c++11

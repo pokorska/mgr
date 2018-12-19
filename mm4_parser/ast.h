@@ -148,7 +148,6 @@ class TransitionMap {
     long long counters[4] = { 0LL, 0LL, 0LL, 0LL };
     long long input_counter = 0LL, output_counter = 0LL;
     std::string curr_state = init_state;
-    //std::cout << "Starting in state: " << init_state << "\n";
     while (curr_state != mgr::END_STATE) {
       //std::cout << "Counters: " << counters[0] << " " << counters[1] << " "
       //          << counters[2] << " " << counters[3] << "\n";
