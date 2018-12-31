@@ -67,6 +67,7 @@ class Statement {
       tape->push_back(BLANK);
       //std::cout << "push. size: " << tape->size() << " pos: " << *pos << "\n";
     }
+    if (tape->size() >= 3) std::cout << "TAPE: " << (*tape)[0] << " " << (*tape)[1] << " " << (*tape)[2] <<"\n";
   }
   virtual void evaluate(std::vector<int>* tape, int* pos) const = 0;
   virtual std::string to_string() = 0;
@@ -183,12 +184,12 @@ class Decrease : public Statement {
  public:
   virtual void evaluate(std::vector<int>* tape, int* pos) const {
     check_tape(tape, pos);
-    (*tape)[*pos]--;
+    if ((*tape)[*pos] > 0) (*tape)[*pos]--;
   }
   virtual std::string to_string() {
     return "Decrease";
   }
-  
+
   virtual std::string translate(Statement* next) {
     return getStateName() + " " + ALL_CHARS + " -> " +
            nullSafeGetName(next) + " " + to_char(None) + " " + PREV_CHAR +
@@ -239,7 +240,10 @@ class Loop : public Statement {
   Loop(Statement* inner) : inner(inner) { }
   virtual void evaluate(std::vector<int>* tape, int* pos) const {
     check_tape(tape, pos);
-    while ((*tape)[*pos] != 0) inner->evaluate(tape, pos);
+    while ((*tape)[*pos] != 0)  {
+      //std::cout << "Looping, because tape[" << *pos << "] = " << (*tape)[*pos] << "\n";
+      inner->evaluate(tape, pos);
+    }
   }
   virtual std::string to_string() {
     return "Loop { " + inner->to_string() + " }";
