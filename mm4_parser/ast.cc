@@ -1,4 +1,5 @@
 #include <fstream>
+#include <cstdio>
 #include "ast.h"
 #include "mm4-driver.hh"
 
@@ -39,6 +40,7 @@ void TransitionMap::AddTransitions(const string& state) {
   filterTransitions(state, filename);
   mm4_driver driver;
   Statement* add = driver.parse_to_statement(TMP_FILE);
+  std::remove(TMP_FILE.c_str());
   if (add != nullptr) Extend(add);
   //if (transitions.size() / 1000 > prev_size / 1000)
     //cout << "Current map size: " << transitions.size() << "\n";

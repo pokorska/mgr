@@ -6,4 +6,4 @@ test.e:
 	g++ -o test.e test.cc generated_scanner.out.c bf-parser.out.cc bf-driver.cc -std=c++11
 
 clean:
-	rm *.e *.out.c *.out.cc *.out.hh location.hh position.hh stack.hh
+	rm *.e *.out.c *.out.cc *.out.hh location.hh position.hh stack.hh 2> /dev/null

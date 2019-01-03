@@ -27,4 +27,4 @@ test.o:
 	g++ -o test.o -c test.cc -std=c++11
 
 clean:
-	rm *.e *.out.c *.out.cc *.out.hh *.o location.hh position.hh stack.hh
+	rm *.e *.out.c *.out.cc *.out.hh *.o location.hh position.hh stack.hh 2> /dev/null

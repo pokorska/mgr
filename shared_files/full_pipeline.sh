@@ -90,4 +90,4 @@ if [ $RUN = true ]; then
     ./cm4_to_cm2.e -multifile "$OUTPUT";
   fi
 fi
-rm bf_to_tm.e tm_to_pda.e pda_to_cm4.e cm4_to_cm2.e tmp.code tmp2.code
+rm bf_to_tm.e tm_to_pda.e pda_to_cm4.e cm4_to_cm2.e tmp.code tmp2.code 2> /dev/null
