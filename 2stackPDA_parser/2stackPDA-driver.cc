@@ -4,10 +4,30 @@
 #include <iostream>
 #include <vector>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+std::string extractDirFromPath(const std::string& path) {
+  size_t sep = path.rfind("/");
+  if (sep == std::string::npos) return path;
+  return path.substr(0, sep);
+}
+
+bool createDir(const std::string& dir) {
+  struct stat st;
+  if (stat(dir.c_str(), &st) == 0 && S_ISDIR(st.st_mode)) return true;
+  if (mkdir(dir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1) {
+    std::cerr << "ERROR: Could not create directory: " << dir << "\n";
+    return false;
+  }
+  return true;
+}
+
 _2stackPDA_driver::_2stackPDA_driver()
   : trace_scanning (false), trace_parsing (false), _minsky (false),
   debug(false), translation_file("output.mm4"), direct_translation(false),
-  direct_multifile_mode(false), multifile_base("outputs/base") { }
+  direct_multifile_mode(false), multifile_base("output/base") { }
 
 _2stackPDA_driver::~_2stackPDA_driver() { }
 
@@ -55,7 +75,8 @@ void _2stackPDA_driver::run() {
       if (direct_translation)
         ast->translateToFile(translation_file);
       if (direct_multifile_mode)
-        ast->translateToManyFiles(multifile_base);
+        if (createDir(extractDirFromPath(multifile_base)))
+          ast->translateToManyFiles(multifile_base);
       if (!direct_translation && !direct_multifile_mode)
         std::cout << ast->translate();
     } catch (const char* msg) {

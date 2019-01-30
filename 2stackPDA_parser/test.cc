@@ -26,7 +26,7 @@ int main (int argc, char *argv[])
       driver.direct_multifile_mode = true;
       if (i+1 < argc) driver.multifile_base = argv[i+1];
       else std::cout << "Warning: No translation filename provided. "
-                     << "Translating to outputs/base*";
+                     << "Translating to output/base*";
       i++;
     }
     else if (!driver.parse (argv[i]))

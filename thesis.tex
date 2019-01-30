@@ -985,7 +985,7 @@ model in the~pipeline (i.e. 2 stack PDA).
 
 Most of the translations were pretty straightforward and require only basic tricks like
 generating unique state names. The~most interesting one was 2 stack PDA to 4 Counter Machine,
-which required putting large part of a~program logic into states, so it is important
+which required putting large part of a~program logic into apropriate state names, so it is important
 to notice the~structure of the~logic to come up with reasonable translation algorithm.
 It turns out that Brainfuck has very specific instructions that allow to make optimizations
 to the~translation process.
@@ -1004,9 +1004,15 @@ Few examples:
       the other states $R_i$ we may connect them to appropriate other 2 stack PDA transitions.
       What is more, for all those outgoing paths that do not match any 2 stack PDA transition
       we may just end execution (go to \texttt{END} state).
-  \item (not implemented) If stack is completely ignored by a~transition, there is no point
+  \item (partially implemented) If stack is completely ignored by a~transition, there is no point
       to recognize a~symbol on top of it. For example instructions \texttt{>} and \texttt{<}
-      in Brainfuck just move to next/previous cell, which in practice ignores one of the~stacks.
+      in Brainfuck just move to next/previous cell, which in practice ignores the top
+      character on one of the~stacks. Another example is an instruction \texttt{+},
+      which requires to touch only one of the stacks -- (implemented) for both
+      \texttt{+} and \texttt{-} there is only O($m$) new states created.
+  \item There is no need to load all the states, becase most probably we will
+      not need all of them -- lazy loading allows to add to transition set
+      all the transitions that refer to the state that we are currently in.
 \end{itemize}
 
 The amount of generated information is very big even for simplest programs, which is not a suprise.
@@ -1015,6 +1021,16 @@ significantly reduce the~required logic. Automatic translation will store single
 in memory (on a~tape or on a~stack) and then print it out, while we may directly use output
 tape/stack/counter. This is caused by Brainfuck code structure, where the only thing we can do
 is modifying the~memory and then output what is within this memory.
+
+The other problematic operation was shifting Brainfuck's tape --- when we shift
+one position our stack in Turing Machine (and later languages) grows by one
+character. When we remind ourselves what it means to extend a counter by
+one character we realise why is it so -- a counter needs to be multiplyed by
+the~size of the~alphabet and increased by the~character's ASCII number.
+This means that each time we shift right we increase our counter 140 times
+(which is the aplhabet size set within the program) and what is more, next
+iterations of a~program need to recognize characters on the top of that
+counter with decreasing it by $1$ at a time.
 
 \todo{Problemy z Bison'em - zjada dużo pamięci stosowej.}
 
@@ -1056,34 +1072,49 @@ List of commands within directories:
   \item \texttt{2stackPDA\_parser}
     \begin{itemize}
       \item run 2 stack PDA source file: \\ \texttt{./test.e ../examples/hello.pda}
-      \item translate 2 stack PDA to 4 Counter Machine: \\ \texttt{./test.e -minsky ../examples/hello.pda}
+      \item (not recommended) translate 2 stack PDA to 4 Counter Machine: \\ \texttt{./test.e -minsky ../examples/hello.pda}
+      \item (recommended) translation into multiple files within \texttt{output}
+        directory (directory does not need to exist): \\ \texttt{./test.e -multifile output/base}
     \end{itemize}
   \item \texttt{mm4\_parser}
     \begin{itemize}
       \item run 4 Counter Machine source file: \\ \texttt{./test.e ../examples/hello.mm4}
+      \item (recommended) run source with multiple files (files within \texttt{output}
+        directory and created by 2StackPDA translation): \\ \texttt{./test.e -multifile output/base}
     \end{itemize}
 \end{itemize}
 
 When we want to run full pipeline then we need to run script \texttt{full\_pipeline.sh} within
-\texttt{shared\_files} directory: \todo{Extend instructions to Counter Machine}
+\texttt{shared\_files} directory:
 
-\texttt{./full\_pipeline.sh -f ../examples/hello.bf -o hello.pda --run}
+\hspace{-1.25cm}
+\texttt{./full\_pipeline.sh -f ../examples/hello3.bf -o output/base --run --recompile}
 
 Options:
 \begin{itemize}
   \item\textbf{(required)} \texttt{-f <input file path>} or \texttt{--file <input file path>} -- specifies
       the path to input file written in Brainfuck,
   \item \texttt{-o <output file path>} or \texttt{--output <output file path>} -- specifies
-      the path to output file (result of translation) written in 2 Stack PDA. If not
-      provided then \texttt{output.pda} is created within current directory,
+      the path to output directory (result of translation) written in 4 Counter Machine. If not
+      provided then path \texttt{output/base} is taken -- \texttt{output} directory
+      is created and all file names resulted in translation start with \texttt{base}
+      and are located within \texttt{output/},
   \item \texttt{-r} or \texttt{--run} -- executes translated code (after translation is completed
       and written to the~specifed output file),
+  \item \texttt{--recompile} or \texttt{--clean} forces to recompile all targets,
+  \item \texttt{-d} or \texttt{--direct} directly runs translated code written
+      in multifile format: \\ \texttt{./full\_pipeline.sh -d output/base}
   \item \texttt{--debug} -- adds additional debugging information when executing program.
 \end{itemize}
 
 For details see README.md file included in the~implementation.
 
-\todo{Ograniczenia implementacji}
+\section{Implementation restrictions}
+
+Using multiple files as input is useful to reduce the time and the memory
+usage, but it has specific structure that needs to be followed. All the files
+within output directory should be created by the provided code, preferably
+with \texttt{full\_pipeline.sh} script.
 
 \section{Examples}
 

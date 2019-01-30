@@ -73,7 +73,7 @@ cd ../shared_files/;
 if [ $TRANSLATE = true ]; then
   DIRNAME=`dirname $OUTPUT`;
   if [ -d $DIRNAME ]; then
-    echo "Output directory $DIRNAME already exists. I'm removing it.";
+    echo "Output directory $DIRNAME already exists. I'm removing all its content.";
     rm -Rf $DIRNAME;
   fi
   mkdir $DIRNAME;
