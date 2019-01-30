@@ -65,9 +65,7 @@ class Statement {
     }
     while(*pos >= tape->size()) {
       tape->push_back(BLANK);
-      //std::cout << "push. size: " << tape->size() << " pos: " << *pos << "\n";
     }
-    if (tape->size() >= 3) std::cout << "TAPE: " << (*tape)[0] << " " << (*tape)[1] << " " << (*tape)[2] <<"\n";
   }
   virtual void evaluate(std::vector<int>* tape, int* pos) const = 0;
   virtual std::string to_string() = 0;
