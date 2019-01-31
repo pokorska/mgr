@@ -1,0 +1,13 @@
+START: init
+init ALL ALL ->^ s1 NOTHING NOTHING Output: "H"
+s1 ALL ALL ->^ s2 NOTHING NOTHING Output: "e"
+s2 ALL ALL ->^ s3 NOTHING NOTHING Output: "l"
+s3 ALL ALL ->^ s4 NOTHING NOTHING Output: "l"
+s4 ALL ALL ->^ s5 NOTHING NOTHING Output: "o"
+s5 ALL ALL ->^ s6 NOTHING NOTHING Output: " "
+s6 ALL ALL ->^ s7 NOTHING NOTHING Output: "W"
+s7 ALL ALL ->^ s8 NOTHING NOTHING Output: "o"
+s8 ALL ALL ->^ s9 NOTHING NOTHING Output: "r"
+s9 ALL ALL ->^ s10 NOTHING NOTHING Output: "l"
+s10 ALL ALL ->^ s11 NOTHING NOTHING Output: "d"
+s11 ALL ALL ->^ s12 NOTHING NOTHING Output: "!"

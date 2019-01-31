@@ -375,13 +375,13 @@ but it will be changed to use special characters instead \todo{revisit}):
   \item \texttt{\#} (NOTHING) means no character which is used to say
                    that we do not want to write anything on tape during
                    this state change
-          \item \texttt{\&} (NON-ZERO) defines all characters except 0
+          \item \texttt{\&} (NON\_ZERO) defines all characters except 0
           \item \texttt{0} (ZERO) represents zero that is used for conditional jumps
            (jump zero)
-          \item \texttt{>} (NEXT-CHAR) allows writing on the tape next character
+          \item \texttt{>} (NEXT\_CHAR) allows writing on the tape next character
                    (increased by one), i.e. writes \texttt{g} if on the tape
                    was \texttt{f}
-  \item \texttt{<} (PREV-CHAR) similarly as above but writes the previous character,
+  \item \texttt{<} (PREV\_CHAR) similarly as above but writes the previous character,
                    i.e. writes \texttt{e} when seen \texttt{f}
 \end{itemize}
 
@@ -1072,7 +1072,9 @@ List of commands within directories:
       \item run 2 stack PDA source file: \\ \texttt{./test.e ../examples/hello.pda}
       \item (not recommended) translate 2 stack PDA to 4 Counter Machine: \\ \texttt{./test.e -minsky ../examples/hello.pda}
       \item (recommended) translation into multiple files within \texttt{output}
-        directory (directory does not need to exist): \\ \texttt{./test.e -multifile output/base}
+        directory: \\ \texttt{./test.e -multifile output/base ../examples/hello.pda}
+
+        (It will automatically create directory if needed.)
     \end{itemize}
   \item \texttt{mm4\_parser}
     \begin{itemize}
@@ -1116,7 +1118,213 @@ with \texttt{full\_pipeline.sh} script.
 
 \section{Examples}
 
-Dużo przykładów...
+\subsection{Brainfuck to Turing Machine}
+
+Classical \texttt{Hello world!} that can be easily found on-line:
+
+\begin{verbatim}
+++++++++++
+[
+>+++++++>++++++++++>+++>+<<<<-
+] Na początek ustawiamy kilka przydatnych później wartości
+>++.               drukuje 'H'
+>+.                drukuje 'e'
++++++++.           drukuje 'l'
+.                  drukuje 'l'
++++.               drukuje 'o'
+>++.               spacja
+<<+++++++++++++++. drukuje 'W'
+>.                 drukuje 'o'
++++.               drukuje 'r'
+------.            drukuje 'l'
+--------.          drukuje 'd'
+>+.                drukuje '!'
+>.                 nowa linia
+\end{verbatim}
+
+It is translated into a~file containing $110$ states (There are long
+sequences generated from many consecutive symbols \texttt{+} or \texttt{-} that
+were cut for better readability).
+
+\begin{verbatim}
+START: state2
+state2 ALL -> state1 - NEXT_CHAR
+state1 ALL -> state3 - NEXT_CHAR
+[...]
+state10 ALL -> state11 - NEXT_CHAR
+state11 NON_ZERO -> state12 - NOTHING
+state11 0 -> state13 - NOTHING
+state12 ALL -> state14 R NOTHING
+state14 ALL -> state15 - NEXT_CHAR
+[...]
+state20 ALL -> state21 - NEXT_CHAR
+state21 ALL -> state22 R NOTHING
+state22 ALL -> state23 - NEXT_CHAR
+[...]
+state31 ALL -> state32 - NEXT_CHAR
+state32 ALL -> state33 R NOTHING
+state33 ALL -> state34 - NEXT_CHAR
+state34 ALL -> state35 - NEXT_CHAR
+state35 ALL -> state36 - NEXT_CHAR
+state36 ALL -> state37 R NOTHING
+state37 ALL -> state38 - NEXT_CHAR
+state38 ALL -> state39 L NOTHING
+state39 ALL -> state40 L NOTHING
+state40 ALL -> state41 L NOTHING
+state41 ALL -> state42 L NOTHING
+state42 ALL -> state11 - PREV_CHAR
+state13 ALL -> state43 R NOTHING
+state43 ALL -> state44 - NEXT_CHAR
+state44 ALL -> state45 - NEXT_CHAR
+state45 ALL ->^ state46 - NOTHING
+state46 ALL -> state47 R NOTHING
+state47 ALL -> state48 - NEXT_CHAR
+state48 ALL ->^ state49 - NOTHING
+state49 ALL -> state50 - NEXT_CHAR
+[...]
+state55 ALL -> state56 - NEXT_CHAR
+state56 ALL ->^ state57 - NOTHING
+state57 ALL ->^ state58 - NOTHING
+state58 ALL -> state59 - NEXT_CHAR
+state59 ALL -> state60 - NEXT_CHAR
+state60 ALL -> state61 - NEXT_CHAR
+state61 ALL ->^ state62 - NOTHING
+state62 ALL -> state63 R NOTHING
+state63 ALL -> state64 - NEXT_CHAR
+state64 ALL -> state65 - NEXT_CHAR
+state65 ALL ->^ state66 - NOTHING
+state66 ALL -> state67 L NOTHING
+state67 ALL -> state68 L NOTHING
+state68 ALL -> state69 - NEXT_CHAR
+[...]
+state82 ALL -> state83 - NEXT_CHAR
+state83 ALL ->^ state84 - NOTHING
+state84 ALL -> state85 R NOTHING
+state85 ALL ->^ state86 - NOTHING
+state86 ALL -> state87 - NEXT_CHAR
+state87 ALL -> state88 - NEXT_CHAR
+state88 ALL -> state89 - NEXT_CHAR
+state89 ALL ->^ state90 - NOTHING
+state90 ALL -> state91 - PREV_CHAR
+[...]
+state95 ALL -> state96 - PREV_CHAR
+state96 ALL ->^ state97 - NOTHING
+state97 ALL -> state98 - PREV_CHAR
+[...]
+state104 ALL -> state105 - PREV_CHAR
+state105 ALL ->^ state106 - NOTHING
+state106 ALL -> state107 R NOTHING
+state107 ALL -> state108 - NEXT_CHAR
+state108 ALL ->^ state109 - NOTHING
+state109 ALL -> state110 R NOTHING
+state110 ALL ->^ END - NOTHING
+\end{verbatim}
+
+There is clear pattern that each symbol in Brainfuck translates
+to a~single transition in Turing machine. The only part which is different
+is a~loop:
+\begin{verbatim}
+state11 NON_ZERO -> state12 - NOTHING
+state11 0 -> state13 - NOTHING
+state12 ALL -> state14 R NOTHING
+state14 ALL -> state15 - NEXT_CHAR
+[...]
+state42 ALL -> state11 - PREV_CHAR
+state13 ALL -> state43 R NOTHING
+\end{verbatim}
+
+From \texttt{state11} we have two options (either field on the tape is $0$
+or not) and we follow instructions from \texttt{state12} to \texttt{state42}
+and then come back to check loop condition once more or we go directly
+to \texttt{state13} and skip the body of the loop.
+
+Another example changing uppercase letters to lowercase (by adding $32$
+to ASCII number):
+
+\begin{verbatim}
+,++++++++++ ++++++++++ ++++++++++ ++.
+\end{verbatim}
+
+Automatically translated to:
+
+\begin{verbatim}
+START: state2
+state2 ALL ->* state1 - NOTHING
+state1 ALL -> state3 - NEXT_CHAR
+state3 ALL -> state4 - NEXT_CHAR
+state4 ALL -> state5 - NEXT_CHAR
+[...]
+state33 ALL -> state34 - NEXT_CHAR
+state34 ALL ->^ END - NOTHING
+\end{verbatim}
+
+\subsection{Turing machine to 2 stack PDA}
+
+Further translation of code changing a~character to lowercase:
+
+\begin{verbatim}
+START: init_state
+init_state $ $ -> state2 BLANK NOTHING
+state2 ALL ALL ->* state1 INPUT_CHAR ORIG_RIGHT
+state1 ALL ALL -> state3 NEXT(ORIG_LEFT) ORIG_RIGHT
+state3 ALL ALL -> state4 NEXT(ORIG_LEFT) ORIG_RIGHT
+[...]
+state33 ALL ALL -> state34 NEXT(ORIG_LEFT) ORIG_RIGHT
+state34 ALL ALL ->^ END ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
+\end{verbatim}
+
+Note: The order of transitions automatically generated is slightly different,
+but because all state names on the~left side of \texttt{->} are distinct
+we can do such a~change.
+
+Another example of Turing machine code which rotates letters in english
+alphabet by $3$, i.e. given \texttt{a} will print \texttt{d}, for \texttt{A}
+prints \texttt{D}, for \texttt{Z} prints \texttt{C} etc.:
+
+\begin{verbatim}
+START: init
+init ALL -> rotation - NOTHING
+rotation ALL -> rotation1 - NEXT_CHAR
+rotation1 ALL -> rotation2 - NEXT_CHAR
+rotation2 ALL -> rotation3 - NEXT_CHAR
+rotation3 ALL -> letters R NOTHING
+letters ALL ->* letters1 - NOTHING
+letters1 ALL -> change L NOTHING
+change 0 -> print R NOTHING
+change NON_ZERO -> change1 R PREV_CHAR
+change1 z -> change L a
+change1 Z -> change L A
+change1 ALL -> change L NEXT_CHAR
+print ALL ->^ END - NOTHING
+\end{verbatim}
+
+Code may be easily changes into a~rotation by any number -- it is enough
+to~change \texttt{rotation} sequence to be longer. Suprisingly, this code
+is easier to write in Turing machine than in Brainfuck. The~above code
+translates to such 2 stack PDA:
+
+\begin{verbatim}
+START: init_state
+init_state $ $ -> init BLANK NOTHING
+change 0 $ -> print (ORIG_LEFT + BLANK) NOTHING
+change 0 ALL -> print (ORIG_LEFT + ORIG_RIGHT) NOTHING
+change & $ -> change1 (ORIG_LEFT + BLANK) NOTHING
+change & ALL -> change1 (PREV(ORIG_LEFT) + ORIG_RIGHT) NOTHING
+change1 z ALL -> change NOTHING (ORIG_RIGHT + "a")
+change1 Z ALL -> change NOTHING (ORIG_RIGHT + "A")
+change1 ALL ALL -> change NOTHING (ORIG_RIGHT + NEXT(ORIG_LEFT))
+init ALL ALL -> rotation ORIG_LEFT ORIG_RIGHT
+letters ALL ALL ->* letters1 INPUT_CHAR ORIG_RIGHT
+letters1 ALL ALL -> change NOTHING (ORIG_RIGHT + ORIG_LEFT)
+print ALL ALL ->^ END ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
+rotation ALL ALL -> rotation1 NEXT(ORIG_LEFT) ORIG_RIGHT
+rotation1 ALL ALL -> rotation2 NEXT(ORIG_LEFT) ORIG_RIGHT
+rotation2 ALL ALL -> rotation3 NEXT(ORIG_LEFT) ORIG_RIGHT
+rotation3 ALL $ -> letters (ORIG_LEFT + BLANK) NOTHING
+rotation3 ALL ALL -> letters (ORIG_LEFT + ORIG_RIGHT) NOTHING
+\end{verbatim}
+
+\newpage
 
 \subsection{Ewaluacja}
 
