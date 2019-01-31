@@ -1308,8 +1308,8 @@ START: init_state
 init_state $ $ -> init BLANK NOTHING
 change 0 $ -> print (ORIG_LEFT + BLANK) NOTHING
 change 0 ALL -> print (ORIG_LEFT + ORIG_RIGHT) NOTHING
-change & $ -> change1 (ORIG_LEFT + BLANK) NOTHING
-change & ALL -> change1 (PREV(ORIG_LEFT) + ORIG_RIGHT) NOTHING
+change NON_ZERO $ -> change1 (ORIG_LEFT + BLANK) NOTHING
+change NON_ZERO ALL -> change1 (PREV(ORIG_LEFT) + ORIG_RIGHT) NOTHING
 change1 z ALL -> change NOTHING (ORIG_RIGHT + "a")
 change1 Z ALL -> change NOTHING (ORIG_RIGHT + "A")
 change1 ALL ALL -> change NOTHING (ORIG_RIGHT + NEXT(ORIG_LEFT))
