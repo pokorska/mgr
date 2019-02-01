@@ -545,13 +545,13 @@ Where:
   \item \texttt{pattern} is one of values \texttt{0}, \texttt{1} or \texttt{\_}.
       \texttt{0} means we expect empty counter, \texttt{1} means we expect non-empty
       counter and \texttt{\_} means that this counter state does not matter, so
-      this transition should be applied regardless of this counter state.
-  \item \texttt{target state} is the state in which machine will be after
+      this transition should be applied regardless of this counter's state.
+  \item \texttt{target\_state} is the state in which machine will be after
       applying the transition,
   \item \texttt{number} is an~integer from the~range \texttt{[-1, MAX\_INT]} specifying
       what should be added to given counter - it is allowed to decrease counter
       by $1$ only, but it is possible to increase it by any number that can be stored
-      in regular integer type.
+      in a~regular integer type.
 \end{itemize}
 
 \textbf{Note:} If there are many transitions that may be applied in given state
@@ -585,12 +585,12 @@ Where:
       decrease input counter by \texttt{1} and leaving input counter untouched.
 \end{itemize}
 
-This transition reads from stdin into input counter:
+This transition reads from stdin into the input counter:
 \begin{verbatim}
 state1 (_ _ _ _) _ ->* state2 (0 0 0 0) LOAD
 \end{verbatim}
 
-These transitions read the~value from input counter and store it in first counter:
+These transitions read the~value from input counter and store it in the first counter:
 \begin{verbatim}
 state1 (_ _ _ _) 1 ->* state1 (1 0 0 0) -1
 state1 (_ _ _ _) 0 ->* state2 (0 0 0 0) NOOP
@@ -612,14 +612,14 @@ Where:
       the~value stored in the counter by the~given number.
 \end{itemize}
 
-These transitions print character stored in first counter:
+These transitions print character stored in the first counter:
 \begin{verbatim}
 state1 (1 _ _ _) ->^ state1 (-1 0 0 0) Output: 1
 state1 (0 _ _ _) ->^ state2 (0 0 0 0) Output: FLUSH
 \end{verbatim}
 
 Note: It is assumed that transition may just increase the output counter
-and is not allowed to decrease its value directly.
+and is not allowed to decrease its value.
 
 
 \subsection{Example}
