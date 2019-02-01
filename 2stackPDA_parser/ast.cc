@@ -156,6 +156,7 @@ void TransitionMap::translateToManyFiles(const std::string& base) {
   std::ofstream init_file (base + "_init", std::ofstream::out);
   init_file << "START: " << init_state << mgr::STATEMENT_SEPARATOR;
   init_file.close();
+  int count = 1;
   std::hash<std::string> hash_fn;
   for (const auto& item : transitions) {
     std::string mm4_chunk = translateSingleTransition(item.first, item.second);
@@ -169,8 +170,10 @@ void TransitionMap::translateToManyFiles(const std::string& base) {
       std::ofstream file (filename, std::ofstream::app);
       file << mm4_item << mgr::STATEMENT_SEPARATOR;
       file.close();
+      count++;
     }
   }
+  std::cout << "Total transitions written: " << count << "\n";
 }
 
 void TransitionMap::print_status() const {
