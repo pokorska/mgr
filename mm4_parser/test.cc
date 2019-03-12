@@ -20,9 +20,9 @@ void handlePartSizeParam(char* param, mm4_driver* out) {
 
 int main (int argc, char *argv[])
 {
-  int res = 0;
   mm4_driver driver;
-  for (int i = 1; i < argc; ++i)
+  std::string input_code;
+  for (int i = 1; i < argc; ++i) {
     if (argv[i] == std::string ("-p"))
       driver.trace_parsing = true;
     else if (argv[i] == std::string ("-s"))
@@ -37,9 +37,20 @@ int main (int argc, char *argv[])
     }
     else if (argv[i] == std::string("-multifile"))
       driver.multifile_input = true;
-    else if (!driver.parse (argv[i]))
-      driver.run();
+    else if (argv[i] == std::string("-o")) {
+      if (i+1 == argc) {
+        std::cerr << "No base for output files specified after -o parameter\n";
+        return 1;
+      }
+      driver.translation_out = argv[++i];
+    }
     else
-      res = 1;
-  return res;
+      input_code = argv[i];
+  }
+
+  if (!input_code.empty() && !driver.parse(input_code)) {
+    driver.run();
+    return 0;
+  }
+  return 1;
 }

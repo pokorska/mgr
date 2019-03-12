@@ -45,17 +45,22 @@ void TransitionMap::AddTransitions(const string& state) {
   //if (transitions.size() / 1000 > prev_size / 1000)
     //cout << "Current map size: " << transitions.size() << "\n";
 }
-/*
-void TransitionMap::AddTransitionsOriginal(const string& state) {
-  // Trying to read appropriate file to add transitions.
-  hash<string> hash_fn;
-  string filename =
-      multifile_base + "_" + std::to_string(hash_fn(state) % mgr::DEFAULT_HASHTABLE_SIZE);
-  if (!file_exists(filename)) return;
+
+int TransitionMap::FilesCount() const {
+  return mgr::DEFAULT_HASHTABLE_SIZE;
+}
+
+void TransitionMap::AddTransitionsWholeFile(int file_no) {
+  if (file_no < 0 || file_no >= FilesCount()) {
+    std::cerr << "Invalid file number to read: " << file_no << "\n";
+    return;
+  }
+  string filename = multifile_base + "_" + std::to_string(file_no);
+  if (!file_exists(filename)) {
+    std::cerr << "File does not exists. Nothing to add.\n";
+    return;
+  }
   mm4_driver driver;
   Statement* add = driver.parse_to_statement(filename);
   if (add != nullptr) Extend(add);
-  files_added++;
-  cout << "FILES ADDED (so far): " << files_added << "\n";
 }
-*/

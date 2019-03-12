@@ -6,10 +6,13 @@
 
 mm4_driver::mm4_driver()
   : trace_scanning (false), trace_parsing (false),
-    _minsky (false), ast (nullptr), enable_chunks(true),
-    multifile_input(false) { }
+    _minsky (false), ast (nullptr), tmp_ast(nullptr), enable_chunks(true),
+    multifile_input(false), translation_out("output/base") { }
 
-mm4_driver::~mm4_driver() { }
+mm4_driver::~mm4_driver() {
+  if (ast != nullptr) delete ast;
+  if (tmp_ast != nullptr) delete tmp_ast;
+}
 
 int mm4_driver::parse (const std::string& f) {
   if (multifile_input) {
@@ -108,7 +111,8 @@ void mm4_driver::run() {
   }
 
   if (_minsky) {
-    std::cout << "Not implemented\n"; //std::cout << ast->translate();
+    //std::cout << "Not implemented\n";
+    ast->translate(translation_out);
   } else {
     ast->evaluate();
     //ast->print_status();

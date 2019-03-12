@@ -8,6 +8,7 @@
 
 //#include "mm4-driver.hh"
 #include "../shared_files/constants.h"
+#include "translate.h"
 
 struct TransitionRaw {
   enum Type { Regular, Input, Output };
@@ -30,6 +31,10 @@ struct TransitionRaw {
       if (p[i] != -1)
         match_mask |= (1 << i);
   }
+
+  TransitionRaw() : curr_state("Invalid"), patterns {-1, -1, -1, -1},
+      input_pattern(-1), type(Regular), next_state("END"), input_op(NothingIn),
+      output_op(NothingOut), changes {0, 0, 0, 0} { }
 
   // Input manipulating transition
   TransitionRaw(const std::string& curr_state, int p[4], int input_pattern,
@@ -97,16 +102,31 @@ class TransitionMap {
     }
   }
 
+  // WARNING: for internal use ONLY.
+  TransitionMap() : multifile_mode(true) {
+    init_state = "undefined";
+  }
+
   void Extend(Statement* tmp_sequence) {
     tmp_sequence->convert_to_transition_map(this);
   }
 
   // Forwarded to .cc
   void AddTransitions(const std::string& state);
+  int FilesCount() const;
+  void AddTransitionsWholeFile(int file_no);
+
+  const std::map<std::string, std::vector<TransitionRaw>>& GetMap() const {
+    return transitions;
+  }
 
   void setMultifile(const std::string& base) {
     multifile_mode = true;
     multifile_base = base;
+  }
+
+  void ClearMap() {
+    transitions.clear();
   }
 
   void AddTransition(TransitionRaw t) {
@@ -189,8 +209,9 @@ class TransitionMap {
     return t == TransitionRaw::Input ? "->*" : t == TransitionRaw::Output ? "->^" : "->";
   }
 */
-  std::string translate() {
-    return "unimplemented";
+  void translate(const std::string& output_base) {
+    Translation translation;
+    translation.translate(multifile_base, output_base);
   }
 
   void print_status() const {
@@ -229,6 +250,10 @@ class Sequence : public Statement {
   virtual void convert_to_transition_map(TransitionMap* tmap) const {
     stm1->convert_to_transition_map(tmap);
     stm2->convert_to_transition_map(tmap);
+  }
+  ~Sequence() {
+    delete stm1;
+    delete stm2;
   }
 };
 

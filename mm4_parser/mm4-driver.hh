@@ -44,5 +44,6 @@ public:
   bool enable_chunks;
   bool multifile_input;
   int chunk_size = mgr::DEFAULT_CHUNK_SIZE;
+  std::string translation_out;
 };
 #endif // ! BF_DRIVER_HH
