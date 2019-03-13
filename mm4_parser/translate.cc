@@ -1,9 +1,11 @@
 #include "ast.h"
+#include "../shared_files/bignum.h"
 
 #include <vector>
 #include <fstream>
 #include <iostream>
 #include <cmath>
+#include <sstream>
 
 #define PUSH(state, outTrans) out->push_back(make_pair(state, outTrans));
 
@@ -41,13 +43,14 @@ bool matches_all(const TransitionRaw& t) {
   return t.match_mask == 0;
 }
 
-// TODO: Bignums.
-string change_to_string(long long int counter) {
+string change_to_string(const Bignum& counter) {
   if (counter < -1) {
     cout << "ERROR: invalid counter change: " << counter << "\n";
     return "0";
   }
-  return std::to_string(counter);
+  std::stringstream ss;
+  ss << counter;
+  return ss.str();
 }
 
 string pattern_to_string(int counter) {
@@ -63,7 +66,7 @@ string build_no_action_mm2(const string& state, const string& next_state) {
 }
 
 string build_mm2_transition(const string& state, const vector<int>& patterns,
-    const string& next_state, const vector<long long int>& changes) {
+    const string& next_state, const vector<Bignum>& changes) {
   if (patterns.size() != 2 || changes.size() != 2) {
     cout << "ERROR: patterns/changes count is not equal 2\n";
     return "undefined";
@@ -113,9 +116,7 @@ string build_modify_counters(const string& state, const TransitionRaw& t,
     if (t.changes[i] > 0) {
       string next_state = gen_next_name(base_name);
       string rec_state = current_state + "_recovery";
-      // TODO: Bignums.
-      long long int mult = pow(transform[i], t.changes[i]);
-      if (mult < -1) cout << "Calc pow(" << transform[i] << ", " << t.changes[i] << ")\n";
+      Bignum mult = Bignum::pow(transform[i], t.changes[i]);
       // Transitions to multiply counter by p^c (where p is prime and c
       // is the original counter change in mm4)
       out->push_back(make_pair(current_state, build_mm2_transition(
@@ -275,7 +276,14 @@ void Translation::translate(const string& input, const string& output) {
       * ClearMap() - deletes all transitions from the map (init_state is untouched)
       * GetMap() - gets const reference to map of transitions
   */
+  int progress = 0;
+  cout << "Progress: 0%\n";
   for (int i = 0; i < map.FilesCount(); ++i) {
+    int new_progress = (i*100)/map.FilesCount();
+    if (new_progress > progress)
+      cout << "Progress: " << new_progress << "%\n";
+    progress = new_progress;
+
     map.ClearMap();
     map.AddTransitionsWholeFile(i);
     const auto inner_map = map.GetMap();
