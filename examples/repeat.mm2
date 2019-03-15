@@ -1,0 +1,6 @@
+START: s1
+s1 (_ _) _ ->* s2 (0 0) LOAD
+s2 (_ _) 1 ->* s2 (1 0) -1
+s2 (_ _) 0 ->* s3 (0 0) NOOP
+s3 (1 _) ->^ s3 (-1 0) Output: 1
+s3 (0 _) ->^ END (0 0) Output: FLUSH
