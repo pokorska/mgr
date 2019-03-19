@@ -55,7 +55,7 @@ void TransitionMap::AddTransitionsWholeFile(int file_no) {
   }
   string filename = multifile_base + "_" + std::to_string(file_no);
   if (!file_exists(filename)) {
-    std::cerr << "File does not exists. Nothing to add.\n";
+    std::cerr << "File does not exist. Nothing to add.\n";
     return;
   }
   mm2_driver driver;

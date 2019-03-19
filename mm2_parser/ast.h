@@ -199,9 +199,9 @@ class TransitionMap {
         std::cout << "- - - - - - - - - - - - - - - -\n"
                   << "Counters state:\n"
                   << input_counter << " (input)\n"
-                  << output_counter << "(output)\n"
-                  << counters[0] << "(1)\n"
-                  << counters[1] << "(2)\n"
+                  << output_counter << " (output)\n"
+                  << counters[0] << " (1)\n"
+                  << counters[1] << " (2)\n"
                   << "-------------------------------\n";
       }
     }

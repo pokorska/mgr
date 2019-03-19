@@ -278,6 +278,9 @@ void Translation::translate(const string& input, const string& output) {
   */
   int progress = 0;
   cout << "Progress: 0%\n";
+  std::ifstream src(input + "_init", std::ios::binary);
+  std::ofstream dst(output + "_init", std::ios::binary);
+  dst << src.rdbuf();
   for (int i = 0; i < map.FilesCount(); ++i) {
     int new_progress = (i*100)/map.FilesCount();
     if (new_progress > progress)
@@ -291,7 +294,7 @@ void Translation::translate(const string& input, const string& output) {
       vector<pair<string,string>> outputs;
       translate_one_state(state.first, state.second, &outputs);
       for (const auto& s : outputs) {
-        const string filename = output +
+        const string filename = output + "_" +
             std::to_string(hash_fn(s.first) % mgr::DEFAULT_HASHTABLE_SIZE);
         std::ofstream file (filename, std::ofstream::app);
         file << s.second << mgr::STATEMENT_SEPARATOR;
