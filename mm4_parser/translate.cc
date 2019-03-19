@@ -208,7 +208,7 @@ bool find_alternatives(const vector<TransitionRaw>& ts,
     }
     else cout << "Warning: transition with weird pattern " << ts[i].patterns[indx] << "\n";
   }
-  return cs == 3;
+  return cs;
 }
 
 // Inserts tuples (state, full transition to be written in output file).
@@ -220,16 +220,19 @@ void translate_one_state(const string& state,
     build_simple_track(state, transitions[0], out);
   else {
     TransitionRaw t0, t1;
-    if (!find_alternatives(transitions, &t0, &t1))
+    int checksum = find_alternatives(transitions, &t0, &t1);
+    if (checksum == 0) { // This should never happen.
+      std::cout << "ERROR: Checksum equals 0, critical.\n";
       return;
+    }
 
     if (t0.type != TransitionRaw::Regular || t1.type != TransitionRaw::Regular) {
       cout << "ERROR: Transition matches all but is of type input/output\n";
       return;
     }
 
-    int indx = my_log2(t0.match_mask);
-    if (my_log2(t1.match_mask) != indx) {
+    int indx = (checksum & 1) ? my_log2(t0.match_mask) : my_log2(t1.match_mask);
+    if (checksum == 3 && my_log2(t0.match_mask) != my_log2(t1.match_mask)) {
       cout << "ERROR: Match masks are different!\n";
       return;
     }

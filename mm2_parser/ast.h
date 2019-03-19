@@ -151,6 +151,12 @@ class TransitionMap {
     return TransitionRaw(state, default_pattern, TransitionRaw::Regular, mgr::END_STATE, default_changes);
   }
 
+  bool recovery_transition(const TransitionRaw& t) {
+    return (t.curr_state == t.next_state &&
+            t.patterns[1] == 1 && t.match_mask == 2 &&
+            t.changes[0] == 1 && t.changes[1] == -1);
+  }
+
   void evaluate(bool verbose = false) {
     // REMEMBER: match_mask specifies what counters should be taken into account.
     Bignum counters[2] = { 0LL, 0LL };
@@ -178,9 +184,15 @@ class TransitionMap {
       }
       else if (transition.output_op == TransitionRaw::Increase)
         output_counter += transition.output_change;
-      for (int i = 0; i < 2; ++i) {
-        counters[i] += transition.changes[i];
-        //std::cout << "Change " << i << ": " << transition.changes[i] << "\n";
+      if (recovery_transition(transition)) {
+        counters[0] += counters[1];
+        counters[1] = 0LL;
+        //std::cout << "Recovery transition found: " << curr_state << " -> " << transition.next_state << "\n";
+      } else {
+        for (int i = 0; i < 2; ++i) {
+          counters[i] += transition.changes[i];
+          //std::cout << "Change " << i << ": " << transition.changes[i] << "\n";
+        }
       }
 
       curr_state = transition.next_state;

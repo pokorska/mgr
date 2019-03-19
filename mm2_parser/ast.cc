@@ -21,14 +21,18 @@ string getState(const string& transition) {
   return transition.substr(0, transition.find(' '));
 }
 
-void filterTransitions(const string& state, const string& filename) {
+bool filterTransitions(const string& state, const string& filename) {
   ifstream file(filename);
   ofstream out(TMP_FILE, ofstream::out);
   string line;
+  bool exists = false;
   while (getline(file, line)) { //  mgr::STATEMENT_SEPARATOR should be used...
-    if (getState(line) == state)
+    if (getState(line) == state) {
       out << line << mgr::STATEMENT_SEPARATOR;
+      exists = true;
+    }
   }
+  return exists;
 }
 
 void TransitionMap::AddTransitions(const string& state) {
@@ -37,7 +41,10 @@ void TransitionMap::AddTransitions(const string& state) {
   string filename =
       multifile_base + "_" + std::to_string(hash_fn(state) % mgr::DEFAULT_HASHTABLE_SIZE);
   if (!file_exists(filename)) return;
-  filterTransitions(state, filename);
+  if (!filterTransitions(state, filename)) {
+    std::remove(TMP_FILE.c_str());
+    return;
+  }
   mm2_driver driver;
   Statement* add = driver.parse_to_statement(TMP_FILE);
   std::remove(TMP_FILE.c_str());
