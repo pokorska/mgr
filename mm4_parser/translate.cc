@@ -305,4 +305,5 @@ void Translation::translate(const string& input, const string& output) {
       }
     }
   }
+  cout << "Progress: 100%\n";
 }

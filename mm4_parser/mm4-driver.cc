@@ -4,6 +4,28 @@
 #include <iostream>
 #include <fstream>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+// TODO: move to shared code.
+std::string extractDirFromPath(const std::string& path) {
+  size_t sep = path.rfind("/");
+  if (sep == std::string::npos) return path;
+  return path.substr(0, sep);
+}
+
+// TODO: move to shared file.
+bool createDir(const std::string& dir) {
+  struct stat st;
+  if (stat(dir.c_str(), &st) == 0 && S_ISDIR(st.st_mode)) return true;
+  if (mkdir(dir.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH) == -1) {
+    std::cerr << "ERROR: Could not create directory: " << dir << "\n";
+    return false;
+  }
+  return true;
+}
+
 mm4_driver::mm4_driver()
   : trace_scanning (false), trace_parsing (false),
     _minsky (false), ast (nullptr), tmp_ast(nullptr), enable_chunks(true),
@@ -112,7 +134,8 @@ void mm4_driver::run() {
 
   if (_minsky) {
     //std::cout << "Not implemented\n";
-    ast->translate(translation_out);
+    if (createDir(extractDirFromPath(translation_out)))
+      ast->translate(translation_out);
   } else {
     ast->evaluate();
     //ast->print_status();
