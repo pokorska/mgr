@@ -157,12 +157,26 @@ class TransitionMap {
             t.changes[0] == 1 && t.changes[1] == -1);
   }
 
+  int debug_get_state_number(const std::string& state) {
+    if (state.rfind("state") != 0) return -1;
+    int pos_ = state.find('_');
+    if (pos_ == std::string::npos) pos_ = state.size();
+    std::string num = state.substr(5, pos_ - 5);
+    return atoi(num.c_str());
+  }
+
   void evaluate(bool verbose = false) {
     // REMEMBER: match_mask specifies what counters should be taken into account.
-    Bignum counters[2] = { 0LL, 0LL };
+    Bignum counters[2] = { 1LL, 0LL };
     long long input_counter = 0LL, output_counter = 0LL;
     std::string curr_state = init_state;
+    int num = 0;
     while (curr_state != mgr::END_STATE) {
+      int new_num = debug_get_state_number(curr_state);
+      if (new_num != num) {
+        std::cout << "Currently on: state" << new_num << "\n";
+        num = new_num;
+      }
       if (verbose)
         std::cout << "-------------------------------\n"
                   << "Current state: " << curr_state << "\n";
@@ -196,7 +210,6 @@ class TransitionMap {
       }
 
       curr_state = transition.next_state;
-      //std::cout << "Transitioned to state: " << curr_state << "\n";
 
       // Sanity checks
       if (input_counter < 0)

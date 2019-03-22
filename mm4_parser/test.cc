@@ -27,6 +27,8 @@ int main (int argc, char *argv[])
       driver.trace_parsing = true;
     else if (argv[i] == std::string ("-s"))
       driver.trace_scanning = true;
+    else if (argv[i] == std::string("-verbose"))
+      driver.verbose = true;
     else if (argv[i] == std::string ("-minsky"))
       driver._minsky = true;
     else if (argv[i] == std::string("-no_chunks"))

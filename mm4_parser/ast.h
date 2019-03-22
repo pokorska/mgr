@@ -163,16 +163,19 @@ class TransitionMap {
     return TransitionRaw(state, default_pattern, TransitionRaw::Regular, mgr::END_STATE, default_changes);
   }
 
-  void evaluate() {
+  void evaluate(bool verbose) {
     // REMEMBER: match_mask specifies what counters should be taken into account.
     long long counters[4] = { 0LL, 0LL, 0LL, 0LL };
     long long input_counter = 0LL, output_counter = 0LL;
     std::string curr_state = init_state;
     while (curr_state != mgr::END_STATE) {
-      //std::cout << "Counters: " << counters[0] << " " << counters[1] << " "
-      //          << counters[2] << " " << counters[3] << "\n";
-      //std::cout << "Input counter: " << input_counter << "\n";
+      if (verbose)
+        std::cout << "-------------------------------\n"
+                  << "Current state: " << curr_state << "\n";
       TransitionRaw transition = FindTransition(curr_state, counters, input_counter);
+      if (verbose)
+        std::cout << "Found transition " << transition.curr_state
+                  << " -> " << transition.next_state << "\n";
       if (transition.input_op == TransitionRaw::Load) {
         char c; std::cin >> c;
         input_counter = c;
@@ -190,8 +193,10 @@ class TransitionMap {
       for (int i = 0; i < 4; ++i)
         counters[i] += transition.changes[i];
 
+      if (transition.next_state == mgr::END_STATE) {
+        std::cout << "Very last state: " << curr_state << "\n";
+      }
       curr_state = transition.next_state;
-      //std::cout << "Transitioned to state: " << curr_state << "\n";
 
       // Sanity checks
       if (input_counter < 0)
@@ -201,6 +206,17 @@ class TransitionMap {
       for (int i = 0; i < 4; ++i)
         if (counters[i] < 0)
           std::cout << "ERROR: counter " << i << " negative!\n";
+      if (verbose) {
+        std::cout << "- - - - - - - - - - - - - - - -\n"
+                  << "Counters state:\n"
+                  << input_counter << " (input)\n"
+                  << output_counter << " (output)\n"
+                  << counters[0] << " (1)\n"
+                  << counters[1] << " (2)\n"
+                  << counters[2] << " (3)\n"
+                  << counters[3] << " (4)\n"
+                  << "-------------------------------\n";
+      }
     }
   //std::cout << "TOTAL FILES ADDED: " << files_added << "\n";
   }

@@ -43,6 +43,7 @@ public:
 
   bool enable_chunks;
   bool multifile_input;
+  bool verbose; // Prints all states and counters while evaluation.
   int chunk_size = mgr::DEFAULT_CHUNK_SIZE;
   std::string translation_out;
 };

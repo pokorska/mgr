@@ -87,10 +87,10 @@ string build_input_mm2_transition(const string& state, int in_pattern,
 }
 
 string build_output_mm2_transition(const string& state, const string& next,
-    TransitionRaw::OutputOperation op) {
+    TransitionRaw::OutputOperation op, int output_change) {
   string result = state + " (_ _) ->^ " + next + " (0 0) Output: ";
   if (op == TransitionRaw::Flush) result += "FLUSH";
-  if (op == TransitionRaw::Increase) result += "1";
+  if (op == TransitionRaw::Increase) result += std::to_string(output_change);
   if (op == TransitionRaw::NothingOut) result += "0";
   return result;
 }
@@ -165,7 +165,7 @@ void build_simple_track(const string& state, const TransitionRaw& t,
   if (t.type == TransitionRaw::Output) {
     string next_state = current_state + "_output";
     PUSH(current_state, build_output_mm2_transition(
-        current_state, next_state, t.output_op));
+        current_state, next_state, t.output_op, t.output_change));
     current_state = next_state;
   }
   string last_state = build_modify_counters(current_state, t, out);

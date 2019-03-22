@@ -29,7 +29,7 @@ bool createDir(const std::string& dir) {
 mm4_driver::mm4_driver()
   : trace_scanning (false), trace_parsing (false),
     _minsky (false), ast (nullptr), tmp_ast(nullptr), enable_chunks(true),
-    multifile_input(false), translation_out("output/base") { }
+    multifile_input(false), translation_out("output/base"), verbose(false) { }
 
 mm4_driver::~mm4_driver() {
   if (ast != nullptr) delete ast;
@@ -137,7 +137,7 @@ void mm4_driver::run() {
     if (createDir(extractDirFromPath(translation_out)))
       ast->translate(translation_out);
   } else {
-    ast->evaluate();
+    ast->evaluate(verbose);
     //ast->print_status();
   }
 }
