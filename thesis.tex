@@ -1145,7 +1145,8 @@ Classical \texttt{Hello world!} that can be easily found on-line:
 It is translated into a~file containing $110$ states (There are long
 sequences generated from many consecutive symbols \texttt{+} or \texttt{-} that
 were cut for better readability).
-
+{
+ \fontsize{9pt}{12pt}\selectfont
 \begin{verbatim}
 START: state2
 state2 ALL -> state1 - NEXT_CHAR
@@ -1219,6 +1220,7 @@ state108 ALL ->^ state109 - NOTHING
 state109 ALL -> state110 R NOTHING
 state110 ALL ->^ END - NOTHING
 \end{verbatim}
+}
 
 There is clear pattern that each symbol in Brainfuck translates
 to a~single transition in Turing machine. The only part which is different
@@ -1336,6 +1338,108 @@ print ALL ALL ->^ END ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
 
 When we change the alphabet size to be $3$ (instead of $140$) we get such
 automatic translation to $4$ counter machine:
+
+... jakis komentarz (ile otrzymujemy instrukcji, co jest ciekawego)
+
+The full code can be found in the appendix.
+
+It is possible to see that \texttt{read} transition was translated with
+regular translation recognizing both stack symbols and \texttt{print}
+was translated with fast track optimization which recognizes only
+left stack item which is the only one needed (the symbol to print).
+
+\newpage
+
+\subsection{Ewaluacja}
+
+Porównanie czasów, rozmiarów (na przykładach, nie musi być ,,zupełne'')
+
+See Table~\ref{t:my-label}.
+
+\begin{table}[]
+\centering
+\caption{
+Size of translated programs (\# of instructions)\\
+Running time \\
+Translation time (to next language)\\
+}
+\begin{center}
+\label{t:my-label}
+\begin{tabular}{llllll}
+Program & Brainfuck & TM & 2PDA & 4CM & 2CM \\
+\hline
+hello.bf & 111 & 112 & 123 & 5\,175\,355 & -\\
+ & 0.005s & 0.003s & 0.011s & - & - \\
+ & 0.006s & 0.005s & 4m 9.838s & - & - \\
+\hline
+hello3.bf & 193 & 205 & 209 & 1\,568\,779 & -\\
+ & 0.006s & 0.008s & 0.011s & 1m 20.335s & - \\
+ & 0.007s & 0.008s & 1m 34.475s & - & - \\
+\hline
+to\_lower.bf & 34 & 35 & 36 & 385\,189 & -\\
+ & 0.005s & 0.006s & 0.004s & 0.413s & - \\
+ & 0.004s & 0.006s & 21.402s & - & - \\
+\hline
+add\_digits.bf & 69 & 70 & 77 & 3\,894\,442 & -\\
+ & 0.006s & 0.006s & 0.008s & 5.372s & - \\
+ & 0.006s & 0.006s & 3m 1.748s & - & - \\
+\hline
+inout.bf & 2 & 3 & 4 & 335\,877 & -\\
+ & 0.005s & 0.006s & 0.006s & 0.029s & - \\
+ & 0.005s & 0.005s & 14.991s & - & - \\
+\hline
+simple.tm & - & 8 & 11 & 345\,407 & -\\
+ & - & 0.005s & 0.005s & 0.065s & - \\
+ & - & 0.004s & 14.568s & - & - \\
+\hline
+rotate.tm & - & 14 & 18 & 1\,596\,442 & -\\
+ & - & 0.008s & 0.007s & 0.244s & - \\
+ & - & 0.006s & 1m 11.924s & - & - \\
+\hline
+hello\_opt.pda & - & - & 13 & 1\,888\,333 & -\\
+ & - & - & 0.005s & 0.211s & - \\
+ & - & - & 1m 17.907s & - & - \\
+\hline
+??? & - & - & - & - & -\\
+ & - & - & - & - & - \\
+ & - & - & - & - & - \\
+\end{tabular}
+\end{center}
+\end{table}
+
+NOTE: translation to 2CM:
+
+\texttt{./test.e -minsky -multifile path/base -o outPath/base}
+
+\chapter{Podsumowanie, wnioski, możliwości kontynuowania}
+
+
+In this thesis we provided...
+
+The obtained implementation is indeed a proof of ... And it works... and not toooooo slow. What have we learned...
+
+Czy bezpośrednie tłumaczenie byłoby lepsze?
+
+
+Future work...
+\begin{itemize}
+\item 
+Rozwój ,,z lewej strony obrazka'' -- tłumaczenie z c++ czy czego kto tam chce
+\item 
+Interfejs graficzny - walory dydaktyczne
+\item 
+? Optymalizacja
+\end{itemize}
+
+\bibliographystyle{plain}
+\bibliography{thesis}{}
+
+\newpage
+\appendix
+
+\chapter{Examples}
+
+... opis ...
 
 \begin{verbatim}
 START: read
@@ -1547,94 +1651,8 @@ read_L2_R2_RECOGNIZED68 (_ _ _ _) -> read_L2_R2_RECOGNIZED69 (0 0 2 0)
 read_L2_R2_RECOGNIZED69 (_ _ _ _) -> print (0 0 0 0)
 \end{verbatim}
 
-It is possible to see that \texttt{read} transition was translated with
-regular translation recognizing both stack symbols and \texttt{print}
-was translated with fast track optimization which recognizes only
-left stack item which is the only one needed (the symbol to print).
 
-\newpage
-
-\subsection{Ewaluacja}
-
-Porównanie czasów, rozmiarów (na przykładach, nie musi być ,,zupełne'')
-
-See Table~\ref{t:my-label}.
-
-\begin{table}[]
-\centering
-\caption{
-Size of translated programs (\# of instructions)\\
-Running time \\
-Translation time (to next language)\\
-}
-\begin{center}
-\label{t:my-label}
-\begin{tabular}{llllll}
-Program & Brainfuck & TM & 2PDA & 4CM & 2CM \\
-\hline
-hello.bf & 111 & 112 & 123 & 5\,175\,355 & -\\
- & 0.005s & 0.003s & 0.011s & - & - \\
- & 0.006s & 0.005s & 4m 9.838s & - & - \\
-\hline
-hello3.bf & 193 & 205 & 209 & 1\,568\,779 & -\\
- & 0.006s & 0.008s & 0.011s & 1m 20.335s & - \\
- & 0.007s & 0.008s & 1m 34.475s & - & - \\
-\hline
-to\_lower.bf & 34 & 35 & 36 & 385\,189 & -\\
- & 0.005s & 0.006s & 0.004s & 0.413s & - \\
- & 0.004s & 0.006s & 21.402s & - & - \\
-\hline
-add\_digits.bf & 69 & 70 & 77 & 3\,894\,442 & -\\
- & 0.006s & 0.006s & 0.008s & 5.372s & - \\
- & 0.006s & 0.006s & 3m 1.748s & - & - \\
-\hline
-inout.bf & 2 & 3 & 4 & 335\,877 & -\\
- & 0.005s & 0.006s & 0.006s & 0.029s & - \\
- & 0.005s & 0.005s & 14.991s & - & - \\
-\hline
-simple.tm & - & 8 & 11 & 345\,407 & -\\
- & - & 0.005s & 0.005s & 0.065s & - \\
- & - & 0.004s & 14.568s & - & - \\
-\hline
-rotate.tm & - & 14 & 18 & 1\,596\,442 & -\\
- & - & 0.008s & 0.007s & 0.244s & - \\
- & - & 0.006s & 1m 11.924s & - & - \\
-\hline
-hello\_opt.pda & - & - & 13 & 1\,888\,333 & -\\
- & - & - & 0.005s & 0.211s & - \\
- & - & - & 1m 17.907s & - & - \\
-\hline
-??? & - & - & - & - & -\\
- & - & - & - & - & - \\
- & - & - & - & - & - \\
-\end{tabular}
-\end{center}
-\end{table}
-
-NOTE: translation to 2CM:
-
-\texttt{./test.e -minsky -multifile path/base -o outPath/base}
-
-\chapter{Podsumowanie, wnioski, możliwości kontynuowania}
-
-
-In this thesis we provided...
-
-The obtained implementation is indeed a proof of ... And it works... and not toooooo slow. What have we learned...
-
-Czy bezpośrednie tłumaczenie byłoby lepsze?
-
-
-Future work...
-\begin{itemize}
-\item 
-Rozwój ,,z lewej strony obrazka'' -- tłumaczenie z c++ czy czego kto tam chce
-\item 
-Interfejs graficzny - walory dydaktyczne
-\item 
-? Optymalizacja
-\end{itemize}
-
-\bibliographystyle{plain}
-\bibliography{thesis}{}
 \end{document}
+
+
+
