@@ -10,6 +10,7 @@
 \usepackage{subcaption}
 \usepackage{cite}
 \usepackage{float}
+\usepackage{multicol}
 
 \usetikzlibrary{shapes.multipart}
 \usetikzlibrary{decorations.text}
@@ -331,7 +332,7 @@ Statements:
 It is allowed to use any other characters within the code, but anything else than the $8$
 listed above are ignored --- it is useful for creating comments in the code.
 
-An example code printing "Hello World!":
+An example code printing "Hello World!" (source: \href{https://pl.wikipedia.org/wiki/Brainfuck#Przyk%C5%82ady}{Wikipedia}):
 \begin{verbatim}
 ++++++++++
 [
@@ -963,8 +964,88 @@ is is enough to say that we perform a~\textbf{pop} after making sure we should a
 
 \section {Reduction from 4 Counter Machine to 2 Counter Machine}
 
-\todo{Opis}
+We need to compress $4$ counters into only $2$ counters. Previously we had
+$2$ counters per each stack (from $2$ stack PDA), where one counter was
+holding state and the other was used for calculations. We will do similar
+thing -- we will compress all $4$ coutunters states into only $1$ counter
+(called \textit{general counter}) and the other one will be used for
+calculations (called \textit{calculations counter}). Here is how we define
+the translation:
+$$ (A\ B\ C\ D) \rightarrow 2^A \cdot 3^B \cdot 5^C \cdot 7^D$$
+$A$, $B$, $C$, and $D$ are the states of the $4$ counters. Because each
+number has deterministic factorization using prime numbers (in our case
+prime numbers $2$, $3$, $5$ and $7$). It could be any prime numbers,
+but for efficiency and simplicity it is assumed that these are $4$ smallest
+prime numbers.
 
+It means that when we need to increase $A$ by some constant $c$, we need
+to multiply the general counter by $2^c$, similarly when we need to decrease
+(we decrease by $1$ only) then we need to divide by $2$.
+
+Multiplying by $2^c$ is easy to express in $2$CM world:
+\begin{enumerate}
+  \item repeat as long as the general counter is not empty:
+  \begin{enumerate}
+    \item decrease the general counter by $1$,
+    \item increase the calculation counter by $2^c$,
+  \end{enumerate}
+  \item once the general counter is empty then copy calculation counter back to general counter.
+\end{enumerate}
+
+Translation of such transition:
+\begin{verbatim}
+s (_ _ _ _) -> next_s (1 0 2 0)
+\end{verbatim}
+
+Will look like this:
+\begin{verbatim}
+s (_ _) -> s_modify (0 0)
+s_modify (1 _) -> s_modify (-1 2)
+s_modify (0 _) -> s_recover (0 0)
+s_recover (_ 1) -> s_recover (1 -1)
+s_recover (_ 0) -> s_modify2 (0 0)
+
+s_modify2 (1 _) -> s_modify2 (-1 25)
+s_modify2 (0 _) -> s_recover2 (0 0)
+s_recover2 (_ 1) -> s_recover2 (1 -1)
+s_recover2 (_ 0) -> next_s
+\end{verbatim}
+
+
+Making division is harder, we will do something similar to recognizing the top
+character when translating $2$ stack PDA to $4$CM. For such transitions (recognizing
+whether second counter is empty or not):
+\begin{verbatim}
+s (_ 1 _ _) -> s_1 (0 0 0 0)
+s (_ 0 _ _) -> s_0 (0 0 0 0)
+\end{verbatim}
+
+We build such circle (we end up within \texttt{s\_0} if counter is empty and in \texttt{s\_1} otherwise):
+
+\begin{center}
+\begin{tikzpicture}
+  \node [shape=circle, draw=black, thick] (s) at (0,1.5) {\texttt{s}};
+  \node [shape=circle, draw=black, thick] (r0) at (0,0) {$r_0$};
+  \node [shape=circle, draw=black, thick] (r1) at (-1,-1) {$r_1$};
+  \node [shape=circle, draw=black, thick] (r2) at (1,-1) {$r_2$};
+
+  \node [shape=circle, draw=red, thick] (s1) at (0,-3) {\texttt{s\_1}};
+  \node [shape=circle, draw=green, thick] (s0) at (4,-3) {\texttt{s\_0}};
+
+
+  \path [->,thick,>=stealth] (s) edge (r0);
+  \path [->,thick,>=stealth] (r0) edge[bend right=20] (r1);
+  \path [->,thick,>=stealth] (r1) edge[bend right=20] (r2);
+  \path [->,thick,>=stealth] (r2) edge[bend right=20] (r0);
+
+  \path [->,thick,>=stealth] (r0) edge[bend left=30] (s0);
+  \path [->,thick,>=stealth] (r1) edge (s1);
+  \path [->,thick,>=stealth] (r2) edge (s1);
+\end{tikzpicture}
+\end{center}
+
+Additionally right before entering states \texttt{s\_0} and \texttt{s\_1}
+we need to move anything in the calculations counter back to general counter.
 
 \chapter{Implementation}
 
@@ -1116,37 +1197,40 @@ usage, but it has specific structure that needs to be followed. All the files
 within output directory should be created by the provided code, preferably
 with \texttt{full\_pipeline.sh} script.
 
+\newpage
 \section{Examples}
 
 \subsection{Brainfuck to Turing Machine}
 
-Classical \texttt{Hello world!} that can be easily found on-line:
+Classical \texttt{Hello World!} that can be easily found on \href{https://pl.wikipedia.org/wiki/Brainfuck#Przyk%C5%82ady}{Wikipedia}:
 
 \begin{verbatim}
 ++++++++++
 [
 >+++++++>++++++++++>+++>+<<<<-
-] Na początek ustawiamy kilka przydatnych później wartości
->++.               drukuje 'H'
->+.                drukuje 'e'
-+++++++.           drukuje 'l'
-.                  drukuje 'l'
-+++.               drukuje 'o'
->++.               spacja
-<<+++++++++++++++. drukuje 'W'
->.                 drukuje 'o'
-+++.               drukuje 'r'
-------.            drukuje 'l'
---------.          drukuje 'd'
->+.                drukuje '!'
->.                 nowa linia
+] We set up the values in few cells for future use.
+>++.               prints 'H'
+>+.                prints 'e'
++++++++.           prints 'l'
+.                  prints 'l'
++++.               prints 'o'
+>++.               prints space
+<<+++++++++++++++. prints 'W'
+>.                 prints 'o'
++++.               prints 'r'
+------.            prints 'l'
+--------.          prints 'd'
+>+.                prints '!'
+>.                 prints newline character
 \end{verbatim}
 
+
+\newpage
 It is translated into a~file containing $110$ states (There are long
 sequences generated from many consecutive symbols \texttt{+} or \texttt{-} that
 were cut for better readability).
-{
- \fontsize{9pt}{12pt}\selectfont
+\begin{multicols}{2}
+\fontsize{9pt}{12pt}\selectfont
 \begin{verbatim}
 START: state2
 state2 ALL -> state1 - NEXT_CHAR
@@ -1220,8 +1304,9 @@ state108 ALL ->^ state109 - NOTHING
 state109 ALL -> state110 R NOTHING
 state110 ALL ->^ END - NOTHING
 \end{verbatim}
-}
+\end{multicols}
 
+\onecolumn
 There is clear pattern that each symbol in Brainfuck translates
 to a~single transition in Turing machine. The only part which is different
 is a~loop:
