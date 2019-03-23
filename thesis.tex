@@ -1029,8 +1029,8 @@ We build such circle (we end up within \texttt{s\_0} if counter is empty and in 
   \node [shape=circle, draw=black, thick] (r1) at (-1,-1) {$r_1$};
   \node [shape=circle, draw=black, thick] (r2) at (1,-1) {$r_2$};
 
-  \node [shape=circle, draw=red, thick] (s1) at (0,-3) {\texttt{s\_1}};
-  \node [shape=circle, draw=green, thick] (s0) at (4,-3) {\texttt{s\_0}};
+  \node [shape=circle, draw=red, thick] (s1) at (0,-3) {\texttt{s\_0}};
+  \node [shape=circle, draw=green, thick] (s0) at (4,-3) {\texttt{s\_1}};
 
 
   \path [->,thick,>=stealth] (s) edge (r0);
@@ -1044,8 +1044,13 @@ We build such circle (we end up within \texttt{s\_0} if counter is empty and in 
 \end{tikzpicture}
 \end{center}
 
-Additionally right before entering states \texttt{s\_0} and \texttt{s\_1}
-we need to move anything in the calculations counter back to general counter.
+Additionally just before entering states \texttt{s\_0} and \texttt{s\_1}
+we need to move everything from the calculations counter back to general counter.
+
+The picture would be much more complex if the original $4$CM transition
+recognized more counters. Fortunately, all the transitions produced by
+the automatic translation use at most one counter (for recognition),
+so for the purpose of this thesis such an example is not necessary.
 
 \chapter{Implementation}
 
@@ -1162,8 +1167,19 @@ List of commands within directories:
       \item run 4 Counter Machine source file: \\ \texttt{./test.e ../examples/hello.mm4}
       \item (recommended) run source with multiple files (files within \texttt{output}
         directory and created by 2StackPDA translation): \\ \texttt{./test.e -multifile output/base}
+      \item translation into \texttt{output} directory from \texttt{input}
+        directory: \\ \texttt{./test.e -minsky -multifile input/base -o output/base}
+
+        (It will automatically create directory if needed.)
+    \end{itemize}
+  \item \texttt{mm2\_parser}
+    \begin{itemize}
+      \item run source with multiple files (files within \texttt{output}
+        directory and created by $4$ Counter Machine translation): \\ \texttt{./test.e -multifile output/base}
     \end{itemize}
 \end{itemize}
+
+\todo{full pipeline script should handle mm2 as well, somehow}
 
 When we want to run full pipeline then we need to run script \texttt{full\_pipeline.sh} within
 \texttt{shared\_files} directory:
@@ -1306,7 +1322,6 @@ state110 ALL ->^ END - NOTHING
 \end{verbatim}
 \end{multicols}
 
-\onecolumn
 There is clear pattern that each symbol in Brainfuck translates
 to a~single transition in Turing machine. The only part which is different
 is a~loop:
@@ -1345,7 +1360,7 @@ state33 ALL -> state34 - NEXT_CHAR
 state34 ALL ->^ END - NOTHING
 \end{verbatim}
 
-\subsection{Turing machine to 2 stack PDA}
+\subsection{Turing Machine to 2 stack PDA}
 
 Further translation of code changing a~character to lowercase:
 
@@ -1387,7 +1402,7 @@ print ALL ->^ END - NOTHING
 
 Code may be easily changed into a~rotation by any number -- it is enough
 to~change \texttt{rotation} sequence to be longer. Suprisingly, this code
-is easier to write in Turing machine than in Brainfuck. The~above code
+is easier to write in Turing Machine than in Brainfuck. The~above code
 translates to such 2 stack PDA:
 
 \begin{verbatim}
@@ -1411,7 +1426,7 @@ rotation3 ALL $ -> letters (ORIG_LEFT + BLANK) NOTHING
 rotation3 ALL ALL -> letters (ORIG_LEFT + ORIG_RIGHT) NOTHING
 \end{verbatim}
 
-\subsection{2 stack PDA to 4 counter machine}
+\subsection{2 stack PDA to 4 Counter Machine}
 
 Simple code reading a~symbol and writing it on standard output:
 
@@ -1422,7 +1437,7 @@ print ALL ALL ->^ END ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
 \end{verbatim}
 
 When we change the alphabet size to be $3$ (instead of $140$) we get such
-automatic translation to $4$ counter machine:
+automatic translation to $4$ Counter Machine:
 
 ... jakis komentarz (ile otrzymujemy instrukcji, co jest ciekawego)
 
@@ -1492,9 +1507,6 @@ hello\_opt.pda & - & - & 13 & 1\,888\,333 & -\\
 \end{center}
 \end{table}
 
-NOTE: translation to 2CM:
-
-\texttt{./test.e -minsky -multifile path/base -o outPath/base}
 
 \chapter{Podsumowanie, wnioski, możliwości kontynuowania}
 
