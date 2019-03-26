@@ -279,7 +279,7 @@ void Translation::translate(const string& input, const string& output) {
       * ClearMap() - deletes all transitions from the map (init_state is untouched)
       * GetMap() - gets const reference to map of transitions
   */
-  int progress = 0;
+  int progress = 0, count = 0;
   cout << "Progress: 0%\n";
   std::ifstream src(input + "_init", std::ios::binary);
   std::ofstream dst(output + "_init", std::ios::binary);
@@ -302,8 +302,10 @@ void Translation::translate(const string& input, const string& output) {
         std::ofstream file (filename, std::ofstream::app);
         file << s.second << mgr::STATEMENT_SEPARATOR;
         file.close();
+        count++;
       }
     }
   }
   cout << "Progress: 100%\n";
+  cout << "Total number of transitions: " << count << "\n";
 }
