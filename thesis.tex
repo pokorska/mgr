@@ -368,8 +368,10 @@ extended with the same amount of additional (non-ASCII) symbols. Regular
 ASCII characters have 7 bits (numbers 0-127), so tape symbols have 8 bits
 allowing to hold regular ASCII and special characters (numbers 128-255).
 
-        There are few special definitions (so far using regular ASCII,
-but it will be changed to use special characters instead \todo{revisit}):
+        There are few special definitions (it is using regular ASCII, so
+these characters may cause unexpected behaviour if used in Brainfuck's
+code logic).
+
 \begin{itemize}
   \item \texttt{BLANK} which represents empty field on the tape
   \item \texttt{*} (ALL) defines all characters (both ASCII and special)
@@ -1054,7 +1056,7 @@ so for the purpose of this thesis such an example is not necessary.
 
 \chapter{Implementation}
 
-\section{Intruduction}
+\section{Introduction}
 
 Language chosen for the entire project is C++, mainly because of its efficiency. Counter Machine
 is a~basic model, so any translated program is expected to be very long. These amounts of information
@@ -1098,7 +1100,10 @@ Few examples:
       \texttt{+} and \texttt{-} there is only O($m$) new states created.
   \item There is no need to load all the states, becase most probably we will
       not need all of them -- lazy loading allows to add to transition set
-      all the transitions that refer to the state that we are currently in.
+      all the transitions that refer to the state that we are currently in,
+  \item In $2$CM transitions we often need to recover counter's position by
+      copying its content to the other counter -- it is easy to recognize such
+      a transition and do the copy using regular variable assigment in C++.
 \end{itemize}
 
 The amount of generated information is very big even for simplest programs, which is not a suprise.
@@ -1109,16 +1114,29 @@ tape/stack/counter. This is caused by Brainfuck code structure, where the only t
 is modifying the~memory and then output what is within this memory.
 
 The other problematic operation was shifting Brainfuck's tape --- when we shift
-one position our stack in Turing Machine (and later languages) grows by one
-character. When we remind ourselves what it means to extend a counter by
+by one position on the tape then our stack in Turing Machine (and later languages)
+grows by one character. When we remind ourselves what it means to extend a counter by
 one character we realise why is it so -- a counter needs to be multiplyed by
 the~size of the~alphabet and increased by the~character's ASCII number.
 This means that each time we shift right we increase our counter 140 times
-(which is the aplhabet size set within the program) and what is more, next
+(which is the alphabet size set within the program) and what is more, next
 iterations of a~program need to recognize characters on the top of that
 counter with decreasing it by $1$ at a time.
 
-\todo{Wszystko, co było ciekawe}
+Computations starts to be an issue at the very end of the pipeline, namely
+when executing $2$CM program. Because of the structure of the counter translation
+(exponential) and the way these (exponential) counter is used, it is really
+hard to get any english character. ASCII table contains these characters
+at high positions like 65 ('A'), so within our $2$CM's counter it will be represented
+as a number $2^{65}$ if it was on the first counter of $4$CM and $3^{65}$ when
+it was moved to the second counter of $4$CM. Additionally we decrease these numbers
+by $1$ until we reach $0$ to recognize whether it is divisible by $2$ (for example),
+and then we divide it by $2$ (which again forces us to decrease whole counter to $0$).
+After that we usually repeat this several times, what is equivalent to several
+(simple) operations in $4$CM. So in $4$CM these operations execute lightning fast
+in comparison to their equivalents in $2$CM.
+
+\todo{Rozwiązania problemu?}
 
 \section{Technical details}
 
@@ -1436,17 +1454,29 @@ read ALL ALL ->* print INPUT_CHAR ORIG_RIGHT
 print ALL ALL ->^ END ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
 \end{verbatim}
 
-When we change the alphabet size to be $3$ (instead of $140$) we get such
-automatic translation to $4$ Counter Machine:
-
-... jakis komentarz (ile otrzymujemy instrukcji, co jest ciekawego)
-
-The full code can be found in the appendix.
+When we change the alphabet size to be $3$ (instead of $140$) we get
+automatic translation to $4$ Counter Machine that has ??? transitions.
 
 It is possible to see that \texttt{read} transition was translated with
 regular translation recognizing both stack symbols and \texttt{print}
 was translated with fast track optimization which recognizes only
 left stack item which is the only one needed (the symbol to print).
+Names that contain \texttt{L0} or \texttt{L1} etc. recognize character
+on the left stack (in $2$ stack PDA) and those containing \texttt{R0}
+or \texttt{R1} etc. recognize right stack's element. If additionally
+we see fragment \texttt{RECOGNIZED} then the state already knows what
+was on the stack and does some modifications based on that knowledge.
+
+General structure of the translation keeps original state names from
+$2$ stack PDA, so if we see short names (like \texttt{read} or \texttt{print})
+then this is a starting point for all $4$CM transitions that are bewteen.
+In the above examples we go from \texttt{read} to \texttt{print}, so in
+the translation there are transitions recognizing items on stack (only left in
+this case) and these transitions are in between these two "top level" states.
+By saying "between" I mean computations flow, not the order of transitions
+in the source code.
+
+The full code can be found in the appendix.
 
 \newpage
 
@@ -1536,7 +1566,16 @@ Interfejs graficzny - walory dydaktyczne
 
 \chapter{Examples}
 
-... opis ...
+
+Such $2$ stack PDA code:
+
+\begin{verbatim}
+START: read
+read ALL ALL ->* print INPUT_CHAR ORIG_RIGHT
+print ALL ALL ->^ END ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
+\end{verbatim}
+
+Translates to such $4$CM code:
 
 \begin{verbatim}
 START: read
