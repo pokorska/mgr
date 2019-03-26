@@ -1538,24 +1538,49 @@ hello\_opt.pda & - & - & 13 & 1\,888\,333 & -\\
 \end{table}
 
 
-\chapter{Podsumowanie, wnioski, możliwości kontynuowania}
+\chapter{Summary}
 
 
-In this thesis we provided...
+In this thesis we provided a full realization of theoretical translation
+from a modern programming language to $2$ Counter Machine. Despite Brainfuck
+being not the most up-to-date language the proof has been done and it may
+be extended with another (related) work that exists translating C++
+to Brainfuck (\todo{Autor? Źródło?}). Toghether these two works give full
+proof of theoretical concept of equivalence modern languages and $2$ Counter
+Machine.
 
-The obtained implementation is indeed a proof of ... And it works... and not toooooo slow. What have we learned...
+The obtained implementation is slow (as expected), but there is a clear real
+code that uses only $2$CM language, which is very poor and is able to express
+high level thoughts of today's programmers.
 
-Czy bezpośrednie tłumaczenie byłoby lepsze?
+To be honest, execution is possible in $4$ Counter Machine, where the time is
+acceptable. Translation to $2$CM is pretty fast as well, so real code which
+we wanted to achieve was generated.
 
+What we have learned is that ASCII table is not designed to help in such
+translation and if it was redesigned to have english alphabet assigned
+with small numbers it would be much easier to handle.
 
-Future work...
+Exponential growth is dangerous (which is not suprising) and limits our implementation.
+If we remapped ASCII caracters at the very beginning of the pipeline
+then it would help significantly. Brainfuck's code structure is very connected
+to current shape of ASCII table, to it is not that simple to make such a remapping,
+usual Brainfuck's code has many consecutive \texttt{+}'s that are making
+expected character. Remapping would mean that Brainfuck's code should be changed
+(or at least cut) before the actual translation.
+
+What can be done next?
 \begin{itemize}
-\item 
-Rozwój ,,z lewej strony obrazka'' -- tłumaczenie z c++ czy czego kto tam chce
-\item 
-Interfejs graficzny - walory dydaktyczne
-\item 
-? Optymalizacja
+  \item Extending from left side of the pipeline -- translations from any modern
+      programming language to Brainfuck.
+  \item Adding graphical interface to make the usage easier.
+  \item Harder optimizations that would make Counter Machines faster.
+  \item Adding clever recognition of transition's groups -- there are specific
+      transition's chains that could be recognized and the calculations
+      based on such knowledge can help to improve times.
+  \item Adding ASCII mapping that is attached to original source code -- that
+      would allow to create codes in slight modifications of Brainfuck that
+      would be more efficient in end point source code.
 \end{itemize}
 
 \bibliographystyle{plain}
