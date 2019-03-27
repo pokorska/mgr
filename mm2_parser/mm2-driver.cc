@@ -7,7 +7,7 @@
 mm2_driver::mm2_driver()
   : trace_scanning (false), trace_parsing (false),
      ast (nullptr), tmp_ast(nullptr), enable_chunks(true),
-    multifile_input(false), verbose(false) { }
+    multifile_input(false), verbose(false), log(false) { }
 
 mm2_driver::~mm2_driver() {
   if (ast != nullptr) delete ast;
@@ -110,7 +110,7 @@ void mm2_driver::run() {
     return;
   }
 
-  ast->evaluate(verbose);
+  ast->evaluate(verbose, log);
 }
 
 std::ostream& operator<<(std::ostream& out, const TransitionRaw& t) {

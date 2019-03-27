@@ -29,6 +29,8 @@ int main (int argc, char *argv[])
       driver.trace_scanning = true;
     else if (argv[i] == std::string("-verbose"))
       driver.verbose = true;
+    else if (argv[i] == std::string("-log"))
+      driver.log = true;
     else if (argv[i] == std::string("-no_chunks"))
       driver.enable_chunks = false;
     else if (argv[i] == std::string("-chunk_size")) {

@@ -40,6 +40,7 @@ blank [ \t]
 "+"      return yy::bf_parser::make_INCREASE(loc);
 "-"      return yy::bf_parser::make_DECREASE(loc);
 "."      return yy::bf_parser::make_WRITE(loc);
+":"      return yy::bf_parser::make_WRITE_SHIFTED(loc);
 ","      return yy::bf_parser::make_READ(loc);
 "["      return yy::bf_parser::make_LOOP_BEGIN(loc);
 "]"      return yy::bf_parser::make_LOOP_END(loc);

@@ -38,6 +38,7 @@ class _2stackPDA_driver;
   TRANSITION "->"
   TRANSITION_INPUT "->*"
   TRANSITION_OUTPUT "->^"
+  TRANSITION_OUTPUT_SHIFTED "->~"
   INIT_STATE "INIT"
   ALL "ALL"
   NOTHING "NOTHING"
@@ -114,6 +115,7 @@ transition_in:
 
 transition_out:
   "->^" { $$ = TransitionRaw::Output; }
+| "->~" { $$ = TransitionRaw::OutputShifted; }
 
 // TODO: extend.
 item_no_input:

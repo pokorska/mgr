@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "../shared_files/constants.h"
 
 const int BLANK = 0;
 const int MAX_TAPE_LENGTH = 1000;
@@ -27,7 +28,7 @@ inline HeadMove from_char(char c) {
 }
 
 struct TransitionRaw {
-  enum Type { Regular, Input, Output };
+  enum Type { Regular, Input, Output, OutputShifted };
   Type type;
   char pattern, symbol_to_write;
   std::string curr_state, next_state;
@@ -123,6 +124,8 @@ class TransitionMap {
       }
       else if (transition.type == TransitionRaw::Output)
         std::cout << (char)tape[head];
+      else if (transition.type == TransitionRaw::OutputShifted)
+        std::cout << (char)(tape[head] + mgr::ASCII_SHIFT);
       tape[head] = GetSymbolToWrite(transition, tape[head]);
       curr_state = transition.next_state;
       head = NewHeadPos(head, transition.head_move);
@@ -135,7 +138,8 @@ class TransitionMap {
   }
 
   std::string transitionTypeToString(TransitionRaw::Type t) {
-    return t == TransitionRaw::Input ? "->*" : t == TransitionRaw::Output ? "->^" : "->";
+    return t == TransitionRaw::Input ? "->*" : t == TransitionRaw::Output ?
+        "->^" : t == TransitionRaw::OutputShifted ? "->~" : "->";
   }
 
   std::string buildTapeExtension(const TransitionRaw& t) {
@@ -168,7 +172,7 @@ class TransitionMap {
         // Warning: Defining read transition OVERWRITES symbol on the tape with symbol read from stdin.
         if (t.type == TransitionRaw::Input)
           input_handling = "INPUT_CHAR";
-        std::string output_char_section = (t.type == TransitionRaw::Output) ? " Output: ORIG_LEFT" : "";
+        std::string output_char_section = (t.type == TransitionRaw::Output || t.type == TransitionRaw::OutputShifted) ? " Output: ORIG_LEFT" : "";
         std::string left_stack = "", right_stack = "";
         if (t.head_move == Right) {
           left_stack = "(" + input_handling + " + ORIG_RIGHT)";

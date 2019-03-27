@@ -39,6 +39,7 @@ class bf_driver;
   INCREASE "+"
   DECREASE "-"
   WRITE "."
+  WRITE_SHIFTED ":"
   READ ","
   LOOP_BEGIN "["
   LOOP_END "]"
@@ -70,6 +71,7 @@ statement:
 | "+" { $$ = new Increase(); }
 | "-" { $$ = new Decrease(); }
 | "." { $$ = new Write(); }
+| ":" { $$ = new WriteShifted(); }
 | "," { $$ = new Read(); }
 | "[" statements "]" { $$ = new Loop($2); };
 

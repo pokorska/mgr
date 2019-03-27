@@ -38,6 +38,7 @@ blank  [ \t]
 
 "->*"        return yy::_2stackPDA_parser::make_TRANSITION_INPUT(loc);
 "->^"        return yy::_2stackPDA_parser::make_TRANSITION_OUTPUT(loc);
+"->~"        return yy::_2stackPDA_parser::make_TRANSITION_OUTPUT_SHIFTED(loc);
 "->"         return yy::_2stackPDA_parser::make_TRANSITION(loc);
 "START:"     return yy::_2stackPDA_parser::make_INIT_STATE(loc);
 "ALL"        return yy::_2stackPDA_parser::make_ALL(loc);

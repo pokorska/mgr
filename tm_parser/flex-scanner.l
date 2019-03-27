@@ -38,6 +38,7 @@ blank  [ \t]
 
 "->*"       return yy::tm_parser::make_TRANSITION_INPUT(loc);
 "->^"       return yy::tm_parser::make_TRANSITION_OUTPUT(loc);
+"->~"       return yy::tm_parser::make_TRANSITION_OUTPUT_SHIFTED(loc);
 "->"        return yy::tm_parser::make_TRANSITION(loc);
 "START:"    return yy::tm_parser::make_INIT_STATE(loc);
 "BLANK"     return yy::tm_parser::make_BLANK(loc);

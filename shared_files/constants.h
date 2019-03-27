@@ -21,6 +21,7 @@ const int DEFAULT_ALPHABET_SIZE = 140;
 const int DEFAULT_CHUNK_SIZE = 10000;
 const int DEFAULT_HASHTABLE_SIZE = 1009; // How many files are created.
 const int MAX_MAP_SIZE = 100000;
+const int ASCII_SHIFT = 64;
 
 class SequenceGenerator {
  private:

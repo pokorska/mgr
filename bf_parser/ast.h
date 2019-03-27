@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include "../shared_files/constants.h"
 
 std::string strip_label(const std::string& label);
 
@@ -207,6 +208,23 @@ class Write : public Statement {
 
   virtual std::string translate(Statement* next) {
     return getStateName() + " " + ALL_CHARS + " ->^ " +
+           nullSafeGetName(next) + " " + to_char(None) + " " + NO_CHAR +
+           STATEMENT_SEPARATOR;
+  }
+};
+
+class WriteShifted : public Statement {
+ public:
+  virtual void evaluate(std::vector<int>* tape, int* pos) const {
+    check_tape(tape, pos);
+    std::cout << (char)((*tape)[*pos] + mgr::ASCII_SHIFT);
+  }
+  virtual std::string to_string() {
+    return "WriteShifted";
+  }
+
+  virtual std::string translate(Statement* next) {
+    return getStateName() + " " + ALL_CHARS + " ->~ " +
            nullSafeGetName(next) + " " + to_char(None) + " " + NO_CHAR +
            STATEMENT_SEPARATOR;
   }

@@ -43,13 +43,15 @@ void build_pushing_symbol(const string& base, int symbol, Stack stack,
 
 void build_output_items(const string& base, int left, int right,
     const TransitionRaw& t, vector<string>* dest, int alph_size) {
-  if (t.type != TransitionRaw::Output) return;
+  if (t.type != TransitionRaw::Output && t.type != TransitionRaw::OutputShifted) return;
   // Push to output counter.
   const string state1 = get_curr_name(base);
   const string state2 = gen_next_name(base);
   const string state3 = gen_next_name(base);
-  dest->push_back(create_output_MM4(state1, t.output_symbol->evaluate(left-1, right-1),
-      state2));
+  int symbol = t.output_symbol->evaluate(left-1, right-1);
+  if (t.type == TransitionRaw::OutputShifted)
+    symbol += mgr::ASCII_SHIFT;
+  dest->push_back(create_output_MM4(state1, symbol, state2));
   // Flush output counter.
   dest->push_back(create_output_MM4(state2, -1, state3));
 }

@@ -92,6 +92,8 @@ void TransitionMap::evaluate() {
     }
     else if (transition.type == TransitionRaw::Output)
       std::cout << (char)(transition.output_symbol->evaluate(left_top, right_top, c));
+    else if (transition.type == TransitionRaw::OutputShifted)
+      std::cout << (char)(mgr::ASCII_SHIFT + (transition.output_symbol->evaluate(left_top, right_top, c)));
     PushToStack(&left_stack, transition.left_stack, left_top, right_top, c);
     PushToStack(&right_stack, transition.right_stack, left_top, right_top, c);
     curr_state = transition.next_state;

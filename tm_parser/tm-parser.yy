@@ -37,6 +37,7 @@ class tm_driver;
   TRANSITION "->"
   TRANSITION_INPUT "->*"
   TRANSITION_OUTPUT "->^"
+  TRANSITION_OUTPUT_SHIFTED "->~"
   INIT_STATE "INIT"
   BLANK "BLANK"
   ALL "ALL"
@@ -90,6 +91,7 @@ transition_symbol:
   "->" { $$ = TransitionRaw::Regular; }
 | "->*" { $$ = TransitionRaw::Input; }
 | "->^" { $$ = TransitionRaw::Output; }
+| "->~" { $$ = TransitionRaw::OutputShifted; }
 
 head_move:
   "L" { $$ = Left; }

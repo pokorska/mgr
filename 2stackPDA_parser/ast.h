@@ -96,7 +96,7 @@ class SymbolNext : public StackSymbol {
 };
 
 struct TransitionRaw {
-  enum Type { Regular, Input, Output };
+  enum Type { Regular, Input, Output, OutputShifted };
   Type type;
   char left_pattern, right_pattern;
   StackSymbol* output_symbol; // TODO: Change to sequence of symbols to write.

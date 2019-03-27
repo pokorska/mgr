@@ -165,17 +165,19 @@ class TransitionMap {
     return atoi(num.c_str());
   }
 
-  void evaluate(bool verbose = false) {
+  void evaluate(bool verbose = false, bool log = false) {
     // REMEMBER: match_mask specifies what counters should be taken into account.
     Bignum counters[2] = { 1LL, 0LL };
     long long input_counter = 0LL, output_counter = 0LL;
     std::string curr_state = init_state;
     int num = 0;
     while (curr_state != mgr::END_STATE) {
-      int new_num = debug_get_state_number(curr_state);
-      if (new_num != num) {
-        std::cout << "Currently on: state" << new_num << "\n";
-        num = new_num;
+      if (log) {
+        int new_num = debug_get_state_number(curr_state);
+        if (new_num != num) {
+          std::cout << "Currently on: state" << new_num << "\n";
+          num = new_num;
+        }
       }
       if (verbose)
         std::cout << "-------------------------------\n"

@@ -43,6 +43,7 @@ public:
   bool enable_chunks;
   bool multifile_input;
   bool verbose; // Prints all states and counters while evaluation.
+  bool log; // Prints top level state numbers while evaluation.
   int chunk_size = mgr::DEFAULT_CHUNK_SIZE;
 };
 #endif // ! BF_DRIVER_HH

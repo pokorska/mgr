@@ -4,7 +4,8 @@ RUN=false
 TRANSLATE=true
 DEBUG=false
 CLEAN=false
-OUTPUT="output/base"
+KEEP=false
+OUTPUT="output_mm4/base"
 POSITIONAL=()
 while [[ $# -gt 0 ]]
 do
@@ -31,6 +32,10 @@ case $key in
     ;;
     --recompile|--clean)
     CLEAN=true
+    shift
+    ;;
+    --keep)
+    KEEP=true
     shift
     ;;
     -d|--direct)
@@ -77,9 +82,15 @@ if [ $TRANSLATE = true ]; then
     rm -Rf $DIRNAME;
   fi
   mkdir $DIRNAME;
-  ./bf_to_tm.e -turing $FILE > tmp.code;
-  ./tm_to_pda.e -2StackPDA tmp.code > tmp2.code
-  ./pda_to_cm4.e -multifile "$OUTPUT" tmp2.code
+  echo "Translation from Brainfuck to Turing Machine... ";
+  ./bf_to_tm.e -turing $FILE > tmp.tm;
+  echo "completed.";
+  echo "Translation from Turing Machine to 2 stack PDA... ";
+  ./tm_to_pda.e -2StackPDA tmp.tm > tmp.pda;
+  echo "completed.";
+  echo "Translation from 2 stack PDA to 4 Counter Machine... ";
+  ./pda_to_cm4.e -multifile "$OUTPUT" tmp.pda;
+  echo "completed.";
 fi
 
 if [ $RUN = true ]; then
@@ -90,4 +101,7 @@ if [ $RUN = true ]; then
     ./cm4_to_cm2.e -multifile "$OUTPUT";
   fi
 fi
-rm bf_to_tm.e tm_to_pda.e pda_to_cm4.e cm4_to_cm2.e tmp.code tmp2.code 2> /dev/null
+rm bf_to_tm.e tm_to_pda.e pda_to_cm4.e cm4_to_cm2.e 2> /dev/null
+if [ $KEEP = false ]; then
+  rm tmp.tm tmp.pda 2> /dev/null
+fi
