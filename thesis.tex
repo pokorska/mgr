@@ -1184,7 +1184,7 @@ List of commands within directories:
     \begin{itemize}
       \item run 4 Counter Machine source file: \\ \texttt{./test.e ../examples/hello.mm4}
       \item (recommended) run source with multiple files (files within \texttt{output}
-        directory and created by 2StackPDA translation): \\ \texttt{./test.e -multifile output/base}
+        directory and created by 2StackPDA translation): \\ \texttt{./test.e -multifile input/base}
       \item translation into \texttt{output} directory from \texttt{input}
         directory: \\ \texttt{./test.e -minsky -multifile input/base -o output/base}
 
@@ -1203,23 +1203,26 @@ When we want to run full pipeline then we need to run script \texttt{full\_pipel
 \texttt{shared\_files} directory:
 
 \hspace{-1.25cm}
-\texttt{./full\_pipeline.sh -f ../examples/hello3.bf -o output/base --run --recompile}
+\texttt{./full\_pipeline.sh -f ../examples/hello4.xbf -o output\_mm2/base --run --recompile}
 
 Options:
 \begin{itemize}
   \item\textbf{(required)} \texttt{-f <input file path>} or \texttt{--file <input file path>} -- specifies
       the path to input file written in Brainfuck,
   \item \texttt{-o <output file path>} or \texttt{--output <output file path>} -- specifies
-      the path to output directory (result of translation) written in 4 Counter Machine. If not
-      provided then path \texttt{output/base} is taken -- \texttt{output} directory
-      is created and all file names resulted in translation start with \texttt{base}
-      and are located within \texttt{output/},
+      the path to output directory (result of translation) written in required language (2 Counter Machine by default).
+      If not provided then path default path is taken (depending on the final language)
   \item \texttt{-r} or \texttt{--run} -- executes translated code (after translation is completed
       and written to the~specifed output file),
   \item \texttt{--recompile} or \texttt{--clean} forces to recompile all targets,
-  \item \texttt{-d} or \texttt{--direct} directly runs translated code written
-      in multifile format: \\ \texttt{./full\_pipeline.sh -d output/base}
-  \item \texttt{--debug} -- adds additional debugging information when executing program.
+  \item \texttt{-d} or \texttt{--direct} directly runs translated code. If input
+      code is in multifile format then path to the code should not contain latter \texttt{\_<num>}
+      part, for example files \texttt{outdir/aaa\_123}, \texttt{outdir/aaa\_43} should
+      be provided as a command \texttt{./full\_pipeline -d outdir/aaa}
+  \item \texttt{-t <lang>} or \texttt{--to <lang>} specifies at which language a translation should
+      be stopped. Possible languages: \texttt{bf}, \texttt{tm}, \texttt{pda}, \texttt{mm4} and \texttt{mm2}.
+      Such command: \texttt{./full\_pipeline -f ../examples/hello3.bf --to pda} will translate
+      \texttt{hello3.bf} to $2$ stack PDA. By default translation is done to $2$ Counter Machine.
 \end{itemize}
 
 For details see README.md file included in the~implementation.
