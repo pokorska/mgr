@@ -168,7 +168,7 @@ if [ $RUN = true ]; then
   elif [ $STAGES = 2 ]; then
     ./pda_to_cm4.e $OUTPUT;
   elif [ $STAGES = 3 ]; then
-    ./cm4_to_cm2 -multifile $OUTPUT;
+    ./cm4_to_cm2.e -multifile $OUTPUT;
   elif [ $STAGES = 4 ]; then
     ./cm2.e -multifile $OUTPUT;
   fi

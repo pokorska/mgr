@@ -193,7 +193,7 @@ class TransitionMap {
       for (int i = 0; i < 4; ++i)
         counters[i] += transition.changes[i];
 
-      if (transition.next_state == mgr::END_STATE) {
+      if (transition.next_state == mgr::END_STATE && verbose) {
         std::cout << "Very last state: " << curr_state << "\n";
       }
       curr_state = transition.next_state;

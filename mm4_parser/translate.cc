@@ -280,14 +280,13 @@ void Translation::translate(const string& input, const string& output) {
       * GetMap() - gets const reference to map of transitions
   */
   int progress = 0, count = 0;
-  cout << "Progress: 0%\n";
   std::ifstream src(input + "_init", std::ios::binary);
   std::ofstream dst(output + "_init", std::ios::binary);
   dst << src.rdbuf();
   for (int i = 0; i < map.FilesCount(); ++i) {
     int new_progress = (i*100)/map.FilesCount();
     if (new_progress > progress)
-      cout << "Progress: " << new_progress << "%\n";
+      cout << "Progress: " << progress << "%\n";
     progress = new_progress;
 
     map.ClearMap();

@@ -160,7 +160,15 @@ void TransitionMap::translateToManyFiles(const std::string& base) {
   init_file.close();
   int count = 1;
   std::hash<std::string> hash_fn;
+  int total = transitions.size();
+  int progress = 0;
+  int in_count = 0;
   for (const auto& item : transitions) {
+    in_count++;
+    int new_progress = (in_count*100)/total;
+    if (new_progress > progress)
+      std::cout << "Progress: " << progress << "%\n";
+    progress = new_progress;
     std::string mm4_chunk = translateSingleTransition(item.first, item.second);
     std::vector<std::string> singles;
     splitString(mm4_chunk, mgr::STATEMENT_SEPARATOR, &singles);
@@ -175,6 +183,7 @@ void TransitionMap::translateToManyFiles(const std::string& base) {
       count++;
     }
   }
+  std::cout << "Progress: 100%\n";
   std::cout << "Total transitions written: " << count << "\n";
 }
 
