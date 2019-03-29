@@ -174,11 +174,11 @@ if [ $RUN = true ]; then
   fi
 fi
 
-CODES=($TM_OUT $PDA_OUT $MM4_OUT $MM2_OUT)
+CODES=($TM_OUT $PDA_OUT `dirname $MM4_OUT` `dirname $MM2_OUT`)
 
 rm bf_to_tm.e tm_to_pda.e pda_to_cm4.e cm4_to_cm2.e cm2.e 2> /dev/null
 if [ $KEEP = false ]; then
   for file in ${CODES[*]}; do
-    if [ $file != $OUTPUT ]; then rm $file 2> /dev/null; fi
+    if [ $file != $OUTPUT ] &&  [ $file != `dirname $OUTPUT` ]; then rm -Rf $file 2> /dev/null; fi
   done
 fi
