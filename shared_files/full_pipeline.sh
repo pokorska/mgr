@@ -151,11 +151,11 @@ else
   OUTPUT=$FILE;
   filename=$(basename -- "$FILE")
   ext="${filename##*.}"
-  if [ $ext = "bf" ]; then STAGES=0; fi
+  if [ $ext = "bf" ] || [ $ext = "xbf" ]; then STAGES=0; fi
   if [ $ext = "tm" ]; then STAGES=1; fi
   if [ $ext = "pda" ]; then STAGES=2; fi
-  if [ $ext = "mm4" ]; then STAGES=3; fi
-  if [ $ext = "mm2" ]; then STAGES=4; fi
+  if [ $ext = "mm4" ] || [[ $OUTPUT = *"mm4"* ]] ; then STAGES=3; fi
+  if [ $ext = "mm2" ] || [[ $OUTPUT = *"mm2"* ]]; then STAGES=4; fi
 fi
 
 if [ $RUN = true ]; then
