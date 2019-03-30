@@ -1125,18 +1125,44 @@ counter with decreasing it by $1$ at a time.
 
 Computations starts to be an issue at the very end of the pipeline, namely
 when executing $2$CM program. Because of the structure of the counter translation
-(exponential) and the way these (exponential) counter is used, it is really
+(exponential) and tahe way this (exponential) counter is used, it is really
 hard to get any english character. ASCII table contains these characters
 at high positions like 65 ('A'), so within our $2$CM's counter it will be represented
 as a number $2^{65}$ if it was on the first counter of $4$CM and $3^{65}$ when
-it was moved to the second counter of $4$CM. Additionally we decrease these numbers
+it is moved to the second counter of $4$CM. Additionally we decrease these numbers
 by $1$ until we reach $0$ to recognize whether it is divisible by $2$ (for example),
 and then we divide it by $2$ (which again forces us to decrease whole counter to $0$).
 After that we usually repeat this several times, what is equivalent to several
 (simple) operations in $4$CM. So in $4$CM these operations execute lightning fast
 in comparison to their equivalents in $2$CM.
 
-\todo{Rozwiązania problemu?}
+\section{Brainfuck's extension}
+
+The cruelness of the ASCII table can be defeated though. The only thing we need
+is to operate on small numbers in memory, while big numbers (or rather characters
+assigned to them) are printed to the standard output. This leads us to shifting
+printed character by $64$ with newly created operator \texttt{:} (semicolon) which is
+very similar to Brainfuck's \texttt{.} (dot) printing a character without any shifts. Example:
+\begin{verbatim}
++++:++:++:
+\end{verbatim}
+This code will print \texttt{CEG} on standard output.
+
+Obviously this modification does not change the power of expression
+of that language, because it is actually a sintactic sugar and may be translated
+into $64$ \texttt{+}'s then a regular print with \texttt{.} and then $64$ \texttt{-}'s.
+
+Analogical changes have been made to further languages: Turing Machine and $2$
+stack PDA, where we define special operator \texttt{->~} for shifted printing.
+For the purposes of this thesis it was not necessary to introduce similar
+operators in $4$CM or $2$CM, because in translation process we could just
+increase (by $64$) the number pushed into output counter. After the translation
+is done we recognize special printing operator and then we change \texttt{Output: <number>}
+part into \texttt{Output:~<number>~+~$64$}. This means that from $4$CM
+to the end of the pipeline this extension is not present.
+
+All the files that use this extension of the language also have different file
+extension \texttt{.xbf} instead of \texttt{.bf}.
 
 \section{Technical details}
 
@@ -1196,8 +1222,6 @@ List of commands within directories:
         directory and created by $4$ Counter Machine translation): \\ \texttt{./test.e -multifile output/base}
     \end{itemize}
 \end{itemize}
-
-\todo{full pipeline script should handle mm2 as well, somehow}
 
 When we want to run full pipeline then we need to run script \texttt{full\_pipeline.sh} within
 \texttt{shared\_files} directory:
