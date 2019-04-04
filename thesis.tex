@@ -23,27 +23,31 @@
 % Pamietaj o madrym (zgodnym z logicznym rozbiorem zdania oraz estetyka) recznym
 % zlamaniu wierszy w temacie pracy, zwlaszcza tego w jezyku pracy. Uzyj do tego
 % polecenia \fmlinebreak.
-\polishtitle    {Tłumaczenie współczesnego języka programowania\fmlinebreak do Maszyny Minsky'ego.}
-\englishtitle   {Modern programming language translation to the theoretical model of Minsky Machine (Counter Machine).}
+\polishtitle    {Tłumaczenie współczesnego języka programowania\fmlinebreak do Maszyny Minsky'ego}
+\englishtitle   {Modern programming language translation to the theoretical model of Minsky Machine (Counter Machine)}
 \polishabstract {
-Maszyna Mińskiego (definiowana jako skończony zbiór stanów i~przejść mięszy nimi, korzystająca
-z~dwóch liczników jako pamięcie oraz osobnych liczników odpowiadających za wejście/wyjście) ma
+Maszyna Mińskiego, zdefiniowana jako skończony zbiór stanów i~przejść między nimi, korzystająca
+z~dwóch liczników jako pamięci oraz osobnych liczników odpowiadających za wejście/wyjście, ma
 taką samą siłę wyrazu co współczesne języki programowania. To jest znany już fakt, bardziej
 popularny w~wersji z Maszyną Turinga. Oznacza to, że dowolny współczesny program da się
-przetłumaczyć na teoretyczny model Maszyny Mińskiego (to samo dotyczy Maszyny Turinga).
+przetłumaczyć na teoretyczny model Maszyny Mińskiego.
 
 Moim celem jest zatem zbudowanie automatycznego narzędzia tłumaczącego współczesny język
-programowania (Brainfuck) do Maszyny Mińskiego.
+programowania (Brainfuck) do Maszyny Mińskiego z dwoma licznikami. Tym samym narzędziem
+można również przetłumaczyć dany kod źródłowy do Maszyny Mińskiego z czterema
+licznikami oraz automatu z dwoma stosami, jak również uruchomić program napisany
+w dowolnym z tych języków.
 }
 \englishabstract{
-Counter Machine (a machine with finite state set, two counters and input/output counters) is~able
-to express any computations done by~modern programming languages. This is the~well-known theorem,
-just like computations performed using Turing Machine and means that anything written in a~modern
-programming language is possible to~translate into the~theoretical model of Counter Machine
-(as well as into Turing Machine).
+A Counter Machine, a machine with finite state set, two counters and input/output counters, is~able
+to perform any computations done by~modern programming languages. This is theorem
+means that anything written in a~modern
+programming language can be translated into the~theoretical model of Counter Machine.
 
-My goal is to build automatic translation from a~modern programming language (Brainfuck)
-to a~Counter Machine.
+I build a tool for automatic translation from a~modern programming language (Brainfuck)
+to a~Counter Machine with two counters. The tool can also produce codes for
+Counter Machines with four counters, pushdown automata with two stacks as well
+as execute a code written in any of these languages.
 }
 % w pracach wielu autorow nazwiska mozna oddzielic poleceniem \and
 \author         {Jadwiga Pokorska}
@@ -86,13 +90,13 @@ to a~Counter Machine.
 Modern computers and their abilities nowadays are complex and depend on many different factors
 to~perform given computations, like processor technology, software optimizations within given
 processor model, input/output communication protocols and many others. This is why if we want
-to~state or prove anything about the behaviour of computer programs then we need to~find a~common
+to~state or prove anything about the behaviour of computer programs, then we need to~find a~common
 language and~general theoretical model representing any type of "computer".
 
-The model is known since 1936 \cite{turing1937computable} when Alan Turing proposed something
+The model is known since 1936 \cite{turing1937computable} when Alan Turing proposed an abstract system
 called \textbf{Turing Machine}
 to represent a~machine that is able to~execute any computations expressible in~terms of~computer program.
-It has all positive and~negative properties which belong to~modern programs, i.e. it~is possible
+It has all positive and~negative properties which belong to~modern programs, i.e., it~is possible
 to create a~program which will never stop or~consume an infinite amount of memory. The model does not allow
 to~solve all the problems -- it~has got the~same limitations in~sense of~creating algorithms
 like a~regular computer.
@@ -101,20 +105,19 @@ Turing Machine is~a~finite description of~an~algorithm. To perform calculations 
 a~potentially infinite tape as~its memory -- we have some amount of~tape at~the beginning,
 but~we may extend this tape (glue additional tape cells) to~the right end if necessary.
 All cells are either blank or~contain a~single letter -- when a~machine starts its
-work it has access to $3$ different tapes: \textit{input tape}, \textit{output tape} and
+work, it has access to $3$ different tapes: \textit{input tape}, \textit{output tape} and
 its own tape for calculations.
 \textit{Input tape} is read-only and it gives symbols one by one until the~end of an~input word
-(we cannot move left or right explicitly). Similarly, \textit{output tape} is write-only and
+(we cannot perform any direct moves on that tape). Similarly, \textit{output tape} is write-only, and
 when a~machine finishes its work there is output word written (if any is needed). Using its regular
 tape for computations a~machine can do anything: write, read, move and extend the~tape.
 After a~machine finishes (if it finishes at all) it can either \textit{accept}
-or~\textit{reject} original input word and there may be an~output word written on the output tape
+or~\textit{reject} the original input word and there may be an~output word written on the output tape
 (for simplicity it is usually assumed that there is no output word).
 
-As~an~example we can try to construct a~Turing Machine recognizing all binary palindromes of~even length,
+As~an~example we can construct a~Turing Machine recognizing all binary palindromes of~even length,
 formally defined as a~set $A = \{ ww^R : w \in \{0,1\}^* \}$ (where $^R$ means reversing given word).
-
-Because we need to use finite description we say that the~machine should read whole input word
+Because we need to use finite description, we say that the~machine should read whole input word
 from the~input tape, store it on its computations tape and move to the~beginning of its tape.
 Then the~machine should check the~first letter $a_1$ with the~last one $a_n$ -- if these cells
 contain different letters then the~machine should immediately reject the whole word,
@@ -135,13 +138,13 @@ $(Q,\Sigma,\Gamma,\delta,q_0,P)$ where:
       transition function, $L$ and~$R$ mean the~machine should move one cell
       left or~right respectively,
   \item $q_0$ is~the~initial state the~machine starts within,
-  \item $P$ is~a~finite set of~states which accept the~input word.
+  \item $P$ is~a~finite set of~accepting states.
 \end{itemize}
 
-\textbf{Configuration} of~a~Turing Machine consists of ($w$, $q$, $k$), where:
+\textbf{Configuration} of~a~Turing Machine is a~triple ($w$, $q$, $k$), where:
 \begin{itemize}
   \item $w \in \Gamma^*$ is a~word written on~the~computations tape,
-  \item $q$ is a~state of the~machine is~currently within,
+  \item $q$ is a~state the~machine is~currently within,
   \item $k$ is a~cell number the~machine is currently looking at.
 \end{itemize}
 
@@ -151,67 +154,66 @@ each consecutive pair obeys $\delta$) is called
 a~\textbf{run} of~a~Turing Machine. This sequence may be finite or~infinite the~same way like
 a~program may loop forever or~finish within some number of~steps. Each such run begins with
 a~configuration where some word $w$ is~an~input, $k = 0$ which is the~leftmost cell on~the~tape
-and~$q = q_0$ which is initial state defined in~the~description of~given machine. If~a~run is
-finite and~ends with configuration ($w_n$, $q_n$, $k_n$) then we define the~input word to~be
+and~$q = q_0$ which is initial state defined in~the~description of~the~given machine. If~a~run is
+finite and~ends with a~configuration ($w_n$, $q_n$, $k_n$) then we define the~input word to~be
 \textit{accepted} if $q_n \in P$ ($q_n$ is one of accepting states) and \textit{rejected} otherwise.
+\todo{Doprecyzować "run"}
 
 \section{Church-Turing thesis and Turing-completeness}
 
-Computers are used to perform calculations for us. we want them to~execute some
+Computers are used to perform calculations for us. We want them to~execute some
 procedures or~to~perform some process and~we call it an~\textit{algorithm} in~its intuitive meaning.
 A~good example could be~a~mathematical problem of~generating prime numbers -- it~is fairly simple
 to~think of~a~method of~generating prime numbers by checking lager and~larger numbers and~checking
 their all possible divisors. We~are able to~precisely say what this algorithm looks like and~if
-we think for a~while we would probably be able to~express it in terms of Turing Machines. That
-is~exactly what \textbf{Church-Turing thesis} (see Chapter Church-Turing Thesis of \cite{sipser2012ChurchTuring}) states:
+we think for a~while we would probably be able to~express it in terms of Turing Machines. This
+is a consequence of the \textbf{Church-Turing thesis} (see Chapter Church-Turing Thesis of \cite{sipser2012ChurchTuring}):
 
-\begin{hypothesis}
-  Intuitive definition of~any~algorithm a~human/computer can follow is~equivalent
-  to~some description of~Turing Machine.
-\end{hypothesis}
+\textbf{Thesis.} \textit{Intuitive definition of~any~algorithm a~human/computer can follow is~equivalent
+to~some description of~a~Turing Machine.}
 
 This thesis allows us to~think about defining algorithms in~intuitive way while still staying
 within the~world of~Turing Machine programs.
 
-It~turns out that when designing any~modern algorithms we use~the same way of~intuitive description
-of~a~procedure and~then we~are converting it~into \textit{implementation} which is~a~representation
+It~turns out that when designing any~modern algorithms, we use~the same way of~intuitive description
+of~a~procedure and~then we~are converting it~into \textit{implementation}, which is~a~representation
 of~given algorithm using a~modern programming language. From thesis above we~claim that most probably
 it~would be~possible to~express it~as~a~Turing Machine (but probably require lots of~thought).
 
-To~avoid~a~painful process of~expressing algorithms in~an~unhandy theoretical model we~have
-a~concept of~\textbf{Turing-completeness}. All popular modern programming languages are proven
-to~be Turing-complete which means that we are able to~implement our algorithm in~such
+To~avoid~a~painful process of~expressing algorithms in~an~unhandy theoretical model, we~employ
+the~concept of~\textbf{Turing-completeness}. All popular modern programming languages are proven
+to~be Turing-complete, which means that we are able to~implement an algorithm in~such
 language if and only if there exists some equivalent Turing Machine description.
 
 \section{Counter Machine}
 
-We have so far theoretical model -- Turing Machine -- which has the~same power of~expression
-as~modern languages and~it turns out there are many others we~can describe and~prove they are
-equivalent to Turing Machine (so~to~modern languages as~well). One of~such alternatives
-is~\textbf{Counter Machine} (sometimes called \textbf{Minsky Machine}) \cite{minsky_67}
+We have so far one theoretical model -- a Turing Machine -- which has the~same power of~expression
+as~modern languages. It turns out there are many other theoretical models
+equivalent to Turing Machines (so~to~modern languages as~well). One of~such alternatives
+is~\textbf{Counter Machine} (sometimes called \textbf{Minsky Machine}) \cite{minsky_67},
 which is~really basic in~its construction.
 
-Similarly to~Turing Machine, Counter Machine has~finite description -- finite set of~states $Q$
-and~transition function $\delta$ defining when the~machine may move from one state to~another.
-Instead of~the~infinite tape there are $2$ counters -- each counter works like a~glass of~coins,
+Similarly to~Turing Machine, Counter Machine has~a~finite description -- a finite set of~states $Q$
+and~a~transition function $\delta$ defining when the~machine may move from one state to~another.
+Instead of~the~infinite tape, there is a fixed number of counters -- each counter works like a~glass of~coins,
 the~machine may throw a~coin (or~several coins) into the~glass, check whether the~glass is~empty
 or~take out a~coin (only one and~only if the glass is not empty). Each counter is~basically a~non-negative
 integer, but the~machine is~not allowed to~explicitly check its value, it~just gets a~boolean
 information about whether it equals $0$.
 
-There are a~few alternative models -- if~we~allow the~machine to~use $3$ counters instead of~$2$
-then we get an equivalent model, the~same for $4$ or~more counters. According to~this fact, we~can
+There are a~few alternative models -- if~we~allow the~machine to~use at~least $2$ counters,
+then we get a~model equivalent to Turing Machine. According to~this fact, we~can
 choose how many counters it~is convenient for~us to~use. The~only exception is~Counter Machine with
 $1$ counter which is~not able to~express everything a~$2$ Counter Machine can. As~an~argument
 we may say that halting problem for $1$ Counter Machine is~decidable -- it is possible to~check
 in~polynomial time whether a given description of $1$ Counter Machine will loop forever or~not.
-Of~course halting problem for $2$ Counter Machine (which is~equivalent to~Turing Machine model)
-is proven to~be not decidable. \cite{minsky_67}
+Of~course halting problem for $2$ Counter Machine is proven to~be not decidable. \cite{minsky_67}
 
 \section {2 stack pushdown automaton (2 stack PDA)}
 
-Similarly to~Counter Machine, finite description of a~2~stack pushdown automaton (see Chapter Context-Free Languages, Pushdown Automata of \cite{sipser2012ChurchTuring})
-contains number of~states and~transition function $\delta$, but~counters are replaced with 2 stacks.
+Similarly to~a~Counter Machine, finite description of a~2~stack pushdown automaton
+(PDA) -- see Chapter Context-Free Languages, Pushdown Automata of \cite{sipser2012ChurchTuring}
+-- contains a~number of~states and~transition function $\delta$, but~counters are replaced with 2 stacks.
 These 2~stacks use stack alphabet $\Gamma$ and the~automaton may change their state
 by~pushing zero or~more symbols at the~top or~removing \textbf{exactly one} symbol from
 the~top.
@@ -220,7 +222,7 @@ In practice, the~implementation assumes that a~single transition \textbf{always}
 a~symbol from each stack and after transitioning to a~new state pushes some symbols
 (maybe the~original ones) to each stack.
 
-Each stack has a~special symbol $\perp$ at the~bottom that determines when a~stack becomes
+Each stack has a~special symbol $\perp$ at the~bottom that determines when a~stack is
 empty. Additionally, it is not allowed to take $\perp$ out from the stack, so~after transitioning
 to a~new state $\perp$ must be pushed back (maybe followed by other symbols) to~the~stack.
 
@@ -232,18 +234,18 @@ Formally 2 stack PDA is a~$6$-tuple ($Q$, $\Sigma$, $\Gamma$, $\delta$, $q_0$, $
   \item $\delta: Q \times \Sigma \times \Gamma \times \Gamma \rightarrow
       Q \times \Gamma^* \times \Gamma^*$ is~a~finite transition function,
   \item $q_0$ is the initial state of the~PDA,
-  \item $F$ is a~finite set of states which accept the~input word.
+  \item $F$ is a~finite set of accepting states which.
 \end{itemize}
 
-Each transition specifies when it may be applied by giving a~triple
-($a$,~$s$,~$t$)~$\in$~($\Sigma$,~$\Gamma$,~$\Gamma$). It means that the input symbol is $a$,
+Each transition specifies when it may be applied by giving a~quadruple
+($q$,$a$,~$s$,~$t$)~$\in$~($Q$,$\Sigma$,~$\Gamma$,~$\Gamma$). It means that the input symbol is $a$,
 the~left stack has symbol $s$ and the~right stack symbol $t$ at the~top. In practice, there
 might be multiple transitions matching the current state, so it is assumed that the first one
 defined is applied.
 
 \section{Brainfuck}
 
-As~we defined above Counter Machine is~a~minimalistic model of~computations, the~same way
+A~Counter Machine is~a~minimalistic model of~Turing-complete computations the~same way
 \textbf{Brainfuck} \cite{brainfuckWiki} is a~minimalistic (only 8 instructions) programming
 language which recalls
 the~definition of~Turing Machine -- program operates on~a~tape containing numbers, it~is possible
@@ -290,30 +292,26 @@ in Brainfuck, Turing Machine, 2 stack PDA or~4 Counter Machine and receive an~eq
 Similarly, we may stop at any point of~translations, so it is possible to generate an equivalent program
 in 2 stack PDA model from a~program written in Turing Machine model.
 
-The~flexibility in running the~pipeline gives us the possibility to prove (as~side-effect)
-the~original Church-Turing thesis for Brainfuck. Any~modern program (written in Brainfuck) may be executed
-on a~theoretical Turing Machine model.
+It is worth to mention that there are translators from C to Brainfuck that can
+be combined with my tool in order to obtain a translation from C to $2$ Counter
+Machine.
 
 This paper is organized as follows: Section 2 contains the exact specification of all the~models used in translations.
-It contains descriptions of how to write source code in each model (i.e. Turing Machine source code). Section 3
+It contains descriptions of how to write source code in each model. Section 3
 explains how we approach each separate translation -- general algorithm to~move from a~source code in one model
 to a~source code in the~next one. Section 4 contains technical details about the~implementation -- what tools
 were chosen to~this project and how to use the~prepared code. It also discusses encountered problems and presents
-a~summary of received results. In section 5 we discuss the~outcome of the~whole work, what could be extended in the~future
+a~summary of received results. In Section 5 we discuss the~outcome of the~whole work, what could be extended in the~future
 and what could be done better with the~current knowledge.
 
-
-\ldots
-
-\todo{,,Related work''}
 
 \chapter {Preliminaries}
 
 \section {Brainfuck}
 
-Brainfuck is a programming language with only $8$ statements and execution
+Brainfuck is a programming language with only $8$ statements. Execution
 of~any program is done using a~finite sequence of~memory cells. Statements
-operate on~these cells using data pointer --- initially, the pointer is set
+operate on~these cells using a~data pointer --- initially, the pointer is set
 on the~leftmost cell in the sequence.
 
 Statements:
@@ -325,7 +323,7 @@ Statements:
   \item \texttt{.} print to stdout the~character that is under the~data pointer,
   \item \texttt{,} read from stdin a~character and write it to the cell under the data pointer,
   \item \texttt{$[$} beginning of a loop with condition checking whether value under
-      the~data pointer is zero. If it is then execution jumps to the matching $]$,
+      the~data pointer is zero. If it is, then execution jumps to the matching $]$,
   \item \texttt{$]$} closing symbol of a loop --- execution jumps to the~beginning of the~loop
       (matching $[$) and then check for zero value under the data pointer is performed.
 \end{itemize}
@@ -358,11 +356,11 @@ An example code printing "Hello World!" (source: \href{https://pl.wikipedia.org/
 
 \subsection {Instructions}
 
-Turing Machine consists of a finite number of states, changes between them
-and~potentially infinite tape, on~which it is able to~write and~read symbols.
-It has no code sequence, a program is a~set of state changes and~definition
+A~Turing Machine consists of a finite number of states, transition relation
+and~a~potentially infinite tape, on~which it is able to~write and~read symbols.
+It has no code sequence, a program is a~set of transitions and~a~definition
 of~an~initial state. There is a special final state \texttt{END} that does not need
-        to~be defined to~be used.
+to~be defined to~be used.
 
 There is a~predefined set of symbols used on the tape which is whole ASCII character set
 extended with the same amount of additional (non-ASCII) symbols. Regular
@@ -374,63 +372,62 @@ these characters may cause unexpected behaviour if used in Brainfuck's
 code logic).
 
 \begin{itemize}
-  \item \texttt{BLANK} which represents empty field on the tape
-  \item \texttt{*} (ALL) defines all characters (both ASCII and special)
-  \item \texttt{\#} (NOTHING) means no character which is used to say
+  \item \texttt{BLANK} which represents empty field on the tape,
+  \item \texttt{*} (ALL) defines all characters (both ASCII and special),
+  \item \texttt{\#} (NOTHING) means "no character" which is used to say
                    that we do not want to write anything on tape during
-                   this state change
-          \item \texttt{\&} (NON\_ZERO) defines all characters except 0
+                   this state change,
+          \item \texttt{\&} (NON\_ZERO) defines all characters except 0,
           \item \texttt{0} (ZERO) represents zero that is used for conditional jumps
-           (jump zero)
-          \item \texttt{>} (NEXT\_CHAR) allows writing on the tape next character
-                   (increased by one), i.e. writes \texttt{g} if on the tape
-                   was \texttt{f}
+           (jump zero),
+          \item \texttt{>} (NEXT\_CHAR) allows writing the next character
+                   (increased by one) on the~tape, i.e. writes \texttt{g}
+                   if on the tape was \texttt{f},
   \item \texttt{<} (PREV\_CHAR) similarly as above but writes the previous character,
-                   i.e. writes \texttt{e} when seen \texttt{f}
+                   i.e. writes \texttt{e} when seen \texttt{f}.
 \end{itemize}
 
-Defining initial state:
+Defining the initial state:
 \begin{verbatim}
 START: state_name
 \end{verbatim}
 
-Each state change looks as follows:
+Each transition looks as follows:
 \begin{verbatim}
-state_name symbol(s) -> target_state head_move symbol_to_write
+state_name symbol -> target_state head_move symbol_to_write
 \end{verbatim}
 
-\texttt{symbol(s)} is ASCII character including special definitions (currently
+\texttt{symbol} is an~ASCII character including special definitions (currently
 all special definitions use regular ASCII so that it is easy to see
 in a~standard text file).
 
 \texttt{head move} is one of \texttt{L}, \texttt{R} or \texttt{-} which
 steer the head to go left, right or stay in place, respectively.
 
-\texttt{symbol to write} is any (currently ASCII) symbol. Currently, there
-is no mechanism to prevent writing any symbol from special definitions,
-but~it will cause an~undefined behaviour of~the machine. The only symbol
-from special definitions that are allowed to appear as \texttt{symbol\_to\_write}
+\texttt{symbol to write} is any (currently ASCII) symbol. Writing any symbol
+from special definitions will cause an~undefined behaviour of~the machine. The only symbol
+from special definitions that is allowed to appear as \texttt{symbol\_to\_write}
 is \texttt{\#} (NOTHING) meaning that symbol on the tape should not change.
 
 \subsection {Extensions of the theoretical model}
 
-Standard input/output handling is done by allowing to read or write single
-ASCII character from/to stdin/stdout. It is possible to~add additional
-reading or~writing before moving the~head. It is done by modifying change
-symbol \texttt{->} in the~state change definition.
+Standard input/output handling is done by allowing to read or write a~single
+ASCII character from/to stdin/stdout. It is possible to~add an~additional
+reading or~writing instruction before moving the~head. It is done by modifying
+the~change symbol \texttt{->} in the~transition definition.
 \begin{itemize}
-  \item Reading is done with \texttt{->*}, i.e. \texttt{state1 A ->* state2 R NOTHING}
-        which means when seen symbol \texttt{A} in state \texttt{state1} we read
-        from stdin one character, overwrite \texttt{A} to read value and move
-        head one field right.
+  \item Reading is done with \texttt{->*}, i.e., \texttt{state1 A ->* state2 R NOTHING},
+        which means "when seen the~symbol \texttt{A} in state \texttt{state1}, read
+        from stdin one character, overwrite \texttt{A} to the~read value and move
+        head one field right".
   \item Writing is done similarly with \texttt{->\^},
-        i.e. \texttt{state1 A ->\^\ state2 R NOTHING} which will print symbol
+        i.e., \texttt{state1 A ->\^\ state2 R NOTHING}, which will print the~symbol
         \texttt{A} on stdout and move the~head to the~right.
 \end{itemize}
 
 \subsection{Example}
 
-A~program that reads a~letter from stdin, writes this letter into
+Below is a~program that reads a~letter from stdin, writes this letter into
 stdout and if the~written letter was \texttt{B} or \texttt{b} then prints
 \texttt{.} at the end as well, otherwise finishes.
 
@@ -446,13 +443,13 @@ s6 ALL ->^ s7 - NOTHING
 s7 ALL -> END - NOTHING
 \end{verbatim}
 
-Note: If there is no state change defined for the given configuration
-(nothing matches) then it is assumed that machine gets to \texttt{END} state.
-Because of this in the above example, last instruction is not necessary.
+Note: If there is no transition defined for the given configuration
+(nothing matches), then it is assumed that the~machine gets to the~\texttt{END} state.
+Because of this, in the above example, last instruction is not necessary.
 
 \section {2 Stack Pushdown Automaton}
 
-2 Stack Pushdown Automaton consists of two stacks, input tape and~definition
+A~$2$ Stack Pushdown Automaton consists of two stacks, an~input tape and~a~definition
 of~states and transitions between them. Each transition looks as follows:
 \begin{verbatim}
 state_name left_pattern right_pattern ->
@@ -461,38 +458,38 @@ state_name left_pattern right_pattern ->
 
 Explanation:
 \begin{itemize}
-  \item \texttt{left\_pattern} is symbol or pattern that should be matched
-      for the symbol at the top of the left stack
-  \item \texttt{right\_pattern} is the same as above, but for the right stack
+  \item \texttt{left\_pattern} is a~symbol or a~pattern that should be matched
+      for the symbol at the top of the left stack,
+  \item \texttt{right\_pattern} is the same as above, but for the right stack,
   \item \texttt{left\_stack\_items} is the list of items that should be pushed
       to the~left stack before moving to \texttt{target\_state}. It might be
       a~single letter \texttt{"a"}, a~sequence of letters \texttt{"abc"}
-      or~sequence of~letters and~references, i.e. \texttt{("a" + ORIG\_LEFT + "b")}
+      or~a~sequence of~letters and~references, i.e., \texttt{("a" + ORIG\_LEFT + "b")}
       where \texttt{ORIG\_LEFT} means the letter we read from the~left stack (the one matched
-      in \texttt{left\_pattern}). Note: If \texttt{+} is used it is required to put
-      the~whole sequence in parenthesis
+      in \texttt{left\_pattern}). Note: If \texttt{+} is used, it is required to put
+      the~whole sequence in parenthesis,
   \item \texttt{right\_stack\_items} is the same as above, but for items to be pushed into
-      the right stack
+      the right stack.
 \end{itemize}
 
 Special references and definitions in transitions:
 \begin{itemize}
-  \item \texttt{ORIG\_LEFT} is the letter taken from the left stack
-  \item \texttt{ORIG\_RIGHT} is the letter taken from the right stack
+  \item \texttt{ORIG\_LEFT} is the letter taken from the left stack,
+  \item \texttt{ORIG\_RIGHT} is the letter taken from the right stack,
   \item \texttt{INPUT\_CHAR} is the letter taken from the input tape
-      (only in input transition type - see section below)
+      (only in the~input transition type - see section below),
   \item \texttt{NOTHING} may be used as \texttt{left\_stack\_items} or \texttt{right\_stack\_items}
-      and means that nothing is pushed into the left/right stack
-  \item \texttt{END} is a special state name into which the transition is made if no other transition is specified
+      and means that nothing is pushed into the left/right stack,
+  \item \texttt{END} is a special state name into which the transition is made if no other transition is specified,
   \item \texttt{\$} is the symbol of the stack bottom.
 \end{itemize}
 
 \subsection {Extensions of the theoretical model}
 
-Input/Output handling is done similarly to Turing Machine: we change \texttt{->} in transition
+Input/Output handling is done similarly to a~Turing Machine: we change \texttt{->} in transition
 to \texttt{->*} or \texttt{->\^}.
 
-When defining input transition it is allowed to use \texttt{INPUT\_CHAR} in any items
+When defining input transition, it is allowed to use \texttt{INPUT\_CHAR} in any items
 to be pushed into the left/right stack. Here is an~example that takes a~character from input
 tape and pushes it into the~left stack (and ignores symbols taken from both stacks).
 \begin{verbatim}
@@ -500,18 +497,19 @@ state1 ALL ALL ->* state2 INPUT_CHAR NOTHING
 \end{verbatim}
 
 When defining output transition we \textbf{must} specify what character is printed
-with adding \texttt{Output: <letter>} at the very back of transition definition.
-An~example that prints letter taken from the~left stack (and ignores what was taken from right stack):
+with adding \texttt{Output: <letter>} at the very back of the~transition definition.
+An~example that prints the~letter taken from the~left stack (and ignores what was
+taken from the~right stack):
 \begin{verbatim}
 state1 ALL ALL ->^ state2 NOTHING NOTHING Output: ORIG_LEFT
 \end{verbatim}
-An~example that prints letter "a" (and ignores what was taken from stacks):
+An~example that prints the~letter "a" (and ignores what was taken from the~stacks):
 \begin{verbatim}
 state1 ALL ALL ->^ state2 NOTHING NOTHING Output: "a"
 \end{verbatim}
 
 \textbf{Important note:} Order of defining transition matters. If patterns do not match
-a~distinct set of letters then the transition that appeared first is applied.
+a~distinct set of letters, then the transition that appeared first is applied.
 
 \subsection{Example}
 
@@ -532,7 +530,7 @@ s6 ALL ALL -> END ORIG_LEFT ORIG_RIGHT
 
 \section {Counter Machine (4 counters)}
 
-Counter Machine consists of $4$ counters each holding non-negative integer,
+A~$4$ Counter Machine consists of $4$ counters each holding non-negative integer,
 a~finite number of states and~transitions between them. Each transition
 looks as follows:
 
@@ -541,14 +539,14 @@ state_name (pattern pattern pattern pattern) ->
     target_state (number number number number)
 \end{verbatim}
 
-Where:
+where:
 \begin{itemize}
   \item \texttt{state\_name} is the state in which the Counter Machine needs to be
       within for this transition to be applied,
   \item \texttt{pattern} is one of values \texttt{0}, \texttt{1} or \texttt{\_}.
-      \texttt{0} means we expect empty counter, \texttt{1} means we expect non-empty
+      \texttt{0} means we expect the~empty counter, \texttt{1} means we expect an~non-empty
       counter and \texttt{\_} means that this counter state does not matter, so
-      this transition should be applied regardless of this counter's state.
+      this transition should be applied regardless of this counter's value,
   \item \texttt{target\_state} is the state in which machine will be after
       applying the transition,
   \item \texttt{number} is an~integer from the~range \texttt{[-1, MAX\_INT]} specifying
@@ -557,8 +555,8 @@ Where:
       in a~regular integer type.
 \end{itemize}
 
-\textbf{Note:} If there are many transitions that may be applied in given state
-matching all counters \textbf{the first one} is applied. It means that the order
+\textbf{Note:} If there are many transitions that may be applied in a~given state
+matching all the counters, \textbf{the first one} is applied. It means that the order
 of defining transitions matters.
 
 It is required to give an~initial state of the machine with the following statement:
@@ -568,24 +566,24 @@ START: state_name
 
 \subsection {Extensions of the theoretical model}
 
-Input/Output operations fit in the schema of using counters - input and output
-are additional counters which transitions may use in a~similar way as counters are used.
+The~Input/Output operations fit in the schema of using counters - input and output
+are additional counters which transitions may be used in a~similar way as counters are used.
 
-Input transition is defined as follows:
+An~input transition is defined as follows:
 \begin{verbatim}
 state_name (counters) input pattern ->*
     target_state (numbers) input_operation
 \end{verbatim}
 
-Where:
+where:
 \begin{itemize}
   \item \texttt{input\_pattern} is one of \texttt{0}, \texttt{1} or \texttt{\_}
       (same as the counter pattern) and specifies what should be the state
       of input counter for this transition to be applied,
   \item \texttt{input\_operation} specifies what action should be performed
-      on input counter and is one of \texttt{LOAD}, \texttt{-1} or \texttt{NOOP}
+      on the~input counter and is one of \texttt{LOAD}, \texttt{-1} or \texttt{NOOP}
       meaning respectively loading a~character from stdin into the input counter,
-      decrease input counter by \texttt{1} and leaving input counter untouched.
+      decrease input counter by \texttt{1}, and leaving input counter untouched.
 \end{itemize}
 
 This transition reads from stdin into the input counter:
@@ -593,27 +591,24 @@ This transition reads from stdin into the input counter:
 state1 (_ _ _ _) _ ->* state2 (0 0 0 0) LOAD
 \end{verbatim}
 
-These transitions read the~value from input counter and store it in the first counter:
+These transitions read the~value from the~input counter and store it in the first counter:
 \begin{verbatim}
 state1 (_ _ _ _) 1 ->* state1 (1 0 0 0) -1
 state1 (_ _ _ _) 0 ->* state2 (0 0 0 0) NOOP
 \end{verbatim}
 
-Note: It is assumed that transition may just decrease the input counter
-and is not allowed to increase its value directly.
+Note: Any transition may only decrease (or load) the input counter
+and it is not allowed to increase its value.
 
-Output transition is defined as follows:
+An~output transition is defined as follows:
 \begin{verbatim}
 state_name (counters) ->^ target_state (numbers) Output: output_operation
 \end{verbatim}
 
-Where:
-\begin{itemize}
-  \item \texttt{output\_operation} specifies what should be performed
-      on output counter and may be one of \texttt{FLUSH} or non-negative number,
-      meaning respectively pushing counter to stdout and modifying
-      the~value stored in the counter by the~given number.
-\end{itemize}
+where \texttt{output\_operation} specifies what should be performed on the~output
+counter and may be one of \texttt{FLUSH} or non-negative number, meaning
+respectively pushing the~counter to stdout and modifying the~value stored
+in the counter by the~given number.
 
 These transitions print character stored in the first counter:
 \begin{verbatim}
@@ -621,13 +616,13 @@ state1 (1 _ _ _) ->^ state1 (-1 0 0 0) Output: 1
 state1 (0 _ _ _) ->^ state2 (0 0 0 0) Output: FLUSH
 \end{verbatim}
 
-Note: It is assumed that transition may just increase the output counter
+Note: Any transition may only increase (or flush) the output counter
 and is not allowed to decrease its value.
-
 
 \subsection{Example}
 
-Code that reads a~character from stdin doubles its ASCII value and prints the result.
+A~code that reads a~character from stdin, doubles its ASCII value and prints
+the result is as follows:
 \begin{verbatim}
 START: s1
 s1 (_ _ _ _) _ ->* s2 (0 0 0 0) LOAD
@@ -641,20 +636,20 @@ s4 (_ 0 _ _) ->^ END (0 0 0 0) Output: FLUSH
 
 \section {Counter Machine (2 counters)}
 
-Counter Machine with 2 counters has the same definition as
-Counter Machine with 4 counters, but it is allowed to use only
+A~Counter Machine with 2 counters has the same definition as
+a~Counter Machine with 4 counters, but it is allowed to use only
 2 counters, so transitions become of the form:
 
 \begin{verbatim}
 state_name (pattern pattern) -> target_state (number number)
 \end{verbatim}
 
-Input/Output is handled the same way it is handled in Counter Machine with 4 counters.
+Input/Output is handled the same way it is handled in a~Counter Machine with 4 counters.
 
 
 \chapter{Theoretical underpinnings}
 
-\section {Reduction from Brainfuck to Turing Machine}
+\section {From Brainfuck to Turing Machine}
 
 Brainfuck is very similar to Turing Machine, so it is relatively easy to build
 a~translation. They both have a~tape and both can read and update symbols in any
@@ -668,24 +663,24 @@ of states and transition function (defining how to move between them). A solutio
 is to give a~unique name to each instruction and specify transitions between
 consecutive instructions. The only exception is a~loop, where depending on
 symbol stored in the current cell we perform transition to $1$ out of $2$ different states.
-This is exactly what Turing Machine model provides -- depending on the~symbol
-within the current cell we apply the appropriate transition.
+This is exactly what the Turing Machine model provides -- depending on the~symbol
+within the current cell, we apply the appropriate transition.
 
 \textit{Input/Output handling.}
-Turing Machine can either accept or~reject given input, so it is necessary to
-extend this theoretical model to allow side-effects like reading standard
-input and writing to standard output. Even though there is a~way to give
-input word (it should be initially written on the tape), this thesis assumes
-there are a separate source and a separate destination for I/O operations.
+A~Turing Machine can either accept or~reject a~given input, so it is necessary to
+extend this theoretical model to allow side-effects like reading the~standard
+input and writing to the~standard output. Even though there is a~way to give
+an~input word (it should be initially written on the tape), this thesis assumes
+that there are a separate source and a separate destination for input/output operations.
 It means that at any point we may load a~symbol into the current cell or~send
 any symbol (not necessary the one from the current cell) to the~screen. This
-way Brainfuck itself handles I/O as well which makes translation straightforward.
+way Brainfuck itself handles input/output as well, which makes the~translation straightforward.
 
-\section {Reduction from Turing Machine to 2 stack PDA}
+\section {From Turing Machine to 2 stack PDA}
 
-Turing Machine operates on a~tape, while 2 stack PDA operates on 2 stacks, so we need
-to come up with some idea how to represent a~tape using 2 stacks. This idea is well-known:
-we cut the~tape into two pieces in a~way that the current cell is at the~top of the~left stack and all
+A~Turing Machine operates on a~tape, while 2 stack PDA operates on 2 stacks, so we need
+to represent a~tape using 2 stacks. The idea is well-known: we cut the~tape into
+two pieces in a~way that the current cell is at the~top of the~left stack and all
 the cells from the~left side are lower in the~left stack and similarly all cells from the~right side
 are stored in the~right stack (cell to the right of the~current cell is the top of the~right stack).
 
@@ -703,29 +698,29 @@ is equivalent to taking one symbol from the~top of the~right stack and pushing i
 into the~left stack -- if the~right stack is empty then we just push the new blank symbol
 to the~left stack.
 
-\section {Reduction from 2 stack PDA to 4 Counter Machine}
+\section {From 2 stack PDA to 4 Counter Machine}
 
 Similarly to the~reduction from Turing Machine to 2 stack PDA we need to simulate
 one memory model with the~other one. In this case, we need to simulate $2$ stacks
 with $4$ counters. More precisely, it is enough to show how to simulate $1$ stack
 with $2$ counters and then apply the~same idea to both stacks.
 
-Stack alphabet $\Gamma$ is finite and is of size $N = |\Gamma|$. Each symbol from $\Gamma$ may
+A~stack alphabet $\Gamma$ is finite and is of size $N = |\Gamma|$. Each symbol from $\Gamma$ may
 be assigned a~unique number starting from $1$ up to $N$ ($0$ is problematic -- it will be
 explained later). A~stack is a~sequence of numbers $a = a_0 a_1 a_2 \dots a_{k}$ (where $a_0$
-is the~top of the~stack and $a_k = \perp = 0$ is the~stack bottom). Such a~sequence we may
-represent as a~single number in a~numeral system with base $\bar{N} = N+1$:
+is the~stack top and $a_k = \perp = 0$ is the~stack bottom). We represent such
+a~sequence as a~single number in a~numeral system with base $\bar{N} = N+1$:
 
 $$ a_0 \cdot \bar{N}^0 + a_1 \cdot \bar{N}^1 + \dots + a_{k} \cdot \bar{N}^{k}
     = \sum_{i=0}^{k} a_i \cdot \bar{N}^i $$
 
 Our left counter will hold the whole stack as a~single number and our right counter will be used
 to perform operations on the~left one. Because of this representation if we had some symbol $a$
-with value $0$ then we would not distinguish between an~empty stack and the~one containing
-a single $a$ (more precisely $0$ could represent a~stack containing any number of $a$'s
+with the~value $0$, then we would not distinguish between an~empty stack and the~one containing
+a single $a$ (more precisely, $0$ could represent a~stack containing any number of $a$'s
 stored on this stack).
 
-We will need a~few stack operations (and their equivalent
+We need a~few stack operations (and their equivalent
 methods on counters):
 \begin{itemize}
   \item \textbf{pop} one symbol from the~top,
@@ -734,10 +729,10 @@ methods on counters):
 \end{itemize}
 
 To \textbf{pop} one symbol from the~stack we just perform an~integer division by $\bar{N}$ on
-the~counter. To~perform this division we will decrease counter by $1$ at each step and every
-$\bar{N}$-th step will increase the~helper counter by $1$. When the~original counter becomes empty
-then in the~helper counter there is the~result of integer division by $\bar{N}$. Now we just
-need to copy the~result from helper counter into the~original one. The whole operation is shown in
+the~counter. To~perform this division we decrease the~counter by $1$ at each step and every
+$\bar{N}$-th step we increase the~helper counter by $1$. When the~original counter becomes empty,
+then the~helper counter stores the~result of integer division by $\bar{N}$. Now we just
+need to copy the~result from helper counter into the~original one. The whole operation shows
 Figure \ref{fig:pop_operation}.
 
 \begin{figure}[H]
@@ -763,7 +758,7 @@ Figure \ref{fig:pop_operation}.
     \end{tikzpicture}
 
     \captionsetup{font=footnotesize}
-    \caption{Pop element $a_0$ from the top.}
+    \caption{Pop $a_0$ from the top.}
 
   \end{subfigure}
   \begin{subfigure}[b]{0.6\textwidth}
@@ -785,22 +780,22 @@ Figure \ref{fig:pop_operation}.
     \end{tikzpicture}
 
     \captionsetup{font=footnotesize}
-    \caption{Pop element from the~stack encoded in counter $C_0$.}
+    \caption{Pop $a_0$ from the~stack encoded in counter $C_0$.}
 
   \end{subfigure}
 
-  \caption{Stack vs. counter --- \textbf{pop} operation.}
+  \caption{Stack vs. counter --- the~\textbf{pop} operation.}
   \label{fig:pop_operation}
 
 \end{figure}
 
-To \textbf{push} symbol $b$ to the~top of the stack we need to multiply the~counter
-by $\bar{N}$ and add number $\bar{b}$ corresponding to symbol $b$:
+To \textbf{push} the~symbol $b$ to the~top of the stack we need to multiply the~counter
+by $\bar{N}$ and add the~number $\bar{b}$ corresponding to symbol $b$:
 $$ \bar{b} + \bar{N} \cdot
     \Big[ a_0 \cdot \bar{N}^0 + a_1 \cdot \bar{N}^1 + \dots
     + a_{k} \cdot \bar{N}^{k} \Big]
     = \bar{b} + \sum_{i=0}^{k} a_i \cdot \bar{N}^{i+1} $$
-Schematic operations to push stack symbol into a~stack represented as a~number is
+Schematic operations to push stack symbol into a~stack represented as a~number are
 shown in Figure \ref{fig:push_operation}.
 
 \begin{figure}[H]
@@ -826,7 +821,7 @@ shown in Figure \ref{fig:push_operation}.
     \end{tikzpicture}
 
     \captionsetup{font=footnotesize}
-    \caption{Push element $b$ to the top.}
+    \caption{Push $b$ to the top.}
 
   \end{subfigure}
   \begin{subfigure}[b]{0.6\textwidth}
@@ -852,26 +847,26 @@ shown in Figure \ref{fig:push_operation}.
     \end{tikzpicture}
 
     \captionsetup{font=footnotesize}
-    \caption{Push element $b$ to the~stack encoded in counter $C_0$.}
+    \caption{Push $b$ to the~stack encoded in counter $C_0$.}
 
   \end{subfigure}
 
-  \caption{Stack vs. counter --- \textbf{push} operation.}
+  \caption{Stack vs. counter --- the~\textbf{push} operation.}
   \label{fig:push_operation}
 
 \end{figure}
 
 
-The hardest part is to recognize what is the~top symbol -- \textbf{check} operation.
+The hardest part is to recognize what is the~top symbol -- the~\textbf{check} operation.
 The idea is simple -- we need to calculate the~remainder from division by $\bar{N}$:
 $$ \Bigg( \sum_{i=0}^{k} a_i \cdot \bar{N}^i \Bigg) \ \mathrm{mod} \ \bar{N} = a_0 $$
 The only places where we can remember any information are states. This means that we need
 to end up within a different state for each remainder -- we call a~state $R_i$ if
-the recognized symbol has number $i$. Consider example alphabet having $9$ symbols -- Figure
+the recognized symbol has the~number $i$. Consider an~example alphabet having $9$ symbols -- Figure
 \ref{fig:check} shows all states and transitions needed to~recognize it. Each
 transition labelled with $0$ is applied only when the counter is empty, similarly
 all those labelled with $1$ apply when it is not empty. Additionally, when we move around
-the~circle (apply transition labelled with $1$) we always decrease the~counter.
+the~circle (apply the~transition labelled with $1$), we always decrease the~counter.
 
 \begin{figure}[H]
 \centering
@@ -908,44 +903,45 @@ the~circle (apply transition labelled with $1$) we always decrease the~counter.
 }
 \end{tikzpicture}
 
-\caption{Recognizing symbol from an alphabet of size $9$. $R_i$ is the~state with recognized
-  symbol $i$, labels on paths define whether counter is empty (0) or not (1).}
+\caption{Recognizing a~symbol from an alphabet of size $9$. $R_i$ is the~state with recognized
+  symbol $i$, labels on paths define whether the~counter is empty (0) or not (1).}
 \label{fig:check}
 
 \end{figure}
 
-When a~counter value decreases to $0$ then we move to some state $R_i$ (notice that for
-correct representations of stacks we never get a~remainder equal $0$, so we never end within $q_0$).
-If we do not want to destroy original counter value (which is stack representation) we need
-to copy it into our counter for computations and after recognizing symbol at the~top
+When a~counter value decreases to $0$, then we move to some state $R_i$ (notice that for
+the~correct representations of the~stacks we never get a~remainder equal $0$, so we never end within $q_0$).
+If we do not want to destroy the~original counter value (which is the~stack representation), we need
+to copy it into our counter for computations and after recognizing the~symbol at the~top,
 we need to copy it back to the original counter.
 
 \textit{How to put it all together?}
 
 Because all transitions (in any presented model) are independent, we may focus on a~single
-transition and when we build a~translation for it then we can build a~translation for the~whole
+transition and when we build a~translation for it, then we can build a~translation for the~whole
 program (as long as we keep the~order of transitions).
 
 Each 2 stack PDA transition \texttt{T} has a~\texttt{state} the~model needs to be within,
-an~\texttt{other\_state} to which the~model moves into \textbf{if both stack symbol match
+an~\texttt{other\_state} to which the~model moves into \textbf{if both stack symbols match
 the~patterns}.
 
 \begin{verbatim}
 state left_symbol right_symbol -> other_state [...]
 \end{verbatim}
 
-We will keep state names and build a~new 4 Counter Machine model that will operate as well
-on states \texttt{state} and \texttt{other\_state}, but it will have some additional ones
-in between. When we want to check whether $T$ should be applied then we perform two
-\textbf{check} operations. Because both symbols need to match, after recognizing the first symbol
-we need to recognize the other without losing the information about the~first one. This
+We will keep the~state names and build a~new 4 Counter Machine model that will operate
+on states \texttt{state} and \texttt{other\_state}, but as well as some additional states
+in between. To check whether $T$ should be applied, we perform two \textbf{check}
+operations. Because both symbols need to match, after recognizing the first symbol
+we need to recognize the other one without losing the information about the~first one. This
 means that we build a~structure from Figure \ref{fig:check} and in place of each $R_i$ we
 paste the same structure for symbols recognition. All unsuccessful paths (symbols not matched)
 return to \texttt{state} and successful ones end up within \texttt{other\_state}.
 
 This idea gives O($m^2$) new transitions, where $m$ is the~number of transitions in 2 stack PDA
-program. If we consider input counter (which is yet another input stack) then we get O($m^3$)
-transitions that we generate. (Fortunately, implementation optimizations make it O($m^2$).)
+program. If we consider the~input counter (which is yet another input stack), then we get O($m^3$)
+transitions that we generate. Fortunately, implementation optimizations make it O($m^2$).
+\todo{Wyjaśnić poprawkę.}
 
 There are still a~few more details to handle:
 \begin{itemize}
@@ -964,7 +960,7 @@ generated states.
 In practice, we want to pop elements together with recognizing them, but now we define the~idea, so
 it is enough to say that we perform a~\textbf{pop} after making sure we should apply transition $T$.
 
-\section {Reduction from 4 Counter Machine to 2 Counter Machine}
+\section {From 4 Counter Machine to 2 Counter Machine}
 
 We need to compress $4$ counters into only $2$ counters. Previously we had
 $2$ counters per each stack (from $2$ stack PDA), where one counter was
@@ -1242,14 +1238,12 @@ Options:
   \item \texttt{-d} or \texttt{--direct} directly runs translated code. If input
       code is in multifile format then path to the code should not contain latter \texttt{\_<num>}
       part, for example files \texttt{outdir/aaa\_123}, \texttt{outdir/aaa\_43} should
-      be provided as a command \texttt{./full\_pipeline -d outdir/aaa}
+      be provided as a command \texttt{./full\_pipeline -d outdir/aaa} \todo{Dopisać jak wykrywa język}
   \item \texttt{-t <lang>} or \texttt{--to <lang>} specifies at which language a translation should
       be stopped. Possible languages: \texttt{bf}, \texttt{tm}, \texttt{pda}, \texttt{mm4} and \texttt{mm2}.
       Such command: \texttt{./full\_pipeline -f ../examples/hello3.bf --to pda} will translate
       \texttt{hello3.bf} to $2$ stack PDA. By default translation is done to $2$ Counter Machine.
 \end{itemize}
-
-For details see README.md file included in the~implementation.
 
 \section{Implementation restrictions}
 
@@ -1258,7 +1252,6 @@ usage, but it has specific structure that needs to be followed. All the files
 within output directory should be created by the provided code, preferably
 with \texttt{full\_pipeline.sh} script.
 
-\newpage
 \section{Examples}
 
 \subsection{Brainfuck to Turing Machine}
@@ -1285,8 +1278,6 @@ Classical \texttt{Hello World!} that can be easily found on \href{https://pl.wik
 >.                 prints newline character
 \end{verbatim}
 
-
-\newpage
 It is translated into a~file containing $110$ states (There are long
 sequences generated from many consecutive symbols \texttt{+} or \texttt{-} that
 were cut for better readability).
@@ -1505,11 +1496,18 @@ in the source code.
 
 The full code can be found in the appendix.
 
-\newpage
-
 \subsection{Ewaluacja}
 
 Porównanie czasów, rozmiarów (na przykładach, nie musi być ,,zupełne'')
+\todo{Dopisać słowną analizę tabelki poniżej.}
+\todo{dopisać na jakiej maszynie uruchamiane.}
+
+Sprzęt:
+Intel(R) Core(TM) i7-5600U CPU @ 2.60GHz
+4 rdzenie
+
+System:
+Linux thinkpad 4.15.0-45-generic \#48-Ubuntu SMP Tue Jan 29 16:28:13 UTC 2019 x86\_64 x86\_64 x86\_64 GNU/Linux
 
 See Table~\ref{t:my-label}.
 
@@ -1519,27 +1517,28 @@ See Table~\ref{t:my-label}.
 Size of translated programs (\# of instructions)\\
 Running time \\
 Translation time (to next language)\\
+TLE stands for time limit exceeded
 }
 \begin{center}
 \label{t:my-label}
 \begin{tabular}{llllll}
 Program & Brainfuck & TM & 2PDA & 4CM & 2CM \\
 \hline
-hello.bf & 111 & 112 & 123 & 5\,175\,355 & -\\
- & 0.005s & 0.003s & 0.011s & - & - \\
- & 0.006s & 0.005s & 4m 9.838s & - & - \\
+hello.bf & 111 & 112 & 123 & 5\,175\,355 & ?\\
+ & 0.005s & 0.003s & 0.011s & TLE & TLE \\
+ & 0.006s & 0.005s & 4m 9.838s & ? & - \\
 \hline
-hello3.bf & 193 & 205 & 209 & 1\,568\,779 & -\\
- & 0.006s & 0.008s & 0.011s & 1m 20.335s & - \\
- & 0.007s & 0.008s & 1m 34.475s & - & - \\
+hello3.bf & 193 & 205 & 209 & 1\,568\,779 & ?\\
+ & 0.006s & 0.008s & 0.011s & 1m 20.335s & TLE \\
+ & 0.007s & 0.008s & 1m 34.475s & ? & - \\
 \hline
 hello4.xbf & 26 & 27 & 28 & 41\,761 & 365\,202\\
  & 0.002s & 0.002s & 0.002s & 0.042s & 1.412s \\
  & 0.001s & 0.002s & 5.222s & 4.711s & - \\
 \hline
-to\_lower.bf & 34 & 35 & 36 & 385\,189 & -\\
- & 0.005s & 0.006s & 0.004s & 0.413s & - \\
- & 0.004s & 0.006s & 21.402s & - & - \\
+to\_lower.bf & 34 & 35 & 36 & 385\,189 & ?\\
+ & 0.005s & 0.006s & 0.004s & 0.413s & TLE \\
+ & 0.004s & 0.006s & 21.402s & ? & - \\
 \hline
 add\_digits.bf & 69 & 70 & 77 & 3\,894\,442 & -\\
  & 0.006s & 0.006s & 0.008s & 5.372s & - \\
@@ -1617,7 +1616,6 @@ What can be done next?
 \bibliographystyle{plain}
 \bibliography{thesis}{}
 
-\newpage
 \appendix
 
 \chapter{Examples}
