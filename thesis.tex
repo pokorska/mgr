@@ -1054,12 +1054,12 @@ so for the purpose of this thesis, such an example is not necessary.
 
 \section{Introduction}
 
-Language chosen for the entire project is C++, mainly because of its efficiency. Counter Machine
+The language chosen for the entire project is C++, mainly because of its efficiency. Counter Machine
 is a~basic model, so any translated program is expected to be very long. These amounts of information
 need to be stored and accessed efficiently, so STL library and its containers like hashing table
-and hashing set are used havily in this project.
+and hashing set are used heavily in this project.
 
-For translation purposes we need to have access to abstract syntax trees of original programs which
+For translation purposes, we need to have access to abstract syntax trees of original programs which
 means that we should be able to parse a~source code. Most common tools in C++ are Flex and Bison,
 for lexing and parsing respectively, which are used in this project. We have several translations
 between several different models, so at every step (i.e. Turing Machine to 2 stack PDA) Flex and Bison
@@ -1069,9 +1069,9 @@ model in the~pipeline (i.e. 2 stack PDA).
 
 Most of the translations were pretty straightforward and require only basic tricks like
 generating unique state names. The~most interesting one was 2 stack PDA to 4 Counter Machine,
-which required putting large part of a~program logic into apropriate state names, so it is important
+which required putting a large part of a~program logic into appropriate state names, so it is important
 to notice the~structure of the~logic to come up with reasonable translation algorithm.
-It turns out that Brainfuck has very specific instructions that allow to make optimizations
+It turns out that Brainfuck has very specific instructions that allow making optimizations
 to the~translation process.
 
 Few examples:
@@ -1081,78 +1081,77 @@ Few examples:
       This is the~optimization mentioned earlier -- we may use only O($m^2$) new states to translate
       a~single 2 stack PDA transition.
   \item From a~given state there might be multiple outgoing paths (a~few different states depending
-      on the~stack symbols), but there is no need to build the~whole circle structure for every one.
+      on the~stack symbols), but there is no need to build the~whole circle structure for each one.
       We can aggregate all of them and make appropriate outgoing paths to end up within correct
       next states. Notice that for a~single 2 stack PDA transition with explicit symbols (no patterns)
-      there is only one outgoing path from our circle structure. In this case instead of wasting all
+      there is only one outgoing path from our circle structure. In this case, instead of wasting all
       the other states $R_i$ we may connect them to appropriate other 2 stack PDA transitions.
       What is more, for all those outgoing paths that do not match any 2 stack PDA transition
       we may just end execution (go to \texttt{END} state).
-  \item (partially implemented) If stack is completely ignored by a~transition, there is no point
+  \item (partially implemented) If a stack is completely ignored by a~transition, there is no point
       to recognize a~symbol on top of it. For example instructions \texttt{>} and \texttt{<}
       in Brainfuck just move to next/previous cell, which in practice ignores the top
       character on one of the~stacks. Another example is an instruction \texttt{+},
       which requires to touch only one of the stacks -- (implemented) for both
       \texttt{+} and \texttt{-} there is only O($m$) new states created.
-  \item There is no need to load all the states, becase most probably we will
+  \item There is no need to load all the states, because most probably we will
       not need all of them -- lazy loading allows to add to transition set
       all the transitions that refer to the state that we are currently in,
   \item In $2$CM transitions we often need to recover counter's position by
       copying its content to the other counter -- it is easy to recognize such
-      a transition and do the copy using regular variable assigment in C++.
+      a transition and do the copy using regular variable assignment in C++.
 \end{itemize}
 
-The amount of generated information is very big even for simplest programs, which is not a suprise.
-After analyzing for example classical \textit{Hello World!} it turns out that a~human can
+The amount of generated information is very big even for the simplest programs, which is not a surprise.
+After analyzing a classical \textit{Hello World!}, it turns out that a~human can
 significantly reduce the~required logic. Automatic translation will store single letters
 in memory (on a~tape or on a~stack) and then print it out, while we may directly use output
-tape/stack/counter. This is caused by Brainfuck code structure, where the only thing we can do
+tape/stack/counter. This is caused by the Brainfuck code structure, where the only thing we can do
 is modifying the~memory and then output what is within this memory.
 
 The other problematic operation was shifting Brainfuck's tape --- when we shift
 by one position on the tape then our stack in Turing Machine (and later languages)
 grows by one character. When we remind ourselves what it means to extend a counter by
-one character we realise why is it so -- a counter needs to be multiplyed by
+one character we realise why is it so -- a counter needs to be multiplied by
 the~size of the~alphabet and increased by the~character's ASCII number.
 This means that each time we shift right we increase our counter 140 times
 (which is the alphabet size set within the program) and what is more, next
 iterations of a~program need to recognize characters on the top of that
 counter with decreasing it by $1$ at a time.
 
-Computations starts to be an issue at the very end of the pipeline, namely
+The time of computations starts to be an issue at the very end of the pipeline, namely
 when executing $2$CM program. Because of the structure of the counter translation
-(exponential) and tahe way this (exponential) counter is used, it is really
-hard to get any english character. ASCII table contains these characters
+(exponential) and the way this (exponential) counter is used, it is really
+hard to get any English character. ASCII table contains these characters
 at high positions like 65 ('A'), so within our $2$CM's counter it will be represented
 as a number $2^{65}$ if it was on the first counter of $4$CM and $3^{65}$ when
-it is moved to the second counter of $4$CM. Additionally we decrease these numbers
+it is moved to the second counter of $4$CM. Additionally, we decrease these numbers
 by $1$ until we reach $0$ to recognize whether it is divisible by $2$ (for example),
 and then we divide it by $2$ (which again forces us to decrease whole counter to $0$).
-After that we usually repeat this several times, what is equivalent to several
-(simple) operations in $4$CM. So in $4$CM these operations execute lightning fast
+After that, we usually repeat this several times, what is equivalent to several
+(simple) operations in $4$CM. So in $4$CM, these operations execute lightning fast
 in comparison to their equivalents in $2$CM.
 
 \section{Brainfuck's extension}
 
-The cruelness of the ASCII table can be defeated though. The only thing we need
-is to operate on small numbers in memory, while big numbers (or rather characters
-assigned to them) are printed to the standard output. This leads us to shifting
-printed character by $64$ with newly created operator \texttt{:} (semicolon) which is
-very similar to Brainfuck's \texttt{.} (dot) printing a character without any shifts. Example:
+The ASCII table problem can be defeated with small Brainfuck's modification. The only thing we need
+is to operate on small numbers in memory, while big numbers (or rather characters) are printed to the standard output.
+This solution is shifting printed character by $64$ with newly created operator \texttt{:} (semicolon),
+which is very similar to Brainfuck's \texttt{.} (dot) printing a character without any shifts. Example:
 \begin{verbatim}
 +++:++:++:
 \end{verbatim}
-This code will print \texttt{CEG} on standard output.
+This code will print \texttt{CEG} on the standard output.
 
-Obviously this modification does not change the power of expression
-of that language, because it is actually a sintactic sugar and may be translated
+Obviously, this modification does not change the power of expression
+of that language, because it is actually a syntactic sugar and may be translated
 into $64$ \texttt{+}'s then a regular print with \texttt{.} and then $64$ \texttt{-}'s.
 
 Analogical changes have been made to further languages: Turing Machine and $2$
 stack PDA, where we define special operator \texttt{->~} for shifted printing.
-For the purposes of this thesis it was not necessary to introduce similar
+For the purposes of this thesis, it was not necessary to introduce similar
 operators in $4$CM or $2$CM, because in translation process we could just
-increase (by $64$) the number pushed into output counter. After the translation
+increase (by $64$) the number pushed into the output counter. After the translation
 is done we recognize special printing operator and then we change \texttt{Output: <number>}
 part into \texttt{Output:~<number>~+~$64$}. This means that from $4$CM
 to the end of the pipeline this extension is not present.
@@ -1162,10 +1161,10 @@ extension \texttt{.xbf} instead of \texttt{.bf}.
 
 \section{Technical details}
 
-It is assumed that operating system is Linux -- Debian based distribution. Whole implementation
+The expected operating system is Linux -- Debian based distribution. Whole implementation
 was tested on Ubuntu and there is no guarantee to work on other platforms.
 
-First requirement is installing Flex and Bison:
+The first requirement is installing Flex and Bison:
 
 \texttt{sudo apt-get install flex bison}
 
@@ -1230,7 +1229,7 @@ Options:
   \item\textbf{(required)} \texttt{-f <input file path>} or \texttt{--file <input file path>} -- specifies
       the path to input file written in Brainfuck,
   \item \texttt{-o <output file path>} or \texttt{--output <output file path>} -- specifies
-      the path to output directory (result of translation) written in required language (2 Counter Machine by default).
+      the path to the output directory (the result of translation) written in the required language (2 Counter Machine by default).
       If not provided then path default path is taken (depending on the final language)
   \item \texttt{-r} or \texttt{--run} -- executes translated code (after translation is completed
       and written to the~specifed output file),
@@ -1247,9 +1246,9 @@ Options:
 
 \section{Implementation restrictions}
 
-Using multiple files as input is useful to reduce the time and the memory
-usage, but it has specific structure that needs to be followed. All the files
-within output directory should be created by the provided code, preferably
+Using multiple files as input is useful to reduce the time and memory
+usage, but it has a specific structure that needs to be followed. All the files
+within the output directory should be created by the provided code, preferably
 with \texttt{full\_pipeline.sh} script.
 
 \section{Examples}
@@ -1485,12 +1484,12 @@ or \texttt{R1} etc. recognize right stack's element. If additionally
 we see fragment \texttt{RECOGNIZED} then the state already knows what
 was on the stack and does some modifications based on that knowledge.
 
-General structure of the translation keeps original state names from
+The general structure of the translation keeps original state names from
 $2$ stack PDA, so if we see short names (like \texttt{read} or \texttt{print})
-then this is a starting point for all $4$CM transitions that are bewteen.
+then this is a starting point for all $4$CM transitions that are between.
 In the above examples we go from \texttt{read} to \texttt{print}, so in
-the translation there are transitions recognizing items on stack (only left in
-this case) and these transitions are in between these two "top level" states.
+the translation there are transitions recognizing items on the stack (only left in
+this case) and these transitions are in between these two "top-level" states.
 By saying "between" I mean computations flow, not the order of transitions
 in the source code.
 
@@ -1571,37 +1570,37 @@ hello\_opt.pda & - & - & 13 & 1\,888\,333 & 16\,543\,020\\
 \chapter{Summary}
 
 
-In this thesis we provided a full realization of theoretical translation
+In this thesis, we provided a full realization of theoretical translation
 from a modern programming language to $2$ Counter Machine. Despite Brainfuck
-being not the most up-to-date language the proof has been done and it may
+being not the most up-to-date language, the proof has been done and it may
 be extended with another (related) work that exists translating C++
-to Brainfuck (\todo{Autor? Źródło?}). Toghether these two works give full
-proof of theoretical concept of equivalence modern languages and $2$ Counter
+to Brainfuck (\todo{Autor? Źródło?}). Together these two works give full
+proof of the theoretical concept of equivalence modern languages and $2$ Counter
 Machine.
 
 The obtained implementation is slow (as expected), but there is a clear real
 code that uses only $2$CM language, which is very poor and is able to express
-high level thoughts of today's programmers.
+high-level thoughts of today's programmers.
 
 To be honest, execution is possible in $4$ Counter Machine, where the time is
 acceptable. Translation to $2$CM is pretty fast as well, so real code which
 we wanted to achieve was generated.
 
 What we have learned is that ASCII table is not designed to help in such
-translation and if it was redesigned to have english alphabet assigned
-with small numbers it would be much easier to handle.
+translation and if it was redesigned to have English alphabet assigned
+with small numbers, it would be much easier to handle.
 
-Exponential growth is dangerous (which is not suprising) and limits our implementation.
-If we remapped ASCII caracters at the very beginning of the pipeline
+Exponential growth is dangerous (which is not surprising) and limits our implementation.
+If we remapped ASCII characters at the very beginning of the pipeline
 then it would help significantly. Brainfuck's code structure is very connected
-to current shape of ASCII table, to it is not that simple to make such a remapping,
-usual Brainfuck's code has many consecutive \texttt{+}'s that are making
-expected character. Remapping would mean that Brainfuck's code should be changed
+to the current shape of ASCII table, to it is not that simple to make such a remapping,
+usual Brainfuck's code has many consecutive \texttt{+}'s which are making
+an expected character. Remapping would mean that Brainfuck's code should be changed
 (or at least cut) before the actual translation.
 
 What can be done next?
 \begin{itemize}
-  \item Extending from left side of the pipeline -- translations from any modern
+  \item Extending from the left side of the pipeline -- translations from any modern
       programming language to Brainfuck.
   \item Adding graphical interface to make the usage easier.
   \item Harder optimizations that would make Counter Machines faster.
@@ -1609,8 +1608,8 @@ What can be done next?
       transition's chains that could be recognized and the calculations
       based on such knowledge can help to improve times.
   \item Adding ASCII mapping that is attached to original source code -- that
-      would allow to create codes in slight modifications of Brainfuck that
-      would be more efficient in end point source code.
+      would allow creating codes in slight modifications of Brainfuck that
+      would be more efficient in the endpoint source code.
 \end{itemize}
 
 \bibliographystyle{plain}
