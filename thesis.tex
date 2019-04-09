@@ -158,12 +158,12 @@ Having a~configuration we can precisely say what is the~program execution progre
 One configuration is~a~precise step of~computation, so a~sequence of~configurations (where
 each consecutive pair obeys $\delta$) is called
 a~\textbf{run} of~a~Turing Machine. This sequence may be finite or~infinite the~same way like
-a~program may loop forever or~finish within some number of~steps. Each such run begins with
-a~configuration where some word $w$ is~an~input, $k = 0$ which is the~leftmost cell on~the~tape
-and~$q = q_0$ which is initial state defined in~the~description of~the~given machine. If~a~run is
+a~program may loop forever or~finish within some number of~steps. Each such run is not extendable
+(there is no $\delta$-travel from the very last state). It begins with
+a~configuration, where some word $w$ is~an~input, $k = 0$ which is the~leftmost cell on~the~tape
+and~$q = q_0$ which is an initial state defined in~the~description of~the~given machine. If~a~run is
 finite and~ends with a~configuration ($w_n$, $q_n$, $k_n$) then we define the~input word to~be
 \textit{accepted} if $q_n \in P$ ($q_n$ is one of accepting states) and \textit{rejected} otherwise.
-\todo{Doprecyzować "run"}
 
 \section{Church-Turing thesis and Turing-completeness}
 
@@ -1224,6 +1224,10 @@ List of commands within directories:
     \end{itemize}
 \end{itemize}
 
+A Linux terminal when operating on the multifile format of $4$CM and $2$CM will
+most likely autocomplete to the names containing \texttt{\_} which must not
+be written in any of presented commands (including \texttt{full\_pipeline} script described below).
+
 When we want to run full pipeline then we need to run script \texttt{full\_pipeline.sh} within
 \texttt{shared\_files} directory:
 
@@ -1242,8 +1246,15 @@ Options:
   \item \texttt{--recompile} or \texttt{--clean} forces to recompile all targets,
   \item \texttt{-d} or \texttt{--direct} directly runs translated code. If input
       code is in multifile format then path to the code should not contain latter \texttt{\_<num>}
-      part, for example files \texttt{outdir/aaa\_123}, \texttt{outdir/aaa\_43} should
-      be provided as a command \texttt{./full\_pipeline -d outdir/aaa} \todo{Dopisać jak wykrywa język}
+      part, for example files \texttt{outdir\_mm2/aaa\_123}, \texttt{outdir\_mm2/aaa\_43} should
+      be provided as a command \texttt{./full\_pipeline -d outdir\_mm2/aaa}
+
+      \begin{footnotesize}
+      Note: Brainfuck, Turing Machine and 2 stack PDA are recognized by the extension
+      (\texttt{.bf}/\texttt{.xbf}, \texttt{.tm}, \texttt{.pda}), but multifile format of $2$ and $4$ Counter Machine
+      is recognized by the directory name. It should contain \texttt{mm2} or
+      \texttt{mm4}, respectively. Example: \texttt{my\_code\_mm4/base} is treated as $4$CM code.
+      \end{footnotesize}
   \item \texttt{-t <lang>} or \texttt{--to <lang>} specifies at which language a translation should
       be stopped. Possible languages: \texttt{bf}, \texttt{tm}, \texttt{pda}, \texttt{mm4} and \texttt{mm2}.
       Such command: \texttt{./full\_pipeline -f ../examples/hello3.bf --to pda} will translate
@@ -1478,7 +1489,7 @@ print ALL ALL ->^ END ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
 \end{verbatim}
 
 When we change the alphabet size to be $3$ (instead of $140$) we get
-automatic translation to $4$ Counter Machine that has ??? transitions.
+automatic translation to $4$ Counter Machine that has 207 transitions.
 
 It is possible to see that \texttt{read} transition was translated with
 regular translation recognizing both stack symbols and \texttt{print}
@@ -1501,18 +1512,13 @@ in the source code.
 
 The full code can be found in the appendix.
 
-\subsection{Ewaluacja}
+\subsection{Evaluation}
 
 Porównanie czasów, rozmiarów (na przykładach, nie musi być ,,zupełne'')
 \todo{Dopisać słowną analizę tabelki poniżej.}
-\todo{dopisać na jakiej maszynie uruchamiane.}
 
-Sprzęt:
-Intel(R) Core(TM) i7-5600U CPU @ 2.60GHz
-4 rdzenie
-
-System:
-Linux thinkpad 4.15.0-45-generic \#48-Ubuntu SMP Tue Jan 29 16:28:13 UTC 2019 x86\_64 x86\_64 x86\_64 GNU/Linux
+Whole evaluation was performed on a machine with Intel(R) Core(TM) i7-5600U 2.60GHz
+with $4$ cores. Operating system that was used: Linux thinkpad 4.15.0-45-generic \#48-Ubuntu.
 
 See Table~\ref{t:my-label}.
 
