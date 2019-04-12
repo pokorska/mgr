@@ -1514,6 +1514,26 @@ The full code can be found in the appendix.
 
 \subsection{Evaluation}
 
+We can clearly see that the problems appear starting at $4$CM, where
+the amount of code starts to be significant (millions of instructions).
+The time spent on execution is significantly larger too,
+and some of the codes are not able to finish within a reasonable time frame.
+
+There are $3$ implementations of \texttt{Hello World!} program:
+\begin{itemize}
+  \item \texttt{hello.bf} -- stores few things in different cells
+      (separately characters near \texttt{H} and whitespaces),
+  \item \texttt{hello3.bf} -- uses only one cell to store all letters to print,
+  \item \texttt{hello4.xbf} -- uses only one cell and operates on small numbers
+      within this cell using shifted print.
+\end{itemize}
+
+They contain optimizations for latest stages of translations. \texttt{hello3.bf}
+is running smothly up to $4$CM, while \texttt{hello4.xbf} is runnig smothly
+throughout the whole pipeline. The main difference is using the recourses,
+so $4$CM needs usage of only $1$ memory cell in original Brainfuck's code,
+while $2$CM needs additionally small numbers stored within this cell.
+
 Porównanie czasów, rozmiarów (na przykładach, nie musi być ,,zupełne'')
 \todo{Dopisać słowną analizę tabelki poniżej.}
 
@@ -1532,45 +1552,45 @@ See Table~\ref{t:my-label}.
 %\hline
 \textbf{Program} & & \textbf{BF} & \textbf{TM} & \textbf{2PDA} & \textbf{4CM} & \textbf{2CM} \\
 \hline
-%\texttt{hello.bf} & \# & 111 & 112 & 123 & 5\,175\,355 & ?\\
-\texttt{hello.bf} & \# & 111 & 112 & 123 & 5.2 M & ?\\
+%\texttt{hello.bf} & \# & 111 & 112 & 123 & 5\,175\,355 & 60\,271\,162\\
+\texttt{hello.bf} & \# & 111 & 112 & 123 & 5.2 M & 60.3 M\\
  & {\footnotesize{RT}} & 0.01 s & 0.00 s & 0.01 s & $\infty$ & $\infty$ \\
- & {\footnotesize{TT}} & 0.01 s & 0.01 s & 249.84 s & ? & --- \\
+ & {\footnotesize{TT}} & 0.01 s & 0.01 s & 249.84 s & 714.81 s & --- \\
 \hline
-%\texttt{hello3.bf} & \# & 193 & 205 & 209 & 1\,568\,779 & ?\\
-\texttt{hello3.bf} & \# & 193 & 205 & 209 & 1.6 M & ?\\
+%\texttt{hello3.bf} & \# & 193 & 205 & 209 & 1\,568\,779 & 17\,088\,537\\
+\texttt{hello3.bf} & \# & 193 & 205 & 209 & 1.6 M & 17 M\\
  & {\footnotesize{RT}} & 0.01 s & 0.01 s & 0.01 s & 80.34 s & $\infty$ \\
- & {\footnotesize{TT}} & 0.01 s & 0.01 s & 94.48 s & ? & --- \\
+ & {\footnotesize{TT}} & 0.01 s & 0.01 s & 94.48 s & 187.77 s & --- \\
 \hline
 %\texttt{hello4.xbf} & \# & 26 & 27 & 28 & 41\,761 & 365\,202\\
 \texttt{hello4.xbf} & \# & 26 & 27 & 28 & 42 k & 36 k\\
  & {\footnotesize{RT}} & 0.00 s & 0.00 s & 0.00 s & 0.04 s & 1.41 s \\
  & {\footnotesize{TT}} & 0.00 s & 0.00 s & 5.22 s & 4.71 s & --- \\
 \hline
-%\texttt{to\_lower.bf} & \# & 34 & 35 & 36 & 385\,189 & ?\\
-\texttt{to\_lower.bf} & \# & 34 & 35 & 36 & 0.4 M & ?\\
+%\texttt{to\_lower.bf} & \# & 34 & 35 & 36 & 385\,189 & 4\,286\,957\\
+\texttt{to\_lower.bf} & \# & 34 & 35 & 36 & 0.4 M & 4.3 M\\
  & {\footnotesize{RT}} & 0.01 s & 0.01 s & 0.00 s & 0.41 s & $\infty$ \\
- & {\footnotesize{TT}} & 0.00 s & 0.01 s & 21.40 s & ? & --- \\
+ & {\footnotesize{TT}} & 0.00 s & 0.01 s & 21.40 s & 43.21 s & --- \\
 \hline
-%\texttt{add\_digits.bf} & \# & 69 & 70 & 77 & 3\,894\,442 & ?\\
-\texttt{add\_digits.bf} & \# & 69 & 70 & 77 & 3.9 M & ?\\
+%\texttt{add\_digits.bf} & \# & 69 & 70 & 77 & 3\,894\,442 & 45\,477\,467\\
+\texttt{add\_digits.bf} & \# & 69 & 70 & 77 & 3.9 M & 45.5 M\\
  & {\footnotesize{RT}} & 0.01 s & 0.01 s & 0.01 s & 5.37 s & $\infty$ \\
- & {\footnotesize{TT}} & 0.01 s & 0.01 s & 181.75 s & ? & --- \\
+ & {\footnotesize{TT}} & 0.01 s & 0.01 s & 181.75 s & 515.69 s & --- \\
 \hline
-%\texttt{inout.bf} & \# & 2 & 3 & 4 & 335\,877 & ?\\
-\texttt{inout.bf} & \# & 2 & 3 & 4 & 0.3 M & ?\\
+%\texttt{inout.bf} & \# & 2 & 3 & 4 & 335\,877 & 3\,847\,757\\
+\texttt{inout.bf} & \# & 2 & 3 & 4 & 0.3 M & 3.8 M\\
  & {\footnotesize{RT}} & 0.01 s & 0.01 s & 0.01 s & 0.03 s & $\infty$ \\
- & {\footnotesize{TT}} & 0.01 s & 0.01 s & 14.99 s & ? & --- \\
+ & {\footnotesize{TT}} & 0.01 s & 0.01 s & 14.99 s & 38.00 s & --- \\
 \hline
-%\texttt{simple.tm} & \# & --- & 8 & 11 & 345\,407 & ?\\
-\texttt{simple.tm} & \# & --- & 8 & 11 & 0.3 M & ?\\
+%\texttt{simple.tm} & \# & --- & 8 & 11 & 345\,407 & 3\,940\,225\\
+\texttt{simple.tm} & \# & --- & 8 & 11 & 0.3 M & 3.9 M\\
  & {\footnotesize{RT}} & --- & 0.01 s & 0.01 s & 0.07 s & $\infty$ \\
- & {\footnotesize{TT}} & --- & 0.00 s & 14.57 s & ? & --- \\
+ & {\footnotesize{TT}} & --- & 0.00 s & 14.57 s & 38.02 s & --- \\
 \hline
-%\texttt{rotate.tm} & \# & --- & 14 & 18 & 1\,596\,442 & ?\\
-\texttt{rotate.tm} & \# & --- & 14 & 18 & 1.6 M & ?\\
+%\texttt{rotate.tm} & \# & --- & 14 & 18 & 1\,596\,442 & 19\,033\,283\\
+\texttt{rotate.tm} & \# & --- & 14 & 18 & 1.6 M & 19 M\\
  & {\footnotesize{RT}} & --- & 0.01 s & 0.01 s & 0.24 s & $\infty$ \\
- & {\footnotesize{TT}} & --- & 0.01 s & 71.92 s & ? & --- \\
+ & {\footnotesize{TT}} & --- & 0.01 s & 71.92 s & 213.02 s & --- \\
 \hline
 %\texttt{hello\_opt.pda} & \# & --- & --- & 13 & 1\,888\,333 & 16\,543\,020\\
 \texttt{hello\_opt.pda} & \# & --- & --- & 13 & 1.9 M & 16.5 M\\
