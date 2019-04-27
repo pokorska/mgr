@@ -1522,30 +1522,43 @@ and some of the codes are not able to finish within a reasonable time frame.
 There are $3$ implementations of \texttt{Hello World!} program:
 \begin{itemize}
   \item \texttt{hello.bf} -- stores few things in different cells
-      (separately characters near \texttt{H} and whitespaces),
-  \item \texttt{hello3.bf} -- uses only one cell to store all letters to print,
+      (separately a character to print and a whitespace),
+  \item \texttt{hello3.bf} -- uses only one cell to store all characters to print,
   \item \texttt{hello4.xbf} -- uses only one cell and operates on small numbers
-      within this cell using shifted print.
+      (shifted print extension).
 \end{itemize}
 
-They contain optimizations for latest stages of translations. \texttt{hello3.bf}
-is running smothly up to $4$CM, while \texttt{hello4.xbf} is runnig smothly
-throughout the whole pipeline. The main difference is using the recourses,
-so $4$CM needs usage of only $1$ memory cell in original Brainfuck's code,
-while $2$CM needs additionally small numbers stored within this cell.
+The latter two codes contain optimizations for the last stages of the translation. \texttt{hello3.bf}
+is running smoothly up to $4$CM, while \texttt{hello4.xbf} is running smoothly
+throughout the whole pipeline. The main difference is about the recourses ---
+in practice to make $4$CM code working in a reasonable time, we need to use only
+$1$ memory cell in original Brainfuck's code.
+A $2$CM code needs additionally small numbers (characters) stored within this cell.
 
-Porównanie czasów, rozmiarów (na przykładach, nie musi być ,,zupełne'')
-\todo{Dopisać słowną analizę tabelki poniżej.}
+Solutions \texttt{to\_lower.bf} and \texttt{add\_digits.bf} perform basic
+computations and it is possible to run them in $4$CM, which is most of the pipeline.
 
-Whole evaluation was performed on a machine with Intel(R) Core(TM) i7-5600U 2.60GHz
-with $4$ cores. Operating system that was used: Linux thinkpad 4.15.0-45-generic \#48-Ubuntu.
+There is another group of solutions \texttt{simple.tm} and \texttt{rotate.tm}
+which does not start from Brainfuck code. For them, it is easier to express
+the logic in Turing Machine code. Rotation is implementing Ceasar cypher
+and it still runs within less than $1$s after translating to $4$CM.
+The problem in $2$CM is using the characters with large codes (like
+$65$ for \texttt{A} etc.).
 
-See Table~\ref{t:my-label}.
+The very last code \texttt{hello\_opt.pda} is (again) printing
+\texttt{Hello World!}, but in $2$ stack PDA we can already operate on
+output counters, so all these large numbers (like $2^{65}$) do not
+appear within normal counters. Using directly output counters does not
+require transformation, so output counter contains only $65$,
+no power and no exponential growth.
+
+
+Whole evaluation was performed on Intel(R) Core(TM) i7-5600U 2.60GHz
+with $4$ cores. Operating system: Linux thinkpad 4.15.0-45-generic \#48-Ubuntu.
 
 \begin{table}[]
 \centering
 \begin{center}
-\label{t:my-label}
 \begin{tabular}{
   L{2.6cm}c|R{1.7cm}R{1.7cm}R{1.7cm}R{1.7cm}R{1.7cm}
 }
@@ -1606,6 +1619,7 @@ See Table~\ref{t:my-label}.
 \caption{
 \# -- number of instructions, RT -- running time, TT -- translation time
 }
+\label{t:summary}
 \end{center}
 \end{table}
 
