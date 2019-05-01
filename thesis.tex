@@ -967,22 +967,23 @@ it is enough to say that we perform a~\textbf{pop} after making sure we should a
 
 \section {From 4 Counter Machine to 2 Counter Machine}
 
-We need to compress $4$ counters into only $2$ counters. Previously we had
+We discuss how to compress $4$ counters into only $2$ counters. Previously we had
 $2$ counters per each stack (from $2$ stack PDA), where one counter was
-holding state and the other was used for calculations. We will do a similar
+for the state and the other one was used for calculations. We will do a similar
 thing -- we will compress all $4$ counters states into only $1$ counter
-(called \textit{general counter}) and the other one will be used for
-calculations (called \textit{calculations counter}). Here is how we define
-the translation:
+(called \textit{general counter}) and use the other one
+(called \textit{calculations counter}) for calculations. Here is how we define
+the compression:
 $$ (A\ B\ C\ D) \rightarrow 2^A \cdot 3^B \cdot 5^C \cdot 7^D$$
-$A$, $B$, $C$, and $D$ are the states of the $4$ counters. Because each
-number has deterministic factorization using prime numbers (in our case
-prime numbers $2$, $3$, $5$ and $7$). It could be any prime numbers,
+where $A$, $B$, $C$ and $D$ are the states of the $4$ counters. Because each
+number has a unique factorization using prime numbers (in our case
+prime numbers $2$, $3$, $5$ and $7$), we can revert this compression
+to get original counters states. It could be any prime numbers,
 but for efficiency and simplicity, it is assumed that these are $4$ smallest
 prime numbers.
 
-It means that when we need to increase $A$ by some constant $c$, we need
-to multiply the general counter by $2^c$, similarly when we need to decrease
+To increase $A$ by some constant $c$, we need
+to multiply the general counter by $2^c$, similarly to decrease $A$
 (we decrease by $1$ only) then we need to divide by $2$.
 
 Multiplying by $2^c$ is easy to express in $2$CM world:
@@ -995,7 +996,7 @@ Multiplying by $2^c$ is easy to express in $2$CM world:
   \item once the general counter is empty then copy calculation counter back to general counter.
 \end{enumerate}
 
-Translation of such transition:
+The translation of a transition:
 \begin{verbatim}
 s (_ _ _ _) -> next_s (1 0 2 0)
 \end{verbatim}
@@ -1015,7 +1016,7 @@ s_recover2 (_ 0) -> next_s
 \end{verbatim}
 
 
-Making division is harder, we will do something similar to recognizing the top
+Making division is harder. We will do something similar to recognizing the top
 character when translating $2$ stack PDA to $4$CM. For such transitions (recognizing
 whether second counter is empty or not):
 \begin{verbatim}
@@ -1023,7 +1024,7 @@ s (_ 1 _ _) -> s_1 (0 0 0 0)
 s (_ 0 _ _) -> s_0 (0 0 0 0)
 \end{verbatim}
 
-We build such circle (we end up within \texttt{s\_0} if counter is empty and in \texttt{s\_1} otherwise):
+we build such circle (we end up within \texttt{s\_0} if counter is empty and in \texttt{s\_1} otherwise):
 
 \begin{center}
 \begin{tikzpicture}
@@ -1064,17 +1065,17 @@ is a~basic model, so any translated program is expected to be very long. These a
 need to be stored and accessed efficiently, so STL library and its containers like hashing table
 and hashing set are used heavily in this project.
 
-For translation purposes, we need to have access to abstract syntax trees of original programs which
-means that we should be able to parse a~source code. Most common tools in C++ are Flex and Bison,
-for lexing and parsing respectively, which are used in this project. We have several translations
+For translation purposes, we need to have access to abstract syntax trees of original programs, which
+means that we should be able to parse a~source code. To do so, we use the most common tools
+for lexing and parsing in C++, Flex and Bison. We have several translations
 between several different models, so at every step (i.e. Turing Machine to 2 stack PDA) Flex and Bison
 are applied to parse a~source code (i.e. in Turing Machine model) and produce abstract syntax tree.
 This tree is later used either for evaluation (if we want to execute) or translation to the~next
 model in the~pipeline (i.e. 2 stack PDA).
 
-Most of the translations were pretty straightforward and require only basic tricks like
-generating unique state names. The~most interesting one was 2 stack PDA to 4 Counter Machine,
-which required putting a large part of a~program logic into appropriate state names, so it is important
+Most of the translations are pretty straightforward and require only basic tricks like
+generating unique state names. The~most interesting one is 2 stack PDA to 4 Counter Machine,
+which requires putting a large part of a~program logic into appropriate state names, so it is important
 to notice the~structure of the~logic to come up with reasonable translation algorithm.
 It turns out that Brainfuck has very specific instructions that allow making optimizations
 to the~translation process.
@@ -1101,7 +1102,7 @@ Few examples:
       \texttt{+} and \texttt{-} there is only O($m$) new states created.
   \item There is no need to load all the states, because most probably we will
       not need all of them -- lazy loading allows to add to transition set
-      all the transitions that refer to the state that we are currently in,
+      all the transitions that refer to the state that we are currently in.
   \item In $2$CM transitions we often need to recover counter's position by
       copying its content to the other counter -- it is easy to recognize such
       a transition and do the copy using regular variable assignment in C++.
@@ -1189,27 +1190,27 @@ List of commands within directories:
 \begin{itemize}
   \item \texttt{bf\_parser}
     \begin{itemize}
-      \item run Brainfuck source file: \\ \texttt{./test.e ../examples/hello.bf}
+      \item run a Brainfuck source file: \\ \texttt{./test.e ../examples/hello.bf}
       \item translate Brainfuck to Turing Machine: \\ \texttt{./test.e -turing ../examples/hello.bf}
     \end{itemize}
   \item \texttt{tm\_parser}
     \begin{itemize}
-      \item run Turing Machine source file: \\ \texttt{./test.e ../examples/hello.tm}
+      \item run a Turing Machine source file: \\ \texttt{./test.e ../examples/hello.tm}
       \item translate Turing Machine to 2 stack PDA: \\ \texttt{./test.e -2stackPDA ../examples/hello.tm}
     \end{itemize}
   \item \texttt{2stackPDA\_parser}
     \begin{itemize}
-      \item run 2 stack PDA source file: \\ \texttt{./test.e ../examples/hello.pda}
+      \item run a 2 stack PDA source file: \\ \texttt{./test.e ../examples/hello.pda}
       \item (not recommended) translate 2 stack PDA to 4 Counter Machine: \\ \texttt{./test.e -minsky ../examples/hello.pda}
       \item (recommended) translation into multiple files within \texttt{output}
         directory: \\ \texttt{./test.e -multifile output/base ../examples/hello.pda}
 
-        (It will automatically create directory if needed.)
+        (It will automatically create a directory if needed.)
     \end{itemize}
   \item \texttt{mm4\_parser}
     \begin{itemize}
-      \item run 4 Counter Machine source file: \\ \texttt{./test.e ../examples/hello.mm4}
-      \item (recommended) run source with multiple files (files within \texttt{output}
+      \item run a 4 Counter Machine source file: \\ \texttt{./test.e ../examples/hello.mm4}
+      \item (recommended) run a source with multiple files (files within \texttt{output}
         directory and created by 2StackPDA translation): \\ \texttt{./test.e -multifile input/base}
       \item translation into \texttt{output} directory from \texttt{input}
         directory: \\ \texttt{./test.e -minsky -multifile input/base -o output/base}
@@ -1218,7 +1219,7 @@ List of commands within directories:
     \end{itemize}
   \item \texttt{mm2\_parser}
     \begin{itemize}
-      \item run source with multiple files (files within \texttt{output}
+      \item run a source with multiple files (files within \texttt{output}
         directory and created by $4$ Counter Machine translation): \\ \texttt{./test.e -multifile output/base}
     \end{itemize}
 \end{itemize}
@@ -1296,8 +1297,8 @@ Classical \texttt{Hello World!} that can be easily found on \href{https://pl.wik
 It is translated into a~file containing $110$ states (There are long
 sequences generated from many consecutive symbols \texttt{+} or \texttt{-} that
 were cut for better readability).
+\setlength{\columnsep}{1.5cm}
 \begin{multicols}{2}
-\fontsize{9pt}{12pt}\selectfont
 \begin{verbatim}
 START: state2
 state2 ALL -> state1 - NEXT_CHAR
@@ -1373,9 +1374,9 @@ state110 ALL ->^ END - NOTHING
 \end{verbatim}
 \end{multicols}
 
-There is clear pattern that each symbol in Brainfuck translates
-to a~single transition in Turing machine. The only part which is different
-is a~loop:
+There is a clear pattern that each symbol in Brainfuck translates
+to a~single transition in Turing machine. The only different part is
+is the~loop:
 \begin{verbatim}
 state11 NON_ZERO -> state12 - NOTHING
 state11 0 -> state13 - NOTHING
@@ -1386,19 +1387,19 @@ state42 ALL -> state11 - PREV_CHAR
 state13 ALL -> state43 R NOTHING
 \end{verbatim}
 
-From \texttt{state11} we have two options (either field on the tape is $0$
-or not) and we follow instructions from \texttt{state12} to \texttt{state42}
-and then come back to check loop condition once more or we go directly
+From \texttt{state11} we have two options (either cell on the tape is $0$
+or not); we follow instructions from \texttt{state12} to \texttt{state42}
+and then come back to check loop condition once more, or we go directly
 to \texttt{state13} and skip the body of the loop.
 
-Another example changing uppercase letters to lowercase (by adding $32$
+Another example changes uppercase letters to lowercase (by adding $32$
 to ASCII number):
 
 \begin{verbatim}
 ,++++++++++ ++++++++++ ++++++++++ ++.
 \end{verbatim}
 
-Automatically translated to:
+is automatically translated to:
 
 \begin{verbatim}
 START: state2
@@ -1413,7 +1414,7 @@ state34 ALL ->^ END - NOTHING
 
 \subsection{Turing Machine to 2 stack PDA}
 
-Further translation of code changing a~character to lowercase:
+Further translation of the code changing a~character to lowercase:
 
 \begin{verbatim}
 START: init_state
@@ -1451,10 +1452,10 @@ change1 ALL -> change L NEXT_CHAR
 print ALL ->^ END - NOTHING
 \end{verbatim}
 
-Code may be easily changed into a~rotation by any number -- it is enough
+The code may be easily changed into a~rotation by any number -- it is enough
 to~change \texttt{rotation} sequence to be longer. Suprisingly, this code
 is easier to write in Turing Machine than in Brainfuck. The~above code
-translates to such 2 stack PDA:
+translates to such a 2 stack PDA:
 
 \begin{verbatim}
 START: init_state
@@ -1479,7 +1480,7 @@ rotation3 ALL ALL -> letters (ORIG_LEFT + ORIG_RIGHT) NOTHING
 
 \subsection{2 stack PDA to 4 Counter Machine}
 
-Simple code reading a~symbol and writing it on standard output:
+A simple code reading a~symbol and writing it on standard output:
 
 \begin{verbatim}
 START: read
@@ -1489,6 +1490,7 @@ print ALL ALL ->^ END ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
 
 When we change the alphabet size to be $3$ (instead of $140$) we get
 automatic translation to $4$ Counter Machine that has 207 transitions.
+The code can be found in the appendix.
 
 It is possible to see that \texttt{read} transition was translated with
 regular translation recognizing both stack symbols and \texttt{print}
@@ -1503,24 +1505,22 @@ was on the stack and does some modifications based on that knowledge.
 The general structure of the translation keeps original state names from
 $2$ stack PDA, so if we see short names (like \texttt{read} or \texttt{print})
 then this is a starting point for all $4$CM transitions that are between.
-In the above examples we go from \texttt{read} to \texttt{print}, so in
+In the above examples, we go from \texttt{read} to \texttt{print}, so in
 the translation there are transitions recognizing items on the stack (only left in
-this case) and these transitions are in between these two "top-level" states.
-By saying "between" I mean computations flow, not the order of transitions
-in the source code.
-
-The full code can be found in the appendix.
+this case) and these transitions are in between (in computation flow) these two "top-level" states.
 
 \subsection{Evaluation}
 
-We can clearly see that the problems appear starting at $4$CM, where
+We evaluated the tool on multiple examples. The results are summarised
+in Table~\ref{t:summary}.
+We can see that the problems appear starting at $4$CM, where
 the amount of code starts to be significant (millions of instructions).
 The time spent on execution is significantly larger too,
 and some of the codes are not able to finish within a reasonable time frame.
 
 There are $3$ implementations of \texttt{Hello World!} program:
 \begin{itemize}
-  \item \texttt{hello.bf} -- stores few things in different cells
+  \item \texttt{hello.bf} -- stores a few things in different cells
       (separately a character to print and a whitespace),
   \item \texttt{hello3.bf} -- uses only one cell to store all characters to print,
   \item \texttt{hello4.xbf} -- uses only one cell and operates on small numbers
@@ -1534,13 +1534,13 @@ in practice to make $4$CM code working in a reasonable time, we need to use only
 $1$ memory cell in original Brainfuck's code.
 A $2$CM code needs additionally small numbers (characters) stored within this cell.
 
-Solutions \texttt{to\_lower.bf} and \texttt{add\_digits.bf} perform basic
+Examples \texttt{to\_lower.bf} and \texttt{add\_digits.bf} perform basic
 computations and it is possible to run them in $4$CM, which is most of the pipeline.
 
-There is another group of solutions \texttt{simple.tm} and \texttt{rotate.tm}
+There is another group of examples \texttt{simple.tm} and \texttt{rotate.tm}
 which does not start from Brainfuck code. For them, it is easier to express
-the logic in Turing Machine code. Rotation is implementing Ceasar cypher
-and it still runs within less than $1$s after translating to $4$CM.
+the logic in Turing Machine code. \texttt{rotate.tm} is implementing Ceasar cypher
+and it runs within less than $1$s after translating to $4$CM.
 The problem in $2$CM is using the characters with large codes (like
 $65$ for \texttt{A} etc.).
 
@@ -1548,11 +1548,11 @@ The very last code \texttt{hello\_opt.pda} is (again) printing
 \texttt{Hello World!}, but in $2$ stack PDA we can already operate on
 output counters, so all these large numbers (like $2^{65}$) do not
 appear within normal counters. Using directly output counters does not
-require transformation, so output counter contains only $65$,
+require transformation, so the output counter contains only the number $65$,
 no power and no exponential growth.
 
 
-Whole evaluation was performed on Intel(R) Core(TM) i7-5600U 2.60GHz
+The evaluation was performed on Intel(R) Core(TM) i7-5600U 2.60GHz
 with $4$ cores. Operating system: Linux thinkpad 4.15.0-45-generic \#48-Ubuntu.
 
 \begin{table}[]
@@ -1566,7 +1566,7 @@ with $4$ cores. Operating system: Linux thinkpad 4.15.0-45-generic \#48-Ubuntu.
 \hline
 %\texttt{hello.bf} & \# & 111 & 112 & 123 & 5\,175\,355 & 60\,271\,162\\
 \texttt{hello.bf} & \# & 111 & 112 & 123 & 5.2 M & 60.3 M\\
- & {\footnotesize{RT}} & 0.01 s & 0.00 s & 0.01 s & $\infty$ & $\infty$ \\
+ & {\footnotesize{RT}} & 0.01 s & $<0.01$ s & 0.01 s & $\infty$ & $\infty$ \\
  & {\footnotesize{TT}} & 0.01 s & 0.01 s & 249.84 s & 714.81 s & --- \\
 \hline
 %\texttt{hello3.bf} & \# & 193 & 205 & 209 & 1\,568\,779 & 17\,088\,537\\
@@ -1576,13 +1576,13 @@ with $4$ cores. Operating system: Linux thinkpad 4.15.0-45-generic \#48-Ubuntu.
 \hline
 %\texttt{hello4.xbf} & \# & 26 & 27 & 28 & 41\,761 & 365\,202\\
 \texttt{hello4.xbf} & \# & 26 & 27 & 28 & 42 k & 36 k\\
- & {\footnotesize{RT}} & 0.00 s & 0.00 s & 0.00 s & 0.04 s & 1.41 s \\
- & {\footnotesize{TT}} & 0.00 s & 0.00 s & 5.22 s & 4.71 s & --- \\
+ & {\footnotesize{RT}} & $<0.01$ s & $<0.01$ s & $<0.01$ s & 0.04 s & 1.41 s \\
+ & {\footnotesize{TT}} & $<0.01$ s & $<0.01$ s & 5.22 s & 4.71 s & --- \\
 \hline
 %\texttt{to\_lower.bf} & \# & 34 & 35 & 36 & 385\,189 & 4\,286\,957\\
 \texttt{to\_lower.bf} & \# & 34 & 35 & 36 & 0.4 M & 4.3 M\\
- & {\footnotesize{RT}} & 0.01 s & 0.01 s & 0.00 s & 0.41 s & $\infty$ \\
- & {\footnotesize{TT}} & 0.00 s & 0.01 s & 21.40 s & 43.21 s & --- \\
+ & {\footnotesize{RT}} & 0.01 s & 0.01 s & $<0.01$ s & 0.41 s & $\infty$ \\
+ & {\footnotesize{TT}} & $<0.01$ s & 0.01 s & 21.40 s & 43.21 s & --- \\
 \hline
 %\texttt{add\_digits.bf} & \# & 69 & 70 & 77 & 3\,894\,442 & 45\,477\,467\\
 \texttt{add\_digits.bf} & \# & 69 & 70 & 77 & 3.9 M & 45.5 M\\
@@ -1597,7 +1597,7 @@ with $4$ cores. Operating system: Linux thinkpad 4.15.0-45-generic \#48-Ubuntu.
 %\texttt{simple.tm} & \# & --- & 8 & 11 & 345\,407 & 3\,940\,225\\
 \texttt{simple.tm} & \# & --- & 8 & 11 & 0.3 M & 3.9 M\\
  & {\footnotesize{RT}} & --- & 0.01 s & 0.01 s & 0.07 s & $\infty$ \\
- & {\footnotesize{TT}} & --- & 0.00 s & 14.57 s & 38.02 s & --- \\
+ & {\footnotesize{TT}} & --- & $<0.01$ s & 14.57 s & 38.02 s & --- \\
 \hline
 %\texttt{rotate.tm} & \# & --- & 14 & 18 & 1\,596\,442 & 19\,033\,283\\
 \texttt{rotate.tm} & \# & --- & 14 & 18 & 1.6 M & 19 M\\
@@ -1625,48 +1625,40 @@ with $4$ cores. Operating system: Linux thinkpad 4.15.0-45-generic \#48-Ubuntu.
 
 \chapter{Summary}
 
-
-In this thesis, we provided a full realization of theoretical translation
-from a modern programming language to $2$ Counter Machine. Despite Brainfuck
-being not the most up-to-date language, the proof has been done and it may
-be extended with another (related) work that exists translating C++
-to Brainfuck (\cite{in-person}). Together these two works give full
-proof of the theoretical concept of equivalence modern languages and $2$ Counter
+In this thesis, we provided a full implementation of a translation
+from a modern programming language to $2$ Counter Machine. 
+While Brainfuck is not widely used, our work can be combined with 
+existing tools translating C++
+to Brainfuck (\cite{in-person}). Together these two works give a full
+proof of the theoretical concept of equivalence of modern languages and $2$ Counter
 Machine.
 
-The obtained implementation is slow (as expected), but there is a clear real
-code that uses only $2$CM language, which is very poor and is able to express
-high-level thoughts of today's programmers.
-
-To be honest, execution is possible in $4$ Counter Machine, where the time is
-acceptable. Translation to $2$CM is pretty fast as well, so real code which
-we wanted to achieve was generated.
-
-What we have learned is that ASCII table is not designed to help in such
-translation and if it was redesigned to have English alphabet assigned
-with small numbers, it would be much easier to handle.
-
-Exponential growth is dangerous (which is not surprising) and limits our implementation.
+The translation time is usually reasonable, but the running time grows
+very quickly once we get to the $2$CM language, were we observe the exponential growth.
+This exponential growth limits our implementation especially in presence of ASCII
+characters, whose values are often high.
 If we remapped ASCII characters at the very beginning of the pipeline
 then it would help significantly. Brainfuck's code structure is very connected
-to the current shape of ASCII table, to it is not that simple to make such a remapping,
-usual Brainfuck's code has many consecutive \texttt{+}'s which are making
+to the current shape of ASCII table, so it is not that simple to make such a remapping.
+Usual Brainfuck's code has many consecutive \texttt{+}'s which are making
 an expected character. Remapping would mean that Brainfuck's code should be changed
 (or at least cut) before the actual translation.
 
-What can be done next?
+The application serves as a proof of concept, but could also be adapted
+as an education tool. That would require constructing an user-friendly
+graphical interface, but this is not in the scope of this thesis.
+
+Other possible directions of further development include:
 \begin{itemize}
-  \item Extending from the left side of the pipeline -- translations from any modern
-      programming language to Brainfuck.
-  \item Adding graphical interface to make the usage easier.
   \item Harder optimizations that would make Counter Machines faster.
-  \item Adding clever recognition of transition's groups -- there are specific
+  \item Adding a clever recognition of transition's groups -- there are specific
       transition's chains that could be recognized and the calculations
-      based on such knowledge can help to improve times.
-  \item Adding ASCII mapping that is attached to original source code -- that
-      would allow creating codes in slight modifications of Brainfuck that
-      would be more efficient in the endpoint source code.
+      based on such knowledge can help to improve running times.
+  \item Adding ASCII mapping that is attached to original source codes -- that
+      would allow to create codes in slight modifications of Brainfuck that
+      would be translated to more efficient endpoint source codes.
 \end{itemize}
+
 
 \bibliographystyle{plain}
 \bibliography{thesis}{}
