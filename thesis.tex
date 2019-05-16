@@ -358,7 +358,7 @@ An example code printing "Hello World!" (source: \href{https://pl.wikipedia.org/
 >.                 prints newline character
 \end{verbatim}
 
-\section {Turing Machine}
+\section {Turing Machine} \label{turing_machine}
 
 \subsection {Instructions}
 
@@ -431,7 +431,7 @@ the~change symbol \texttt{->} in the~transition definition.
         \texttt{A} on stdout and move the~head to the~right.
 \end{itemize}
 
-\subsection{Example}
+\subsection{Example} \label{turing_machine_example}
 
 Below is a~program that reads a~letter from stdin, writes this letter into
 stdout and if the~written letter was \texttt{B} or \texttt{b} then prints
@@ -1076,9 +1076,10 @@ model in the~pipeline (i.e. 2 stack PDA).
 Most of the translations are pretty straightforward and require only basic tricks like
 generating unique state names. The~most interesting one is 2 stack PDA to 4 Counter Machine,
 which requires putting a large part of a~program logic into appropriate state names, so it is important
-to notice the~structure of the~logic to come up with reasonable translation algorithm.
-It turns out that Brainfuck has very specific instructions that allow making optimizations
-to the~translation process.
+to notice the~structure of the~logic to come up with a reasonable translation algorithm.
+It turns out that Brainfuck has the very specific instructions that allow making optimizations
+to the~translation process. These optimizations allowed to generate a shorter
+code.
 
 Few examples:
 \begin{itemize}
@@ -1086,27 +1087,38 @@ Few examples:
       which means we do not need to recognize what is read -- we just blindly store it in memory.
       This is the~optimization mentioned earlier -- we may use only O($m^2$) new states to translate
       a~single 2 stack PDA transition.
-  \item From a~given state there might be multiple outgoing paths (a~few different states depending
-      on the~stack symbols), but there is no need to build the~whole circle structure for each one.
-      We can aggregate all of them and make appropriate outgoing paths to end up within correct
-      next states. Notice that for a~single 2 stack PDA transition with explicit symbols (no patterns)
-      there is only one outgoing path from our circle structure. In this case, instead of wasting all
-      the other states $R_i$ we may connect them to appropriate other 2 stack PDA transitions.
-      What is more, for all those outgoing paths that do not match any 2 stack PDA transition
-      we may just end execution (go to \texttt{END} state).
-  \item (partially implemented) If a stack is completely ignored by a~transition, there is no point
-      to recognize a~symbol on top of it. For example instructions \texttt{>} and \texttt{<}
-      in Brainfuck just move to next/previous cell, which in practice ignores the top
-      character on one of the~stacks. Another example is an instruction \texttt{+},
-      which requires to touch only one of the stacks -- (implemented) for both
-      \texttt{+} and \texttt{-} there is only O($m$) new states created.
-  \item There is no need to load all the states, because most probably we will
-      not need all of them -- lazy loading allows to add to transition set
-      all the transitions that refer to the state that we are currently in.
-  \item In $2$CM transitions we often need to recover counter's position by
-      copying its content to the other counter -- it is easy to recognize such
-      a transition and do the copy using regular variable assignment in C++.
+  \item Merging all failing paths into one state. As shown in Figure \ref{fig:check},
+      we end up in some $R_i$ depending on the recognized symbol.
+      Sometimes we are interested in recognizing only one specific symbol
+      and want the code to fail (stop the execution) for all the others.
+      Int this case all $R_i$'s, except the desired one,
+      may be merged into one state (\texttt{END}).
+  \item 2 stack PDA interpreter always recognizes symbols on both stacks
+      to check what is the matching transition. This strategy (when translated
+      explicitly to $4$CM) results in lots of code (O($m^2$) states generated
+      from a single transition). Original Brainfuck's \texttt{+} and \texttt{-}
+      does not need both symbols -- it checks the one on the left stack,
+      increases it by $1$ and stores it back onto the same (left) stack.
+      This means that the right stack may be completely ignored. This will
+      result in O($m$) transitions in $4$CM from a single $2$ stack PDA transition.
 \end{itemize}
+
+
+There are also optimizations in the interpreters, so that the existing
+translated code is executed more efficiently:
+
+\begin{itemize}
+\item There is no need to load all the states at the beginning, because most probably we will
+      not need all of them -- lazy loading allows to add to transition set
+      only the transitions that refer to the state that we are currently in.
+  \item In $2$CM transitions we often need to recover counter's position by
+      copying its content to the other counter. Such a transition subtracts
+      $1$ and adds $1$ on desired counters, which is very ineffective copy.
+      Such a transition is recognized and the copy is done immedietaly with
+      regular variable assignment in C++.
+\end{itemize}
+
+
 
 The amount of generated information is very big even for the simplest programs, which is not a surprise.
 After analyzing a classical \textit{Hello World!}, it turns out that a~human can
@@ -1201,11 +1213,16 @@ List of commands within directories:
   \item \texttt{2stackPDA\_parser}
     \begin{itemize}
       \item run a 2 stack PDA source file: \\ \texttt{./test.e ../examples/hello.pda}
-      \item (not recommended) translate 2 stack PDA to 4 Counter Machine: \\ \texttt{./test.e -minsky ../examples/hello.pda}
       \item (recommended) translation into multiple files within \texttt{output}
         directory: \\ \texttt{./test.e -multifile output/base ../examples/hello.pda}
 
         (It will automatically create a directory if needed.)
+      \item (not recommended) translate 2 stack PDA to 4 Counter Machine: \\ \texttt{./test.e -minsky ../examples/hello.pda}
+
+        (This command prints all the translated code into standard output,
+        which is usually very slow. Instead I recommend to use multifile
+        translation above which directly stores large output into many independent
+        files.)
     \end{itemize}
   \item \texttt{mm4\_parser}
     \begin{itemize}
@@ -1540,9 +1557,12 @@ computations and it is possible to run them in $4$CM, which is most of the pipel
 There is another group of examples \texttt{simple.tm} and \texttt{rotate.tm}
 which does not start from Brainfuck code. For them, it is easier to express
 the logic in Turing Machine code. \texttt{rotate.tm} is implementing Ceasar cypher
-and it runs within less than $1$s after translating to $4$CM.
-The problem in $2$CM is using the characters with large codes (like
-$65$ for \texttt{A} etc.).
+and it runs within less than $1$s after translating to $4$CM. \texttt{simple.tm}
+is in the subsection \ref{turing_machine_example} of Turing Machine
+description (\ref{turing_machine}), which repeats the letter and prints
+additionally \texttt{.} if it was \texttt{b} or \texttt{B}.
+The problem in $2$CM (for this group of codes) is using the characters with
+large codes (like $65$ for \texttt{A} etc.).
 
 The very last code \texttt{hello\_opt.pda} is (again) printing
 \texttt{Hello World!}, but in $2$ stack PDA we can already operate on
