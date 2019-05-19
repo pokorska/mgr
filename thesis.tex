@@ -93,46 +93,46 @@ as execute a code written in any of these languages.
 
 \section{Turing Machine}
 
-Modern computers and their abilities nowadays are complex and depend on many different factors
+Modern computers and their abilities are complex and depend on many different factors
 to~perform given computations, like processor technology, software optimizations within given
-processor model, input/output communication protocols and many others. This is why if we want
-to~state or prove anything about the behaviour of computer programs, then we need to~find a~common
+processor model, input/output communication protocols and many others. This is why when we want
+to~state or prove anything about the behaviour of computer programs, we need a~common
 language and~general theoretical model representing any type of "computer".
 
 The model is known since 1936 \cite{turing1937computable} when Alan Turing proposed an abstract system
 called \textbf{Turing Machine}
 to represent a~machine that is able to~execute any computations expressible in~terms of~computer program.
-It has all positive and~negative properties which belong to~modern programs, i.e., it~is possible
+It has all adventages and~disadventages which belong to~modern programs, i.e., it~is possible
 to create a~program which will never stop or~consume an infinite amount of memory. The model does not allow
-to~solve all the problems -- it~has got the~same limitations in~sense of~creating algorithms
+to~solve all the problems -- it~has the~same limitations in~sense of~creating algorithms
 like a~regular computer.
 
 Turing Machine is~a~finite description of~an~algorithm. To perform calculations it uses
 a~potentially infinite tape as~its memory -- we have some amount of~tape at~the beginning,
 but~we may extend this tape (glue additional tape cells) to~the right end if necessary.
 All cells are either blank or~contain a~single letter -- when a~machine starts its
-work, it has access to $3$ different tapes: \textit{input tape}, \textit{output tape} and
-its own tape for calculations.
-\textit{Input tape} is read-only and it gives symbols one by one until the~end of an~input word
-(we cannot perform any direct moves on that tape). Similarly, \textit{output tape} is write-only, and
+work, it has access to three different tapes: \textit{input tape}, \textit{output tape} and
+a tape for calculations.
+\textit{An input tape} is read-only and it provides symbols one by one until the~end of an~input word
+(we cannot perform any direct moves on that tape). Similarly, \textit{an output tape} is write-only, and
 when a~machine finishes its work there is output word written (if any is needed). Using its regular
 tape for computations a~machine can do anything: write, read, move and extend the~tape.
 After a~machine finishes (if it finishes at all) it can either \textit{accept}
 or~\textit{reject} the original input word and there may be an~output word written on the output tape
 (for simplicity it is usually assumed that there is no output word).
 
-As~an~example we can construct a~Turing Machine recognizing all binary palindromes of~even length,
-formally defined as a~set $A = \{ ww^R : w \in \{0,1\}^* \}$ (where $^R$ means reversing given word).
-Because we need to use finite description, we say that the~machine should read whole input word
+As~an~example, we can construct a~Turing Machine recognizing all binary palindromes of~even length,
+formally defined as a~set $A = \{ ww^R : w \in \{0,1\}^* \}$ (where $w^R$ is the reversed word $w$).
+Because we need to use finite description, we say that the~machine should read the whole input word
 from the~input tape, store it on its computations tape and move to the~beginning of its tape.
 Then the~machine should check the~first letter $a_1$ with the~last one $a_n$ -- if these cells
 contain different letters then the~machine should immediately reject the whole word,
 otherwise, it should mark both $a_1$ and $a_n$ as checked (i.e. write $\#$ symbol in~their cells)
-and~continue with $a_2$ and~$a_{n-1}$. At~the~end we should have a~tape full of $\#$s and~the~machine
-should accept given word. If there is just one unchanged cell left then it was a~palindrome
+and~continue with $a_2$ and~$a_{n-1}$. At~the~end, we should have a~tape full of $\#$s and~the~machine
+should accept the given word. If there is just one unchanged cell left, then the original word was a~palindrome
 of~odd length and~we should reject it.
 
-For simplicity we assume we do not have the~output tape -- a~machine may either accept or reject
+For the sake of simplicity, we assume we do not have the~output tape -- a~machine may either accept or reject
 an~input word written on the~input tape. \textbf{Turing Machine} is a~$6$-tuple
 $(Q,\Sigma,\Gamma,\delta,q_0,P)$ where:
 \begin{itemize}
@@ -154,15 +154,15 @@ $(Q,\Sigma,\Gamma,\delta,q_0,P)$ where:
   \item $k$ is a~cell number the~machine is currently looking at.
 \end{itemize}
 
-Having a~configuration we can precisely say what is the~program execution progress.
+Having a~configuration, we can precisely say what is the~program execution progress.
 One configuration is~a~precise step of~computation, so a~sequence of~configurations (where
 each consecutive pair obeys $\delta$) is called
-a~\textbf{run} of~a~Turing Machine. This sequence may be finite or~infinite the~same way like
+a~\textbf{run} of~a~Turing Machine. This sequence may be finite or~infinite in the~same way like
 a~program may loop forever or~finish within some number of~steps. Each such run is not extendable
 (there is no $\delta$-travel from the very last state). It begins with
 a~configuration, where some word $w$ is~an~input, $k = 0$ which is the~leftmost cell on~the~tape
 and~$q = q_0$ which is an initial state defined in~the~description of~the~given machine. If~a~run is
-finite and~ends with a~configuration ($w_n$, $q_n$, $k_n$) then we define the~input word to~be
+finite and~ends with a~configuration ($w_n$, $q_n$, $k_n$) then we say the~input word to~be
 \textit{accepted} if $q_n \in P$ ($q_n$ is one of accepting states) and \textit{rejected} otherwise.
 
 \section{Church-Turing thesis and Turing-completeness}
@@ -170,8 +170,8 @@ finite and~ends with a~configuration ($w_n$, $q_n$, $k_n$) then we define the~in
 Computers are used to perform calculations for us. We want them to~execute some
 procedures or~to~perform some process and~we call it an~\textit{algorithm} in~its intuitive meaning.
 A~good example could be~a~mathematical problem of~generating prime numbers -- it~is fairly simple
-to~think of~a~method of~generating prime numbers by checking lager and~larger numbers and~checking
-their all possible divisors. We~are able to~precisely say what this algorithm looks like and~if
+to~think of~a~method of~generating prime numbers by checking larger and~larger numbers and~checking
+their all possible divisors. We~are able to~precisely say how this algorithm looks like and~if
 we think for a~while we would probably be able to~express it in terms of Turing Machines. This
 is a consequence of the \textbf{Church-Turing thesis} (see Chapter Church-Turing Thesis of \cite{sipser2012ChurchTuring}):
 
@@ -183,8 +183,8 @@ within the~world of~Turing Machine programs.
 
 It~turns out that when designing any~modern algorithms, we use~the same way of~intuitive description
 of~a~procedure and~then we~are converting it~into \textit{implementation}, which is~a~representation
-of~given algorithm using a~modern programming language. From thesis above we~claim that most probably
-it~would be~possible to~express it~as~a~Turing Machine (but probably require lots of~thought).
+of~given algorithm using a~modern programming language. From the thesis we~claim that
+it~would be~possible to~express it~as~a~Turing Machine (but it would probably require lots of~thought).
 
 To~avoid~a~painful process of~expressing algorithms in~an~unhandy theoretical model, we~employ
 the~concept of~\textbf{Turing-completeness}. All popular modern programming languages are proven
@@ -193,7 +193,7 @@ language if and only if there exists some equivalent Turing Machine description.
 
 \section{Counter Machine}
 
-We have so far one theoretical model -- a Turing Machine -- which has the~same power of~expression
+We have one theoretical model so far -- a Turing Machine -- which has the~same power of~expression
 as~modern languages. It turns out there are many other theoretical models
 equivalent to Turing Machines (so~to~modern languages as~well). One of~such alternatives
 is~\textbf{Counter Machine} (sometimes called \textbf{Minsky Machine}) \cite{minsky_67},
@@ -201,38 +201,39 @@ which is~really basic in~its construction.
 
 Similarly to~Turing Machine, Counter Machine has~a~finite description -- a finite set of~states $Q$
 and~a~transition function $\delta$ defining when the~machine may move from one state to~another.
-Instead of~the~infinite tape, there is a fixed number of counters -- each counter works like a~glass of~coins,
-the~machine may throw a~coin (or~several coins) into the~glass, check whether the~glass is~empty
-or~take out a~coin (only one and~only if the glass is not empty). Each counter is~basically a~non-negative
-integer, but the~machine is~not allowed to~explicitly check its value, it~just gets a~boolean
-information about whether it equals $0$.
+Instead of~an~infinite tape, there is a fixed number of counters -- each counter works like a~glass of~coins,
+the~machine may put a~coin (or~few coins) into the~glass, check whether the~glass is~empty
+or~take out a~coin (only one and~only if the glass is not empty). Each counter is a~non-negative
+integer, but the~machine is~not allowed to~explicitly check its value, it~just receives a~boolean
+information if it is equal to $0$.
 
-There are a~few alternative models -- if~we~allow the~machine to~use at~least $2$ counters,
+There are few alternative models -- if~we~allow the~machine to~use at~least two counters,
 then we get a~model equivalent to Turing Machine. According to~this fact, we~can
-choose how many counters it~is convenient for~us to~use. The~only exception is~Counter Machine with
-$1$ counter which is~not able to~express everything a~$2$ Counter Machine can. As~an~argument
-we may say that halting problem for $1$ Counter Machine is~decidable -- it is possible to~check
+choose how many counters it~is convenient to~use. The~only exception is~Counter Machine with
+one counter which is~not able to~express everything a~Two Counter Machine can. As~an~argument
+we may say that the halting problem for One Counter Machine is~decidable -- it is possible to~check
 in~polynomial time whether a given description of $1$ Counter Machine will loop forever or~not.
-Of~course halting problem for $2$ Counter Machine is proven to~be not decidable. \cite{minsky_67}
+Of~course halting problem for Two Counter Machine is proven to~be not decidable. \cite{minsky_67}
 
-\section {2 stack pushdown automaton (2 stack PDA)}
+\section {Two stack pushdown automaton (two stack PDA)}
 
-Similarly to~a~Counter Machine, finite description of a~2~stack pushdown automaton
-(PDA) -- see Chapter Context-Free Languages, Pushdown Automata of \cite{sipser2012ChurchTuring}
--- contains a~number of~states and~transition function $\delta$, but~counters are replaced with 2 stacks.
+Similarly to~a~Counter Machine, finite description of a~two stack pushdown automaton
+(PDA) contains a~number of~states and~transition function $\delta$,
+but~counters are replaced with two stacks
+(see Chapter Context-Free Languages, Pushdown Automata of \cite{sipser2012ChurchTuring}).
 These 2~stacks use stack alphabet $\Gamma$ and the~automaton may change their state
-by~pushing zero or~more symbols at the~top or~removing \textbf{exactly one} symbol from
+by~pushing zero or~more symbols at the~top or~by removing \textbf{exactly one} symbol from
 the~top.
 
 In practice, the~implementation assumes that a~single transition \textbf{always} takes
 a~symbol from each stack and after transitioning to a~new state pushes some symbols
 (maybe the~original ones) to each stack.
 
-Each stack has a~special symbol $\perp$ at the~bottom that determines when a~stack is
+Each stack has a~special symbol $\perp$ at the~bottom that determines if the~stack is
 empty. Additionally, it is not allowed to take $\perp$ out from the stack, so~after transitioning
-to a~new state $\perp$ must be pushed back (maybe followed by other symbols) to~the~stack.
+to a~new state, $\perp$ must be pushed back (maybe followed by other symbols) to~the~stack.
 
-Formally 2 stack PDA is a~$6$-tuple ($Q$, $\Sigma$, $\Gamma$, $\delta$, $q_0$, $F$) where:
+Formally, two stack PDA is a~$6$-tuple ($Q$, $\Sigma$, $\Gamma$, $\delta$, $q_0$, $F$) where:
 \begin{itemize}
   \item $Q$ is a~finite set of states,
   \item $\Sigma$ is a~finite input alphabet ($\epsilon \in \Sigma$),
@@ -243,71 +244,73 @@ Formally 2 stack PDA is a~$6$-tuple ($Q$, $\Sigma$, $\Gamma$, $\delta$, $q_0$, $
   \item $F$ is a~finite set of accepting states which.
 \end{itemize}
 
-Each transition specifies when it may be applied by giving a~quadruple
-($q$,$a$,~$s$,~$t$)~$\in$~($Q$,$\Sigma$,~$\Gamma$,~$\Gamma$). It means that the input symbol is $a$,
+Each transition specifies when it may be applied by providing a~quadruple
+$(q, a, s, t) \in (Q, \Sigma, \Gamma, \Gamma)$. It means that the input symbol is $a$,
 the~left stack has symbol $s$ and the~right stack symbol $t$ at the~top. In practice, there
-might be multiple transitions matching the current state, so it is assumed that the first one
+might be multiple transitions matching the current state, so it is assumed that only the first
 defined is applied.
 
 \section{Brainfuck}
 
-A~Counter Machine is~a~minimalistic model of~Turing-complete computations the~same way
-\textbf{Brainfuck} \cite{brainfuckWiki} is a~minimalistic (only 8 instructions) programming
+A~Counter Machine is~a~minimalistic model of~Turing-complete computations in the same way as
+\textbf{Brainfuck} \cite{brainfuckWiki} is a~minimalistic (only eight instructions) programming
 language which recalls
-the~definition of~Turing Machine -- program operates on~a~tape containing numbers, it~is possible
+the~definition of~Turing Machine -- a program operates on~a~tape containing numbers, it~is possible
 to~explicitly read and~change values in~cells. A~program operates on~a~data pointer which
-points to~the~current focus cell, so~that it~is able to~freely move around. The~main difference
-between Turing Machine and~Brainfuck is~lack of~states and~transitions, instead a~program
-is a~sequence of instructions that are executed one by~one.
+points to~the~current focus cell, so it~is able to~move left or right to the desired cell. The~main difference
+between Turing Machine and~Brainfuck is the representation of the source code.
+It does not matter what is the order of transitions for Turing Machine, but it
+is critical to know what is the order of intructions in Brainfuck.
 
 Usually, Brainfuck implementations assume that tape length is~around $30\,000$ cells which
 is~enough in~most cases. If~we want to~prove Turing-completeness though, this tape
 needs to~be potentially infinite. Of course, no~modern machine is~equipped with infinite memory,
-but we are able to~extend it (with buying additional hardware), so~this factor is~omitted
-when proving Turing-completeness. It is not a~problem in~this thesis at~all since
+but we are able to~extend it (by installing additional hardware), so~this factor is~omitted
+when proving Turing-completeness. It is not a~problem in~this thesis at~all, since
 the~main goal is to~show that anything written in~modern programming language is~possible
-to~automatically translate into~theoretical model.
+to~automatically translate into the theoretical model.
 
 \section {Purpose of this thesis}
 
-This~thesis should be~a~proof of~theoretical concept based on~Church-Turing thesis -- any~algorithm
+This~thesis is a~proof of the theoretical concept based on~Church-Turing thesis -- any~algorithm
 or~mathematical method we~are able to~come up with (as~long as it is expressible in any programming
 language) is possible to~execute on~the~most basic theoretical model which is a~Counter Machine.
 
 The implementation translates Brainfuck into Counter Machine model and~consists of~a~few separate parts
-which are completely separate translations between more and more basic theoretical models.
-It is possible to access any transitional (temporary) programs created during the~whole process.
+which are separate translations between more and more basic theoretical models.
+It is possible to access any transitional program created during the~process.
 
-The~plan of translation including transitional models:
+The~plan of translation includes the following:
 
-\hspace{-1.5cm}
+\begin{center}
 \begin{tikzpicture}
   \draw (0,0) rectangle (2,1) node[pos=.5] {Brainfuck};
   \draw (3,0) rectangle (5,1) node[pos=.5, text width=2cm, align=center] {Turing Machine};
-  \draw (6,0) rectangle (8,1) node[pos=.5, text width=2cm, align=center] {2 Stack PDA};
-  \draw (9,-0.5) rectangle (12,1.5) node[pos=.5, text width=2.5cm, align=center] {Counter Machine \\ 4 Counters};
-  \draw (13,-0.5) rectangle (16,1.5) node[pos=.5, text width=2.5cm, align=center] {Counter Machine \\ 2 Counters};
+  \draw (6,0) rectangle (8,1) node[pos=.5, text width=2cm, align=center] {Two Stack PDA};
+  \draw (9,-0.5) rectangle (12,1.5) node[pos=.5, text width=2.5cm, align=center] {Counter Machine \\ Four Counters};
+  \draw (13,-0.5) rectangle (16,1.5) node[pos=.5, text width=2.5cm, align=center] {Counter Machine \\ Two Counters};
   \draw [->, >=stealth] (2,0.5) -- (3,0.5);
   \draw [->, >=stealth] (5,0.5) -- (6,0.5);
   \draw [->, >=stealth] (8,0.5) -- (9,0.5);
   \draw [->, >=stealth] (12,0.5) -- (13,0.5);
 \end{tikzpicture}
+\end{center}
 
-Any two consecutive models have an automatic translation, so we may wish to~start with any program written
-in Brainfuck, Turing Machine, 2 stack PDA or~4 Counter Machine and receive an~equivalent 2 Counter Machine.
+Any two consecutive models have an automatic translation, so we may want to~start with any program written
+in Brainfuck, Turing Machine, two stack PDA or a Four Counter Machine and receive an~equivalent Two Counter Machine.
 Similarly, we may stop at any point of~translations, so it is possible to generate an equivalent program
-in 2 stack PDA model from a~program written in Turing Machine model.
+in the two stack PDA model from a~program written in the Turing Machine model.
 
 It is worth to mention that there are translators from C to Brainfuck that can
-be combined with my tool in order to obtain a translation from C to $2$ Counter
+be combined with my work in order to obtain a translation from C to Two Counter
 Machine.
 
 This paper is organized as follows: Section 2 contains the exact specification of all the~models used in translations.
 It contains descriptions of how to write source code in each model. Section 3
-explains how we approach each separate translation -- general algorithm to~move from a~source code in one model
-to a~source code in the~next one. Section 4 contains technical details about the~implementation -- what tools
-were chosen to~this project and how to use the~prepared code. It also discusses encountered problems and presents
-a~summary of received results. In Section 5 we discuss the~outcome of the~whole work, what could be extended in the~future
+explains how we approach each separate translation -- the general algorithm to~move from the~source code in one model
+to the~source code in the~next one. Section 4 contains technical details about the~implementation -- which tools
+were chosen for~this project and how to use the~prepared code. It also discusses encountered problems and presents
+a~summary of received results. In Section 5, we discuss the~outcome of the~whole work, what could be extended in the~future
 and what could be done better with the~current knowledge.
 
 
