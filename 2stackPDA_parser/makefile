@@ -1,7 +1,7 @@
-all: test.e
+all: run.e
 
-test.e: names_manip.o translation.o ast.o parser.o lexer.o driver.o test.o
-	g++ -o test.e names_manip.o translation.o ast.o lexer.o parser.o driver.o test.o -std=c++11
+run.e: names_manip.o translation.o ast.o parser.o lexer.o driver.o test.o
+	g++ -o run.e names_manip.o translation.o ast.o lexer.o parser.o driver.o test.o -std=c++11
 
 names_manip.o:
 	g++ -o names_manip.o -c names_manip.cc -std=c++11

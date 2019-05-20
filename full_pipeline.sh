@@ -87,32 +87,32 @@ fi
 
 if [ $CUSTOM_OUTPUT = true ]; then OUTPUT=$OUTPUT_TMP; fi
 
-cd ../bf_parser/;
+cd bf_parser/;
 if [ $CLEAN = true ]; then make clean; fi
 make all;
-cp test.e ../shared_files/bf_to_tm.e;
+cp run.e ../bf_to_tm.e;
 
 cd ../tm_parser/;
 if [ $CLEAN = true ]; then make clean; fi
 make all;
-cp test.e ../shared_files/tm_to_pda.e;
+cp run.e ../tm_to_pda.e;
 
 cd ../2stackPDA_parser/;
 if [ $CLEAN = true ]; then make clean; fi
 make all;
-cp test.e ../shared_files/pda_to_cm4.e;
+cp run.e ../pda_to_cm4.e;
 
 cd ../mm4_parser/;
 if [ $CLEAN = true ]; then make clean; fi
 make all;
-cp test.e ../shared_files/cm4_to_cm2.e;
+cp run.e ../cm4_to_cm2.e;
 
 cd ../mm2_parser/;
 if [ $CLEAN = true ]; then make clean; fi
 make all;
-cp test.e ../shared_files/cm2.e;
+cp run.e ../cm2.e;
 
-cd ../shared_files/;
+cd ../;
 
 if [ $TRANSLATE = true ]; then
   if [ $STAGES -gt 2 ]; then

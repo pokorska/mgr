@@ -1194,11 +1194,10 @@ The first requirement is installing Flex and Bison:
 
 \texttt{sudo apt-get install flex bison}
 
-When we want to run full pipeline then we need to run script \texttt{full\_pipeline.sh} within
-\texttt{shared\_files} directory:
+When we want to run full pipeline then we need to run script \texttt{full\_pipeline.sh}:
 
 \hspace{-1.25cm}
-\texttt{./full\_pipeline.sh -f ../examples/hello4.xbf -o output\_mm2/base --run --recompile}
+\texttt{./full\_pipeline.sh -f examples/hello4.xbf -o output\_mm2/base --run --recompile}
 
 Options:
 \begin{itemize}
@@ -1213,7 +1212,7 @@ Options:
   \item \texttt{-d} or \texttt{--direct} directly runs translated code. If input
       code is in the multifile format then the path to the code should not contain latter \texttt{\_<num>}
       part, for example, files \texttt{outdir\_mm2/aaa\_123}, \texttt{outdir\_mm2/aaa\_43} should
-      be provided as a command \texttt{./full\_pipeline -d outdir\_mm2/aaa}
+      be provided as a command \texttt{./full\_pipeline.sh -d outdir\_mm2/aaa}
 
       \begin{footnotesize}
       Note: Brainfuck, Turing Machine and two stack PDA are recognized by the extension
@@ -1223,7 +1222,7 @@ Options:
       \end{footnotesize}
   \item \texttt{-t <lang>} or \texttt{--to <lang>} specifies at which language a translation should
       be stopped. Possible languages: \texttt{bf}, \texttt{tm}, \texttt{pda}, \texttt{mm4} and \texttt{mm2}.
-      Such command: \texttt{./full\_pipeline -f ../examples/hello3.bf --to pda} will translate
+      Such command: \texttt{./full\_pipeline.sh -f examples/hello3.bf --to pda} will translate
       \texttt{hello3.bf} to two stack PDA. By default, translation is done to Two Counter Machine.
 \end{itemize}
 Full handling of every single model is implemented within a separate directory called
@@ -1242,31 +1241,31 @@ an~own \texttt{makefile}.
 
 There are two operations allowed for each model:
 \begin{itemize}
-  \item parse + run -- parse source code and run it: \texttt{./test.e <path\_to\_source\_code>},
+  \item parse + run -- parse source code and run it: \texttt{./run.e <path\_to\_source\_code>},
   \item parse + translate -- parse source code and translate it into a~source code
-      of the~next model: \texttt{./test.e -<next\_model> <path\_to\_source\_code>}.
+      of the~next model: \texttt{./run.e -<next\_model> <path\_to\_source\_code>}.
 \end{itemize}
 
 List of commands within directories:
 \begin{itemize}
   \item \texttt{bf\_parser}
     \begin{itemize}
-      \item run a Brainfuck source file: \\ \texttt{./test.e ../examples/hello.bf}
-      \item translate Brainfuck to Turing Machine: \\ \texttt{./test.e -turing ../examples/hello.bf}
+      \item run a Brainfuck source file: \\ \texttt{./run.e ../examples/hello.bf}
+      \item translate Brainfuck to Turing Machine: \\ \texttt{./run.e -turing ../examples/hello.bf}
     \end{itemize}
   \item \texttt{tm\_parser}
     \begin{itemize}
-      \item run a Turing Machine source file: \\ \texttt{./test.e ../examples/hello.tm}
-      \item translate Turing Machine to two stack PDA: \\ \texttt{./test.e -2stackPDA ../examples/hello.tm}
+      \item run a Turing Machine source file: \\ \texttt{./run.e ../examples/hello.tm}
+      \item translate Turing Machine to two stack PDA: \\ \texttt{./run.e -2stackPDA ../examples/hello.tm}
     \end{itemize}
   \item \texttt{2stackPDA\_parser}
     \begin{itemize}
-      \item run a two stack PDA source file: \\ \texttt{./test.e ../examples/hello.pda}
+      \item run a two stack PDA source file: \\ \texttt{./run.e ../examples/hello.pda}
       \item (recommended) translation into multiple files within \texttt{output}
-        directory: \\ \texttt{./test.e -multifile output/base ../examples/hello.pda}
+        directory: \\ \texttt{./run.e -multifile output/base ../examples/hello.pda}
 
         (It will automatically create a directory if needed.)
-      \item (not recommended) translate two stack PDA to four Counter Machine: \\ \texttt{./test.e -minsky ../examples/hello.pda}
+      \item (not recommended) translate two stack PDA to four Counter Machine: \\ \texttt{./run.e -minsky ../examples/hello.pda}
 
         (This command prints all the translated code into standard output,
         which is usually very slow. Instead, it is recommended to use multifile
@@ -1275,18 +1274,18 @@ List of commands within directories:
     \end{itemize}
   \item \texttt{mm4\_parser}
     \begin{itemize}
-      \item run a Four Counter Machine source file: \\ \texttt{./test.e ../examples/hello.mm4}
+      \item run a Four Counter Machine source file: \\ \texttt{./run.e ../examples/hello.mm4}
       \item (recommended) run a source with multiple files (files within \texttt{output}
-        directory and created by 2StackPDA translation): \\ \texttt{./test.e -multifile input/base}
+        directory and created by 2StackPDA translation): \\ \texttt{./run.e -multifile input/base}
       \item translation into \texttt{output} directory from \texttt{input}
-        directory: \\ \texttt{./test.e -minsky -multifile input/base -o output/base}
+        directory: \\ \texttt{./run.e -minsky -multifile input/base -o output/base}
 
         (It will automatically create the directory if needed.)
     \end{itemize}
   \item \texttt{mm2\_parser}
     \begin{itemize}
       \item run a source with multiple files (files within \texttt{output}
-        directory and created by the Four Counter Machine translation): \\ \texttt{./test.e -multifile output/base}
+        directory and created by the Four Counter Machine translation): \\ \texttt{./run.e -multifile output/base}
     \end{itemize}
 \end{itemize}
 
