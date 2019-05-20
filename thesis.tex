@@ -552,7 +552,7 @@ looks as follows:
 state_name (pattern pattern pattern pattern) ->
     target_state (number number number number)
 \end{verbatim}
-
+%
 where:
 \begin{itemize}
   \item \texttt{state\_name} is the state in which the Counter Machine needs to be
@@ -588,7 +588,7 @@ An~input transition is defined as follows:
 state_name (counters) input pattern ->*
     target_state (numbers) input_operation
 \end{verbatim}
-
+%
 where:
 \begin{itemize}
   \item \texttt{input\_pattern} is one of \texttt{0}, \texttt{1} or \texttt{\_}
@@ -618,7 +618,7 @@ An~output transition is defined as follows:
 \begin{verbatim}
 state_name (counters) ->^ target_state (numbers) Output: output_operation
 \end{verbatim}
-
+%
 where \texttt{output\_operation} specifies what should be performed on the~output
 counter and may be one of \texttt{FLUSH} or non-negative number, meaning
 respectively pushing the~counter to stdout and modifying the~value stored
@@ -1008,8 +1008,8 @@ The translation of a transition:
 \begin{verbatim}
 s (_ _ _ _) -> next_s (1 0 2 0)
 \end{verbatim}
-
-Will look like this:
+%
+will look like this:
 \begin{verbatim}
 s (_ _) -> s_modify (0 0)
 s_modify (1 _) -> s_modify (-1 2)
@@ -1031,8 +1031,8 @@ whether second counter is empty or not):
 s (_ 1 _ _) -> s_1 (0 0 0 0)
 s (_ 0 _ _) -> s_0 (0 0 0 0)
 \end{verbatim}
-
-we build such circle (we end up within \texttt{s\_0} if counter is empty and in \texttt{s\_1} otherwise):
+%
+such a circle is built (end up within \texttt{s\_0} if counter is empty and in \texttt{s\_1} otherwise):
 
 \begin{center}
 \begin{tikzpicture}
@@ -1428,7 +1428,7 @@ to ASCII number):
 \begin{verbatim}
 ,++++++++++ ++++++++++ ++++++++++ ++.
 \end{verbatim}
-
+%
 is automatically translated to:
 
 \begin{verbatim}
@@ -1564,8 +1564,8 @@ The latter two codes contain optimizations for the last stages of the translatio
 is running smoothly up to $4$CM, while \texttt{hello4.xbf} is running smoothly
 throughout the whole pipeline. The main difference is about the recourses ---
 in practice to make $4$CM code working in a reasonable time, we need to use only
-one memory cell in the original Brainfuck's code.
-A $2$CM code needs additionally small numbers (characters) stored within this cell.
+one memory cell in the original Brainfuck's code. A $2$CM code needs
+additionally small numbers (characters) stored within this cell.
 
 Examples \texttt{to\_lower.bf} and \texttt{add\_digits.bf} perform basic
 computations and it is possible to run them in $4$CM, which is most of the pipeline.
