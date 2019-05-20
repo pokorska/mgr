@@ -1194,12 +1194,53 @@ The first requirement is installing Flex and Bison:
 
 \texttt{sudo apt-get install flex bison}
 
+When we want to run full pipeline then we need to run script \texttt{full\_pipeline.sh} within
+\texttt{shared\_files} directory:
+
+\hspace{-1.25cm}
+\texttt{./full\_pipeline.sh -f ../examples/hello4.xbf -o output\_mm2/base --run --recompile}
+
+Options:
+\begin{itemize}
+  \item\textbf{(required)} \texttt{-f <input file path>} or \texttt{--file <input file path>} -- specifies
+      the path to input file written in Brainfuck,
+  \item \texttt{-o <output file path>} or \texttt{--output <output file path>} -- specifies
+      the path to the output directory (the result of translation) written in the required language (Two Counter Machine by default).
+      If not provided then the default path is taken (depending on the final language)
+  \item \texttt{-r} or \texttt{--run} -- executes translated code (after translation is completed
+      and written to the~specified output file),
+  \item \texttt{--recompile} or \texttt{--clean} forces to recompile all targets,
+  \item \texttt{-d} or \texttt{--direct} directly runs translated code. If input
+      code is in the multifile format then the path to the code should not contain latter \texttt{\_<num>}
+      part, for example, files \texttt{outdir\_mm2/aaa\_123}, \texttt{outdir\_mm2/aaa\_43} should
+      be provided as a command \texttt{./full\_pipeline -d outdir\_mm2/aaa}
+
+      \begin{footnotesize}
+      Note: Brainfuck, Turing Machine and two stack PDA are recognized by the extension
+      (\texttt{.bf}/\texttt{.xbf}, \texttt{.tm}, \texttt{.pda}), but the multifile format of Two and Four Counter Machine
+      is recognized by the directory name. It should contain \texttt{mm2} or
+      \texttt{mm4}, respectively. Example: \texttt{my\_code\_mm4/base} is treated as $4$CM code.
+      \end{footnotesize}
+  \item \texttt{-t <lang>} or \texttt{--to <lang>} specifies at which language a translation should
+      be stopped. Possible languages: \texttt{bf}, \texttt{tm}, \texttt{pda}, \texttt{mm4} and \texttt{mm2}.
+      Such command: \texttt{./full\_pipeline -f ../examples/hello3.bf --to pda} will translate
+      \texttt{hello3.bf} to two stack PDA. By default, translation is done to Two Counter Machine.
+\end{itemize}
 Full handling of every single model is implemented within a separate directory called
 \texttt{<model>\_parser}, where \texttt{<model>} is short name for the~model
 (i.e. \texttt{tm\_parser}). Each directory is a~standalone part and contains
 an~own \texttt{makefile}.
 
-There are two operations allowed for each part:
+A Linux terminal when operating on the multifile format of $4$CM and $2$CM will
+most likely autocomplete to the names containing the symbol \texttt{\_} which must not
+be written in any of presented commands (including direct model commands described below).
+
+Operations on each separate models are implemented within separate directories called
+\texttt{<model>\_parser}, where \texttt{<model>} is short name for the~model
+(i.e. \texttt{tm\_parser}). Each directory is a~stanalone part and contains
+an~own \texttt{makefile}.
+
+There are two operations allowed for each model:
 \begin{itemize}
   \item parse + run -- parse source code and run it: \texttt{./test.e <path\_to\_source\_code>},
   \item parse + translate -- parse source code and translate it into a~source code
@@ -1249,42 +1290,6 @@ List of commands within directories:
     \end{itemize}
 \end{itemize}
 
-A Linux terminal when operating on the multifile format of $4$CM and $2$CM will
-most likely autocomplete to the names containing \texttt{\_} which must not
-be written in any of presented commands (including \texttt{full\_pipeline} script described below).
-
-When we want to run full pipeline then we need to run script \texttt{full\_pipeline.sh} within
-\texttt{shared\_files} directory:
-
-\hspace{-1.25cm}
-\texttt{./full\_pipeline.sh -f ../examples/hello4.xbf -o output\_mm2/base --run --recompile}
-
-Options:
-\begin{itemize}
-  \item\textbf{(required)} \texttt{-f <input file path>} or \texttt{--file <input file path>} -- specifies
-      the path to input file written in Brainfuck,
-  \item \texttt{-o <output file path>} or \texttt{--output <output file path>} -- specifies
-      the path to the output directory (the result of translation) written in the required language (Two Counter Machine by default).
-      If not provided then the default path is taken (depending on the final language)
-  \item \texttt{-r} or \texttt{--run} -- executes translated code (after translation is completed
-      and written to the~specified output file),
-  \item \texttt{--recompile} or \texttt{--clean} forces to recompile all targets,
-  \item \texttt{-d} or \texttt{--direct} directly runs translated code. If input
-      code is in the multifile format then the path to the code should not contain latter \texttt{\_<num>}
-      part, for example, files \texttt{outdir\_mm2/aaa\_123}, \texttt{outdir\_mm2/aaa\_43} should
-      be provided as a command \texttt{./full\_pipeline -d outdir\_mm2/aaa}
-
-      \begin{footnotesize}
-      Note: Brainfuck, Turing Machine and two stack PDA are recognized by the extension
-      (\texttt{.bf}/\texttt{.xbf}, \texttt{.tm}, \texttt{.pda}), but the multifile format of Two and Four Counter Machine
-      is recognized by the directory name. It should contain \texttt{mm2} or
-      \texttt{mm4}, respectively. Example: \texttt{my\_code\_mm4/base} is treated as $4$CM code.
-      \end{footnotesize}
-  \item \texttt{-t <lang>} or \texttt{--to <lang>} specifies at which language a translation should
-      be stopped. Possible languages: \texttt{bf}, \texttt{tm}, \texttt{pda}, \texttt{mm4} and \texttt{mm2}.
-      Such command: \texttt{./full\_pipeline -f ../examples/hello3.bf --to pda} will translate
-      \texttt{hello3.bf} to two stack PDA. By default, translation is done to Two Counter Machine.
-\end{itemize}
 
 \section{Implementation restrictions}
 
