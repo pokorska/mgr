@@ -97,12 +97,12 @@ Modern computers and their abilities are complex and depend on many different fa
 to~perform given computations, like processor technology, software optimizations within given
 processor model, input/output communication protocols and many others. This is why when we want
 to~state or prove anything about the behaviour of computer programs, we need a~common
-language and~general theoretical model representing any type of "computer".
+language and~general theoretical model representing any type of ``computer''.
 
 The model is known since 1936 \cite{turing1937computable} when Alan Turing proposed an abstract system
 called \textbf{Turing Machine}
-to represent a~machine that is able to~execute any computations expressible in~terms of~computer program.
-It has all adventages and~disadventages which belong to~modern programs, i.e., it~is possible
+to represent a~machine that is able to~execute any computations expressible in~terms of a computer program.
+It has all advantages and~disadvantages which belong to~modern programs, i.e., it~is possible
 to create a~program which will never stop or~consume an infinite amount of memory. The model does not allow
 to~solve all the problems -- it~has the~same limitations in~sense of~creating algorithms
 like a~regular computer.
@@ -111,11 +111,11 @@ Turing Machine is~a~finite description of~an~algorithm. To perform calculations 
 a~potentially infinite tape as~its memory -- we have some amount of~tape at~the beginning,
 but~we may extend this tape (glue additional tape cells) to~the right end if necessary.
 All cells are either blank or~contain a~single letter -- when a~machine starts its
-work, it has access to three different tapes: \textit{input tape}, \textit{output tape} and
+work, it has access to three different tapes: \textit{an input tape}, \textit{an output tape} and
 a tape for calculations.
 \textit{An input tape} is read-only and it provides symbols one by one until the~end of an~input word
 (we cannot perform any direct moves on that tape). Similarly, \textit{an output tape} is write-only, and
-when a~machine finishes its work there is output word written (if any is needed). Using its regular
+when a~machine finishes its work there is an output word written (if any is needed). Using its regular
 tape for computations a~machine can do anything: write, read, move and extend the~tape.
 After a~machine finishes (if it finishes at all) it can either \textit{accept}
 or~\textit{reject} the original input word and there may be an~output word written on the output tape
@@ -128,12 +128,12 @@ from the~input tape, store it on its computations tape and move to the~beginning
 Then the~machine should check the~first letter $a_1$ with the~last one $a_n$ -- if these cells
 contain different letters then the~machine should immediately reject the whole word,
 otherwise, it should mark both $a_1$ and $a_n$ as checked (i.e. write $\#$ symbol in~their cells)
-and~continue with $a_2$ and~$a_{n-1}$. At~the~end, we should have a~tape full of $\#$s and~the~machine
+and~continue with $a_2$ and~$a_{n-1}$. In~the~end, we should have a~tape full of $\#$s and~the~machine
 should accept the given word. If there is just one unchanged cell left, then the original word was a~palindrome
 of~odd length and~we should reject it.
 
 For the sake of simplicity, we assume we do not have the~output tape -- a~machine may either accept or reject
-an~input word written on the~input tape. \textbf{Turing Machine} is a~$6$-tuple
+an~input word written on the~input tape. \textbf{A Turing Machine} is a~$6$-tuple
 $(Q,\Sigma,\Gamma,\delta,q_0,P)$ where:
 \begin{itemize}
   \item $Q$ is~a~finite set of~states the~machine can be within,
@@ -157,7 +157,7 @@ $(Q,\Sigma,\Gamma,\delta,q_0,P)$ where:
 Having a~configuration, we can precisely say what is the~program execution progress.
 One configuration is~a~precise step of~computation, so a~sequence of~configurations (where
 each consecutive pair obeys $\delta$) is called
-a~\textbf{run} of~a~Turing Machine. This sequence may be finite or~infinite in the~same way like
+a~\textbf{run} of~a~Turing Machine. This sequence may be finite or~infinite in the~same way as
 a~program may loop forever or~finish within some number of~steps. Each such run is not extendable
 (there is no $\delta$-travel from the very last state). It begins with
 a~configuration, where some word $w$ is~an~input, $k = 0$ which is the~leftmost cell on~the~tape
@@ -175,15 +175,15 @@ their all possible divisors. We~are able to~precisely say how this algorithm loo
 we think for a~while we would probably be able to~express it in terms of Turing Machines. This
 is a consequence of the \textbf{Church-Turing thesis} (see Chapter Church-Turing Thesis of \cite{sipser2012ChurchTuring}):
 
-\textbf{Thesis.} \textit{Intuitive definition of~any~algorithm a~human/computer can follow is~equivalent
+\textbf{Thesis.} \textit{The intuitive definition of~any~algorithm a~human/computer can follow is~equivalent
 to~some description of~a~Turing Machine.}
 
-This thesis allows us to~think about defining algorithms in~intuitive way while still staying
+This thesis allows us to~think about defining algorithms in an intuitive way while still staying
 within the~world of~Turing Machine programs.
 
-It~turns out that when designing any~modern algorithms, we use~the same way of~intuitive description
+It~turns out that when designing any~modern algorithms, we use~the same way of the intuitive description
 of~a~procedure and~then we~are converting it~into \textit{implementation}, which is~a~representation
-of~given algorithm using a~modern programming language. From the thesis we~claim that
+of the given algorithm using a~modern programming language. From the thesis, we~claim that
 it~would be~possible to~express it~as~a~Turing Machine (but it would probably require lots of~thought).
 
 To~avoid~a~painful process of~expressing algorithms in~an~unhandy theoretical model, we~employ
@@ -204,16 +204,16 @@ and~a~transition function $\delta$ defining when the~machine may move from one s
 Instead of~an~infinite tape, there is a fixed number of counters -- each counter works like a~glass of~coins,
 the~machine may put a~coin (or~few coins) into the~glass, check whether the~glass is~empty
 or~take out a~coin (only one and~only if the glass is not empty). Each counter is a~non-negative
-integer, but the~machine is~not allowed to~explicitly check its value, it~just receives a~boolean
-information if it is equal to $0$.
+integer, but the~machine is~not allowed to~explicitly check its value, it~just receives boolean
+information if it is equal to zero.
 
-There are few alternative models -- if~we~allow the~machine to~use at~least two counters,
+There are a few alternative models -- if~we~allow the~machine to~use at~least two counters,
 then we get a~model equivalent to Turing Machine. According to~this fact, we~can
 choose how many counters it~is convenient to~use. The~only exception is~Counter Machine with
-one counter which is~not able to~express everything a~Two Counter Machine can. As~an~argument
+one counter which is~not able to~express everything a~Two Counter Machine can. As~an~argument,
 we may say that the halting problem for One Counter Machine is~decidable -- it is possible to~check
-in~polynomial time whether a given description of $1$ Counter Machine will loop forever or~not.
-Of~course halting problem for Two Counter Machine is proven to~be not decidable. \cite{minsky_67}
+in~polynomial time whether a given description of One Counter Machine will loop forever or~not.
+Of~course, the halting problem for Two Counter Machine is proven to~be not decidable. \cite{minsky_67}
 
 \section {Two stack pushdown automaton (two stack PDA)}
 
@@ -221,7 +221,7 @@ Similarly to~a~Counter Machine, finite description of a~two stack pushdown autom
 (PDA) contains a~number of~states and~transition function $\delta$,
 but~counters are replaced with two stacks
 (see Chapter Context-Free Languages, Pushdown Automata of \cite{sipser2012ChurchTuring}).
-These 2~stacks use stack alphabet $\Gamma$ and the~automaton may change their state
+These two stacks use stack alphabet $\Gamma$ and the~automaton may change their state
 by~pushing zero or~more symbols at the~top or~by removing \textbf{exactly one} symbol from
 the~top.
 
@@ -260,14 +260,14 @@ to~explicitly read and~change values in~cells. A~program operates on~a~data poin
 points to~the~current focus cell, so it~is able to~move left or right to the desired cell. The~main difference
 between Turing Machine and~Brainfuck is the representation of the source code.
 It does not matter what is the order of transitions for Turing Machine, but it
-is critical to know what is the order of intructions in Brainfuck.
+is critical to know what is the order of instructions in Brainfuck.
 
-Usually, Brainfuck implementations assume that tape length is~around $30\,000$ cells which
+Usually, Brainfuck implementations assume that tape length is~around $30\,000$ cells, which
 is~enough in~most cases. If~we want to~prove Turing-completeness though, this tape
 needs to~be potentially infinite. Of course, no~modern machine is~equipped with infinite memory,
 but we are able to~extend it (by installing additional hardware), so~this factor is~omitted
-when proving Turing-completeness. It is not a~problem in~this thesis at~all, since
-the~main goal is to~show that anything written in~modern programming language is~possible
+when proving Turing-completeness. It is not a~problem in~this thesis at~all since
+the~main goal is to~show that anything written in a modern programming language is~possible
 to~automatically translate into the theoretical model.
 
 \section {Purpose of this thesis}
@@ -276,7 +276,7 @@ This~thesis is a~proof of the theoretical concept based on~Church-Turing thesis 
 or~mathematical method we~are able to~come up with (as~long as it is expressible in any programming
 language) is possible to~execute on~the~most basic theoretical model which is a~Counter Machine.
 
-The implementation translates Brainfuck into Counter Machine model and~consists of~a~few separate parts
+The implementation (\hspace{1sp}\cite{github}) translates Brainfuck into Counter Machine model and~consists of~a~few separate parts
 which are separate translations between more and more basic theoretical models.
 It is possible to access any transitional program created during the~process.
 
@@ -296,7 +296,7 @@ The~plan of translation includes the following:
 \end{tikzpicture}
 \end{center}
 
-Any two consecutive models have an automatic translation, so we may want to~start with any program written
+Any two consecutive models have an automatic translation so we may want to~start with any program written
 in Brainfuck, Turing Machine, two stack PDA or a Four Counter Machine and receive an~equivalent Two Counter Machine.
 Similarly, we may stop at any point of~translations, so it is possible to generate an equivalent program
 in the two stack PDA model from a~program written in the Turing Machine model.
@@ -305,12 +305,17 @@ It is worth to mention that there are translators from C to Brainfuck that can
 be combined with my work in order to obtain a translation from C to Two Counter
 Machine.
 
-This paper is organized as follows: Section 2 contains the exact specification of all the~models used in translations.
+This paper is organized as follows: Section 2 contains the exact specification
+of all the~models used in translations.
 It contains descriptions of how to write source code in each model. Section 3
-explains how we approach each separate translation -- the general algorithm to~move from the~source code in one model
-to the~source code in the~next one. Section 4 contains technical details about the~implementation -- which tools
-were chosen for~this project and how to use the~prepared code. It also discusses encountered problems and presents
-a~summary of received results. In Section 5, we discuss the~outcome of the~whole work, what could be extended in the~future
+explains how we approach each separate translation -- the general algorithm
+to~move from the~source code in one model
+to the~source code in the~next one. Section 4 contains technical details about
+the~implementation -- which tools
+were chosen for~this project and how to use the~prepared code. It also
+discusses the encountered problems and presents
+a~summary of the received results. In Section 5, we discuss the~outcome
+of the~whole work, what could be extended in the~future
 and what could be done better with the~current knowledge.
 
 
@@ -318,7 +323,7 @@ and what could be done better with the~current knowledge.
 
 \section {Brainfuck}
 
-Brainfuck is a programming language with only $8$ statements. Execution
+Brainfuck is a programming language with only eight statements. Execution
 of~any program is done using a~finite sequence of~memory cells. Statements
 operate on~these cells using a~data pointer --- initially, the pointer is set
 on the~leftmost cell in the sequence.
@@ -327,8 +332,8 @@ Statements:
 \begin{itemize}
   \item \texttt{>} moves the data pointer one cell to the right,
   \item \texttt{<} moves the data pointer one cell to the left,
-  \item \texttt{+} increase by $1$ the value held in the cell under the data pointer,
-  \item \texttt{-} decrease by $1$ the value held in the cell under the data pointer,
+  \item \texttt{+} increase by one the value held in the cell under the data pointer,
+  \item \texttt{-} decrease by one the value held in the cell under the data pointer,
   \item \texttt{.} print to stdout the~character that is under the~data pointer,
   \item \texttt{,} read from stdin a~character and write it to the cell under the data pointer,
   \item \texttt{$[$} beginning of a loop with condition checking whether value under
@@ -340,12 +345,12 @@ Statements:
 It is allowed to use any other characters within the code, but anything else than the $8$
 listed above are ignored --- it is useful for creating comments in the code.
 
-An example code printing "Hello World!" (source: \href{https://pl.wikipedia.org/wiki/Brainfuck#Przyk%C5%82ady}{Wikipedia}):
+An example code printing ``Hello World!'' (source: \href{https://pl.wikipedia.org/wiki/Brainfuck#Przyk%C5%82ady}{Wikipedia}):
 \begin{verbatim}
 ++++++++++
 [
 >+++++++>++++++++++>+++>+<<<<-
-] We set up the values in few cells for future use.
+] We set up the values in a few cells for future use.
 >++.               prints 'H'
 >+.                prints 'e'
 +++++++.           prints 'l'
@@ -382,17 +387,17 @@ code logic).
 
 \begin{itemize}
   \item \texttt{BLANK} which represents empty field on the tape,
-  \item \texttt{*} (ALL) defines all characters (both ASCII and special),
-  \item \texttt{\#} (NOTHING) means "no character" which is used to say
+  \item \texttt{*} (\texttt{ALL}) defines all characters (both ASCII and special),
+  \item \texttt{\#} (\texttt{NOTHING}) means ``no character'' which is used to say
                    that we do not want to write anything on tape during
                    this state change,
-          \item \texttt{\&} (NON\_ZERO) defines all characters except 0,
-          \item \texttt{0} (ZERO) represents zero that is used for conditional jumps
+          \item \texttt{\&} (\texttt{NON\_ZERO}) defines all characters except zero,
+          \item \texttt{0} (\texttt{ZERO}) represents zero that is used for conditional jumps
            (jump zero),
-          \item \texttt{>} (NEXT\_CHAR) allows writing the next character
-                   (increased by one) on the~tape, i.e. writes \texttt{g}
+          \item \texttt{>} (\texttt{NEXT\_CHAR}) allows writing the next character
+                   (increased by one) on the~tape i.e. writes \texttt{g}
                    if on the tape was \texttt{f},
-  \item \texttt{<} (PREV\_CHAR) similarly as above but writes the previous character,
+  \item \texttt{<} (\texttt{PREV\_CHAR}) similarly as above but writes the previous character,
                    i.e. writes \texttt{e} when seen \texttt{f}.
 \end{itemize}
 
@@ -414,21 +419,21 @@ in a~standard text file).
 steer the head to go left, right or stay in place, respectively.
 
 \texttt{symbol to write} is any (currently ASCII) symbol. Writing any symbol
-from special definitions will cause an~undefined behaviour of~the machine. The only symbol
+from special definitions will cause undefined behaviour of~the machine. The only symbol
 from special definitions that is allowed to appear as \texttt{symbol\_to\_write}
 is \texttt{\#} (NOTHING) meaning that symbol on the tape should not change.
 
 \subsection {Extensions of the theoretical model}
 
 Standard input/output handling is done by allowing to read or write a~single
-ASCII character from/to stdin/stdout. It is possible to~add an~additional
+ASCII character from/to stdin/stdout. It is possible to~add additional
 reading or~writing instruction before moving the~head. It is done by modifying
 the~change symbol \texttt{->} in the~transition definition.
 \begin{itemize}
   \item Reading is done with \texttt{->*}, i.e., \texttt{state1 A ->* state2 R NOTHING},
-        which means "when seen the~symbol \texttt{A} in state \texttt{state1}, read
+        which means ``when seen the~symbol \texttt{A} in state \texttt{state1}, read
         from stdin one character, overwrite \texttt{A} to the~read value and move
-        head one field right".
+        head one field right''.
   \item Writing is done similarly with \texttt{->\^},
         i.e., \texttt{state1 A ->\^\ state2 R NOTHING}, which will print the~symbol
         \texttt{A} on stdout and move the~head to the~right.
@@ -456,9 +461,9 @@ Note: If there is no transition defined for the given configuration
 (nothing matches), then it is assumed that the~machine gets to the~\texttt{END} state.
 Because of this, in the above example, last instruction is not necessary.
 
-\section {2 Stack Pushdown Automaton}
+\section {Two Stack Pushdown Automaton}
 
-A~$2$ Stack Pushdown Automaton consists of two stacks, an~input tape and~a~definition
+A~Two Stack Pushdown Automaton consists of two stacks, an~input tape and~a~definition
 of~states and transitions between them. Each transition looks as follows:
 \begin{verbatim}
 state_name left_pattern right_pattern ->
@@ -469,7 +474,7 @@ Explanation:
 \begin{itemize}
   \item \texttt{left\_pattern} is a~symbol or a~pattern that should be matched
       for the symbol at the top of the left stack,
-  \item \texttt{right\_pattern} is the same as above, but for the right stack,
+  \item \texttt{right\_pattern} is the same as above but for the right stack,
   \item \texttt{left\_stack\_items} is the list of items that should be pushed
       to the~left stack before moving to \texttt{target\_state}. It might be
       a~single letter \texttt{"a"}, a~sequence of letters \texttt{"abc"}
@@ -486,7 +491,7 @@ Special references and definitions in transitions:
   \item \texttt{ORIG\_LEFT} is the letter taken from the left stack,
   \item \texttt{ORIG\_RIGHT} is the letter taken from the right stack,
   \item \texttt{INPUT\_CHAR} is the letter taken from the input tape
-      (only in the~input transition type - see section below),
+      (only in the~input transition type - see the section below),
   \item \texttt{NOTHING} may be used as \texttt{left\_stack\_items} or \texttt{right\_stack\_items}
       and means that nothing is pushed into the left/right stack,
   \item \texttt{END} is a special state name into which the transition is made if no other transition is specified,
@@ -512,7 +517,7 @@ taken from the~right stack):
 \begin{verbatim}
 state1 ALL ALL ->^ state2 NOTHING NOTHING Output: ORIG_LEFT
 \end{verbatim}
-An~example that prints the~letter "a" (and ignores what was taken from the~stacks):
+An~example that prints the~letter ``a'' (and ignores what was taken from the~stacks):
 \begin{verbatim}
 state1 ALL ALL ->^ state2 NOTHING NOTHING Output: "a"
 \end{verbatim}
@@ -537,9 +542,9 @@ s5 ALL ALL ->^ s6 ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
 s6 ALL ALL -> END ORIG_LEFT ORIG_RIGHT
 \end{verbatim}
 
-\section {Counter Machine (4 counters)}
+\section {Counter Machine (four counters)}
 
-A~$4$ Counter Machine consists of $4$ counters each holding non-negative integer,
+A~Four Counter Machine consists of four counters each holding non-negative integer,
 a~finite number of states and~transitions between them. Each transition
 looks as follows:
 
@@ -560,7 +565,7 @@ where:
       applying the transition,
   \item \texttt{number} is an~integer from the~range \texttt{[-1, MAX\_INT]} specifying
       what should be added to a given counter - it is allowed to decrease a counter
-      by $1$ only, but it is possible to increase it by any number that can be stored
+      by one only, but it is possible to increase it by any number that can be stored
       in a~regular integer type.
 \end{itemize}
 
@@ -592,7 +597,7 @@ where:
   \item \texttt{input\_operation} specifies what action should be performed
       on the~input counter and is one of \texttt{LOAD}, \texttt{-1} or \texttt{NOOP}
       meaning respectively loading a~character from stdin into the input counter,
-      decrease input counter by \texttt{1}, and leaving input counter untouched.
+      decrease input counter by one, and leaving input counter untouched.
 \end{itemize}
 
 This transition reads from stdin into the input counter:
@@ -643,24 +648,24 @@ s4 (_ 1 _ _) ->^ s4 (0 -1 0 0) Output: 1
 s4 (_ 0 _ _) ->^ END (0 0 0 0) Output: FLUSH
 \end{verbatim}
 
-\section {Counter Machine (2 counters)}
+\section {Counter Machine (two counters)}
 
-A~Counter Machine with 2 counters has the same definition as
-a~Counter Machine with 4 counters, but it is allowed to use only
-2 counters, so transitions become of the form:
+A~Counter Machine with two counters has the same definition as
+a~Counter Machine with four counters, but it is allowed to use only
+two counters, so transitions become of the form:
 
 \begin{verbatim}
 state_name (pattern pattern) -> target_state (number number)
 \end{verbatim}
 
-Input/Output is handled the same way it is handled in a~Counter Machine with 4 counters.
+Input/Output is handled the same way it is handled in a~Counter Machine with four counters.
 
 
 \chapter{Theoretical underpinnings}
 
 \section {From Brainfuck to Turing Machine}
 
-Brainfuck is very similar to Turing Machine, so it is relatively easy to build
+Brainfuck is very similar to the Turing Machine, so it is relatively easy to build
 a~translation. They both have a~tape and both can read and update symbols in any
 cell of the~tape. There are two main differences: representation of states and
 input/output handling.
@@ -671,7 +676,7 @@ executed one by~one in the~given order, while Turing Machine has an unordered se
 of states and transition function (defining how to move between them). A solution
 is to give a~unique name to each instruction and specify transitions between
 consecutive instructions. The only exception is a~loop, where depending on
-symbol stored in the current cell we perform transition to $1$ out of $2$ different states.
+symbol stored in the current cell we perform the transition to one out of two different states.
 This is exactly what the Turing Machine model provides -- depending on the~symbol
 within the current cell, we apply the appropriate transition.
 
@@ -682,13 +687,13 @@ input and writing to the~standard output. Even though there is a~way to give
 an~input word (it should be initially written on the tape), this thesis assumes
 that there are a separate source and a separate destination for input/output operations.
 It means that at any point we may load a~symbol into the current cell or~send
-any symbol (not necessary the one from the current cell) to the~screen. This
+any symbol (not necessarily the one from the current cell) to the~screen. This
 way Brainfuck itself handles input/output as well, which makes the~translation straightforward.
 
-\section {From Turing Machine to 2 stack PDA}
+\section {From Turing Machine to two stack PDA}
 
-A~Turing Machine operates on a~tape, while 2 stack PDA operates on 2 stacks, so we need
-to represent a~tape using 2 stacks. The idea is well-known: we cut the~tape into
+A~Turing Machine operates on a~tape, while two stack PDA operates on two stacks, so we need
+to represent a~tape using two stacks. The idea is well-known: we cut the~tape into
 two pieces in a~way that the current cell is at the~top of the~left stack and all
 the cells from the~left side are lower in the~left stack and similarly all cells from the~right side
 are stored in the~right stack (cell to the right of the~current cell is the top of the~right stack).
@@ -697,7 +702,7 @@ The only problem is the~fact that Turing Machine tape is infinite in one directi
 There is an~exact cell that contains the very last non-blank symbol, so we assume the~tape
 ends at this symbol to perform our cut. If Turing machine at any point decides to extend
 the tape, it needs to first move into a new cell (make this cell top of the~left stack in our PDA),
-so at this point, 2 stack PDA model can simply insert an additional new element to the left
+so at this point, two stack PDA model can simply insert an additional new element to the left
 stack performing this extension.
 
 It is clear what are the equivalent operations to the ones a~Turing Machine performs.
@@ -707,12 +712,12 @@ is equivalent to taking one symbol from the~top of the~right stack and pushing i
 into the~left stack -- if the~right stack is empty then we just push the new blank symbol
 to the~left stack.
 
-\section {From 2 stack PDA to 4 Counter Machine}
+\section {From two stack PDA to four Counter Machine}
 
-Similarly to the~reduction from Turing Machine to 2 stack PDA we need to simulate
-one memory model with the~other one. In this case, we need to simulate $2$ stacks
-with $4$ counters. More precisely, it is enough to show how to simulate $1$ stack
-with $2$ counters and then apply the~same idea to both stacks.
+Similarly to the~reduction from Turing Machine to two stack PDA we need to simulate
+one memory model with the~other one. In this case, we need to simulate two stacks
+with four counters. More precisely, it is enough to show how to simulate one stack
+with two counters and then apply the~same idea to both stacks.
 
 A~stack alphabet $\Gamma$ is finite and is of size $N = |\Gamma|$. Each symbol from $\Gamma$ may
 be assigned a~unique number starting from $1$ up to $N$ ($0$ is problematic -- it will be
@@ -738,8 +743,8 @@ methods on counters):
 \end{itemize}
 
 To \textbf{pop} one symbol from the~stack we just perform an~integer division by $\bar{N}$ on
-the~counter. To~perform this division we decrease the~counter by $1$ at each step and every
-$\bar{N}$-th step we increase the~helper counter by $1$. When the~original counter becomes empty,
+the~counter. To~perform this division we decrease the~counter by one at each step and every
+$\bar{N}$-th step we increase the~helper counter by one. When the~original counter becomes empty,
 then the~helper counter stores the~result of integer division by $\bar{N}$. Now we just
 need to copy the~result from helper counter into the~original one. The whole operation shows
 Figure \ref{fig:pop_operation}.
@@ -867,7 +872,7 @@ shown in Figure \ref{fig:push_operation}.
 
 
 The hardest part is to recognize what is the~top symbol -- the~\textbf{check} operation.
-The idea is simple -- we need to calculate the~remainder from division by $\bar{N}$:
+The idea is simple -- we need to calculate the~remainder from the division by $\bar{N}$:
 $$ \Bigg( \sum_{i=0}^{k} a_i \cdot \bar{N}^i \Bigg) \ \mathrm{mod} \ \bar{N} = a_0 $$
 The only places where we can remember any information are states. This means that we need
 to end up within a different state for each remainder -- we call a~state $R_i$ if
@@ -918,8 +923,8 @@ the~circle (apply the~transition labelled with $1$), we always decrease the~coun
 
 \end{figure}
 
-When a~counter value decreases to $0$, then we move to some state $R_i$ (notice that for
-the~correct representations of the~stacks we never get a~remainder equal $0$, so we never end within $q_0$).
+When a~counter value decreases to zero, then we move to some state $R_i$ (notice that for
+the~correct representations of the~stacks we never get a~remainder equal zero, so we never end within $q_0$).
 If we do not want to destroy the~original counter value (which is the~stack representation), we need
 to copy it into our counter for computations and after recognizing the~symbol at the~top,
 we need to copy it back to the original counter.
@@ -930,7 +935,7 @@ Because all transitions (in any presented model) are independent, we may focus o
 transition and when we build a~translation for it, then we can build a~translation for the~whole
 program (as long as we keep the~order of transitions).
 
-Each 2 stack PDA transition \texttt{T} has a~\texttt{state} the~model needs to be within,
+Each two stack PDA transition \texttt{T} has a~\texttt{state} the~model needs to be within,
 an~\texttt{other\_state} to which the~model moves into \textbf{if both stack symbols match
 the~patterns}.
 
@@ -938,7 +943,7 @@ the~patterns}.
 state left_symbol right_symbol -> other_state [...]
 \end{verbatim}
 
-We will keep the~state names and build a~new 4 Counter Machine model that will operate
+We will keep the~state names and build a~new Four Counter Machine model that will operate
 on states \texttt{state} and \texttt{other\_state}, but as well as some additional states
 in between. To check whether $T$ should be applied, we perform two \textbf{check}
 operations. Because both symbols need to match, after recognizing the first symbol
@@ -947,7 +952,7 @@ means that we build a~structure from Figure \ref{fig:check} and in place of each
 paste the same structure for symbols recognition. All unsuccessful paths (symbols not matched)
 return to \texttt{state} and successful ones end up within \texttt{other\_state}.
 
-This idea gives O($m^2$) new transitions, where $m$ is the~number of transitions in 2 stack PDA
+This idea gives O($m^2$) new transitions, where $m$ is the~number of transitions in the two stack PDA
 program. If we consider the~input counter (which is yet another input stack), then we get O($m^3$)
 transitions that we generate. Fortunately, implementation optimizations make it O($m^2$).
 
@@ -959,41 +964,41 @@ There are still a~few more details to handle:
   \item a~transition may contain output instruction.
 \end{itemize}
 
-Notice that pushing symbols (even few ones) is easy -- we need to apply \textbf{push} operation
+Notice that pushing symbols (even a few ones) is easy -- we need to apply \textbf{push} operation
 multiple times, no matter if it is a~stack or an~output. It is worth to notice
 that building this structure takes O($N$) new states assuming the~number of symbols
-to push is a~constant. The whole transition $T$ takes O($N \cdot m^2$) newly
+to push is constant. The whole transition $T$ takes O($N \cdot m^2$) newly
 generated states.
 
 In practice, we want to pop elements together with recognizing them, but now we define the~idea, so
 it is enough to say that we perform a~\textbf{pop} after making sure we should apply transition $T$.
 
-\section {From 4 Counter Machine to 2 Counter Machine}
+\section {From Four Counter Machine to Two Counter Machine}
 
-We discuss how to compress $4$ counters into only $2$ counters. Previously we had
-$2$ counters per each stack (from $2$ stack PDA), where one counter was
+We discuss how to compress four counters into only two counters. Previously we had
+two counters per each stack (from two stack PDA), where one counter was
 for the state and the other one was used for calculations. We will do a similar
-thing -- we will compress all $4$ counters states into only $1$ counter
+thing -- we will compress all four counters states into only one counter
 (called \textit{general counter}) and use the other one
 (called \textit{calculations counter}) for calculations. Here is how we define
 the compression:
 $$ (A\ B\ C\ D) \rightarrow 2^A \cdot 3^B \cdot 5^C \cdot 7^D$$
-where $A$, $B$, $C$ and $D$ are the states of the $4$ counters. Because each
+where $A$, $B$, $C$ and $D$ are the states of the four counters. Because each
 number has a unique factorization using prime numbers (in our case
 prime numbers $2$, $3$, $5$ and $7$), we can revert this compression
 to get original counters states. It could be any prime numbers,
-but for efficiency and simplicity, it is assumed that these are $4$ smallest
+but for efficiency and simplicity, it is assumed that these are four smallest
 prime numbers.
 
 To increase $A$ by some constant $c$, we need
 to multiply the general counter by $2^c$, similarly to decrease $A$
-(we decrease by $1$ only) then we need to divide by $2$.
+(we decrease by one only) then we need to divide by two.
 
-Multiplying by $2^c$ is easy to express in $2$CM world:
+Multiplying by $2^c$ is easy to express in the $2$CM world:
 \begin{enumerate}
   \item repeat as long as the general counter is not empty:
   \begin{enumerate}
-    \item decrease the general counter by $1$,
+    \item decrease the general counter by one,
     \item increase the calculation counter by $2^c$,
   \end{enumerate}
   \item once the general counter is empty then copy calculation counter back to general counter.
@@ -1020,7 +1025,7 @@ s_recover2 (_ 0) -> next_s
 
 
 Making division is harder. We will do something similar to recognizing the top
-character when translating $2$ stack PDA to $4$CM. For such transitions (recognizing
+character when translating two stack PDA to $4$CM. For such transitions (recognizing
 whether second counter is empty or not):
 \begin{verbatim}
 s (_ 1 _ _) -> s_1 (0 0 0 0)
@@ -1066,21 +1071,21 @@ so for the purpose of this thesis, such an example is not necessary.
 The language chosen for the entire project is C++, mainly because of its efficiency. Counter Machine
 is a~basic model, so any translated program is expected to be very long. These amounts of information
 need to be stored and accessed efficiently, so STL library and its containers like hashing table
-and hashing set are used heavily in this project.
+and hashing set are used heavily in this project. Sources are available online \cite{github}.
 
 For translation purposes, we need to have access to abstract syntax trees of original programs, which
 means that we should be able to parse a~source code. To do so, we use the most common tools
 for lexing and parsing in C++, Flex and Bison. We have several translations
-between several different models, so at every step (i.e. Turing Machine to 2 stack PDA) Flex and Bison
+between several different models, so at every step (i.e. Turing Machine to two stack PDA) Flex and Bison
 are applied to parse a~source code (i.e. in Turing Machine model) and produce abstract syntax tree.
 This tree is later used either for evaluation (if we want to execute) or translation to the~next
-model in the~pipeline (i.e. 2 stack PDA).
+model in the~pipeline (i.e. two stack PDA).
 
 Most of the translations are pretty straightforward and require only basic tricks like
-generating unique state names. The~most interesting one is 2 stack PDA to 4 Counter Machine,
+generating unique state names. The~most interesting one is Two Stack PDA to Four Counter Machine,
 which requires putting a large part of a~program logic into appropriate state names, so it is important
 to notice the~structure of the~logic to come up with a reasonable translation algorithm.
-It turns out that Brainfuck has the very specific instructions that allow making optimizations
+It turns out that Brainfuck has very specific instructions that allow making optimizations
 to the~translation process. These optimizations allowed to generate a shorter
 code.
 
@@ -1089,35 +1094,35 @@ Few examples:
   \item Input is always a~single symbol and it is directly stored within one of the~memory cells,
       which means we do not need to recognize what is read -- we just blindly store it in memory.
       This is the~optimization mentioned earlier -- we may use only O($m^2$) new states to translate
-      a~single 2 stack PDA transition.
+      a~single two stack PDA transition.
   \item Merging all failing paths into one state. As shown in Figure \ref{fig:check},
       we end up in some $R_i$ depending on the recognized symbol.
       Sometimes we are interested in recognizing only one specific symbol
       and want the code to fail (stop the execution) for all the others.
       Int this case all $R_i$'s, except the desired one,
       may be merged into one state (\texttt{END}).
-  \item 2 stack PDA interpreter always recognizes symbols on both stacks
+  \item two stack PDA interpreter always recognizes symbols on both stacks
       to check what is the matching transition. This strategy (when translated
       explicitly to $4$CM) results in lots of code (O($m^2$) states generated
       from a single transition). Original Brainfuck's \texttt{+} and \texttt{-}
       does not need both symbols -- it checks the one on the left stack,
-      increases it by $1$ and stores it back onto the same (left) stack.
+      increases it by one and stores it back onto the same (left) stack.
       This means that the right stack may be completely ignored. This will
-      result in O($m$) transitions in $4$CM from a single $2$ stack PDA transition.
+      result in O($m$) transitions in $4$CM from a single two stack PDA transition.
 \end{itemize}
 
 
-There are also optimizations in the interpreters, so that the existing
+There are also optimizations in the interpreters so that the existing
 translated code is executed more efficiently:
 
 \begin{itemize}
-\item There is no need to load all the states at the beginning, because most probably we will
+\item There is no need to load all the states at the beginning because most probably we will
       not need all of them -- lazy loading allows to add to transition set
       only the transitions that refer to the state that we are currently in.
-  \item In $2$CM transitions we often need to recover counter's position by
+  \item In $2$CM transitions, we often need to recover the counter's position by
       copying its content to the other counter. Such a transition subtracts
-      $1$ and adds $1$ on desired counters, which is very ineffective copy.
-      Such a transition is recognized and the copy is done immedietaly with
+      one and adds one on desired counters, which is a very ineffective copy.
+      Such a transition is recognized and the copy is done immediately with
       regular variable assignment in C++.
 \end{itemize}
 
@@ -1138,17 +1143,17 @@ the~size of the~alphabet and increased by the~character's ASCII number.
 This means that each time we shift right we increase our counter 140 times
 (which is the alphabet size set within the program) and what is more, next
 iterations of a~program need to recognize characters on the top of that
-counter with decreasing it by $1$ at a time.
+counter with decreasing it by one at a time.
 
 The time of computations starts to be an issue at the very end of the pipeline, namely
-when executing $2$CM program. Because of the structure of the counter translation
+when executing a $2$CM program. Because of the structure of the counter translation
 (exponential) and the way this (exponential) counter is used, it is really
 hard to get any English character. ASCII table contains these characters
 at high positions like 65 ('A'), so within our $2$CM's counter it will be represented
 as a number $2^{65}$ if it was on the first counter of $4$CM and $3^{65}$ when
 it is moved to the second counter of $4$CM. Additionally, we decrease these numbers
-by $1$ until we reach $0$ to recognize whether it is divisible by $2$ (for example),
-and then we divide it by $2$ (which again forces us to decrease whole counter to $0$).
+by one until we reach $0$ to recognize whether it is divisible by two (for example),
+and then we divide it by $2$ (which again forces us to decrease the whole counter to zero).
 After that, we usually repeat this several times, what is equivalent to several
 (simple) operations in $4$CM. So in $4$CM, these operations execute lightning fast
 in comparison to their equivalents in $2$CM.
@@ -1157,7 +1162,7 @@ in comparison to their equivalents in $2$CM.
 
 The ASCII table problem can be defeated with small Brainfuck's modification. The only thing we need
 is to operate on small numbers in memory, while big numbers (or rather characters) are printed to the standard output.
-This solution is shifting printed character by $64$ with newly created operator \texttt{:} (semicolon),
+This solution is shifting the printed character by $64$ with newly created operator \texttt{:} (semicolon),
 which is very similar to Brainfuck's \texttt{.} (dot) printing a character without any shifts. Example:
 \begin{verbatim}
 +++:++:++:
@@ -1168,7 +1173,7 @@ Obviously, this modification does not change the power of expression
 of that language, because it is actually a syntactic sugar and may be translated
 into $64$ \texttt{+}'s then a regular print with \texttt{.} and then $64$ \texttt{-}'s.
 
-Analogical changes have been made to further languages: Turing Machine and $2$
+Analogical changes have been made to further languages: Turing Machine and two
 stack PDA, where we define special operator \texttt{->~} for shifted printing.
 For the purposes of this thesis, it was not necessary to introduce similar
 operators in $4$CM or $2$CM, because in translation process we could just
@@ -1182,19 +1187,19 @@ extension \texttt{.xbf} instead of \texttt{.bf}.
 
 \section{Technical details}
 
-The expected operating system is Linux -- Debian based distribution. Whole implementation
+The expected operating system is Linux -- Debian based distribution. The whole implementation
 was tested on Ubuntu and there is no guarantee to work on other platforms.
 
 The first requirement is installing Flex and Bison:
 
 \texttt{sudo apt-get install flex bison}
 
-Full handling of each single model is implemented within separate directory called
+Full handling of every single model is implemented within a separate directory called
 \texttt{<model>\_parser}, where \texttt{<model>} is short name for the~model
-(i.e. \texttt{tm\_parser}). Each directory is a~stanalone part and contains
+(i.e. \texttt{tm\_parser}). Each directory is a~standalone part and contains
 an~own \texttt{makefile}.
 
-There are $2$ operations allowed for each part:
+There are two operations allowed for each part:
 \begin{itemize}
   \item parse + run -- parse source code and run it: \texttt{./test.e <path\_to\_source\_code>},
   \item parse + translate -- parse source code and translate it into a~source code
@@ -1211,36 +1216,36 @@ List of commands within directories:
   \item \texttt{tm\_parser}
     \begin{itemize}
       \item run a Turing Machine source file: \\ \texttt{./test.e ../examples/hello.tm}
-      \item translate Turing Machine to 2 stack PDA: \\ \texttt{./test.e -2stackPDA ../examples/hello.tm}
+      \item translate Turing Machine to two stack PDA: \\ \texttt{./test.e -2stackPDA ../examples/hello.tm}
     \end{itemize}
   \item \texttt{2stackPDA\_parser}
     \begin{itemize}
-      \item run a 2 stack PDA source file: \\ \texttt{./test.e ../examples/hello.pda}
+      \item run a two stack PDA source file: \\ \texttt{./test.e ../examples/hello.pda}
       \item (recommended) translation into multiple files within \texttt{output}
         directory: \\ \texttt{./test.e -multifile output/base ../examples/hello.pda}
 
         (It will automatically create a directory if needed.)
-      \item (not recommended) translate 2 stack PDA to 4 Counter Machine: \\ \texttt{./test.e -minsky ../examples/hello.pda}
+      \item (not recommended) translate two stack PDA to four Counter Machine: \\ \texttt{./test.e -minsky ../examples/hello.pda}
 
         (This command prints all the translated code into standard output,
-        which is usually very slow. Instead I recommend to use multifile
+        which is usually very slow. Instead, it is recommended to use multifile
         translation above which directly stores large output into many independent
         files.)
     \end{itemize}
   \item \texttt{mm4\_parser}
     \begin{itemize}
-      \item run a 4 Counter Machine source file: \\ \texttt{./test.e ../examples/hello.mm4}
+      \item run a Four Counter Machine source file: \\ \texttt{./test.e ../examples/hello.mm4}
       \item (recommended) run a source with multiple files (files within \texttt{output}
         directory and created by 2StackPDA translation): \\ \texttt{./test.e -multifile input/base}
       \item translation into \texttt{output} directory from \texttt{input}
         directory: \\ \texttt{./test.e -minsky -multifile input/base -o output/base}
 
-        (It will automatically create directory if needed.)
+        (It will automatically create the directory if needed.)
     \end{itemize}
   \item \texttt{mm2\_parser}
     \begin{itemize}
       \item run a source with multiple files (files within \texttt{output}
-        directory and created by $4$ Counter Machine translation): \\ \texttt{./test.e -multifile output/base}
+        directory and created by the Four Counter Machine translation): \\ \texttt{./test.e -multifile output/base}
     \end{itemize}
 \end{itemize}
 
@@ -1259,26 +1264,26 @@ Options:
   \item\textbf{(required)} \texttt{-f <input file path>} or \texttt{--file <input file path>} -- specifies
       the path to input file written in Brainfuck,
   \item \texttt{-o <output file path>} or \texttt{--output <output file path>} -- specifies
-      the path to the output directory (the result of translation) written in the required language (2 Counter Machine by default).
-      If not provided then path default path is taken (depending on the final language)
+      the path to the output directory (the result of translation) written in the required language (Two Counter Machine by default).
+      If not provided then the default path is taken (depending on the final language)
   \item \texttt{-r} or \texttt{--run} -- executes translated code (after translation is completed
-      and written to the~specifed output file),
+      and written to the~specified output file),
   \item \texttt{--recompile} or \texttt{--clean} forces to recompile all targets,
   \item \texttt{-d} or \texttt{--direct} directly runs translated code. If input
-      code is in multifile format then path to the code should not contain latter \texttt{\_<num>}
-      part, for example files \texttt{outdir\_mm2/aaa\_123}, \texttt{outdir\_mm2/aaa\_43} should
+      code is in the multifile format then the path to the code should not contain latter \texttt{\_<num>}
+      part, for example, files \texttt{outdir\_mm2/aaa\_123}, \texttt{outdir\_mm2/aaa\_43} should
       be provided as a command \texttt{./full\_pipeline -d outdir\_mm2/aaa}
 
       \begin{footnotesize}
-      Note: Brainfuck, Turing Machine and 2 stack PDA are recognized by the extension
-      (\texttt{.bf}/\texttt{.xbf}, \texttt{.tm}, \texttt{.pda}), but multifile format of $2$ and $4$ Counter Machine
+      Note: Brainfuck, Turing Machine and two stack PDA are recognized by the extension
+      (\texttt{.bf}/\texttt{.xbf}, \texttt{.tm}, \texttt{.pda}), but the multifile format of Two and Four Counter Machine
       is recognized by the directory name. It should contain \texttt{mm2} or
       \texttt{mm4}, respectively. Example: \texttt{my\_code\_mm4/base} is treated as $4$CM code.
       \end{footnotesize}
   \item \texttt{-t <lang>} or \texttt{--to <lang>} specifies at which language a translation should
       be stopped. Possible languages: \texttt{bf}, \texttt{tm}, \texttt{pda}, \texttt{mm4} and \texttt{mm2}.
       Such command: \texttt{./full\_pipeline -f ../examples/hello3.bf --to pda} will translate
-      \texttt{hello3.bf} to $2$ stack PDA. By default translation is done to $2$ Counter Machine.
+      \texttt{hello3.bf} to two stack PDA. By default, translation is done to Two Counter Machine.
 \end{itemize}
 
 \section{Implementation restrictions}
@@ -1298,7 +1303,7 @@ Classical \texttt{Hello World!} that can be easily found on \href{https://pl.wik
 ++++++++++
 [
 >+++++++>++++++++++>+++>+<<<<-
-] We set up the values in few cells for future use.
+] We set up the values in a few cells for future use.
 >++.               prints 'H'
 >+.                prints 'e'
 +++++++.           prints 'l'
@@ -1407,7 +1412,7 @@ state42 ALL -> state11 - PREV_CHAR
 state13 ALL -> state43 R NOTHING
 \end{verbatim}
 
-From \texttt{state11} we have two options (either cell on the tape is $0$
+From \texttt{state11} we have two options (either cell on the tape is zero
 or not); we follow instructions from \texttt{state12} to \texttt{state42}
 and then come back to check loop condition once more, or we go directly
 to \texttt{state13} and skip the body of the loop.
@@ -1432,7 +1437,7 @@ state33 ALL -> state34 - NEXT_CHAR
 state34 ALL ->^ END - NOTHING
 \end{verbatim}
 
-\subsection{Turing Machine to 2 stack PDA}
+\subsection{Turing Machine to Two Stack PDA}
 
 Further translation of the code changing a~character to lowercase:
 
@@ -1475,7 +1480,7 @@ print ALL ->^ END - NOTHING
 The code may be easily changed into a~rotation by any number -- it is enough
 to~change \texttt{rotation} sequence to be longer. Suprisingly, this code
 is easier to write in Turing Machine than in Brainfuck. The~above code
-translates to such a 2 stack PDA:
+translates to such a two stack PDA:
 
 \begin{verbatim}
 START: init_state
@@ -1498,7 +1503,7 @@ rotation3 ALL $ -> letters (ORIG_LEFT + BLANK) NOTHING
 rotation3 ALL ALL -> letters (ORIG_LEFT + ORIG_RIGHT) NOTHING
 \end{verbatim}
 
-\subsection{2 stack PDA to 4 Counter Machine}
+\subsection{Two Stack PDA to Four Counter Machine}
 
 A simple code reading a~symbol and writing it on standard output:
 
@@ -1509,39 +1514,42 @@ print ALL ALL ->^ END ORIG_LEFT ORIG_RIGHT Output: ORIG_LEFT
 \end{verbatim}
 
 When we change the alphabet size to be $3$ (instead of $140$) we get
-automatic translation to $4$ Counter Machine that has 207 transitions.
+automatic translation to Four Counter Machine that has 207 transitions.
 The code can be found in the appendix.
 
 It is possible to see that \texttt{read} transition was translated with
 regular translation recognizing both stack symbols and \texttt{print}
 was translated with fast track optimization which recognizes only
 left stack item which is the only one needed (the symbol to print).
-Names that contain \texttt{L0} or \texttt{L1} etc. recognize character
-on the left stack (in $2$ stack PDA) and those containing \texttt{R0}
-or \texttt{R1} etc. recognize right stack's element. If additionally
+Names that contain \texttt{L0} or \texttt{L1} etc. recognize the character
+on the left stack (in two stack PDA) and those containing \texttt{R0}
+or \texttt{R1} etc. recognize right stack's element. Additionally, if
 we see fragment \texttt{RECOGNIZED} then the state already knows what
 was on the stack and does some modifications based on that knowledge.
 
 The general structure of the translation keeps original state names from
-$2$ stack PDA, so if we see short names (like \texttt{read} or \texttt{print})
+two stack PDA, so if we see short names (like \texttt{read} or \texttt{print})
 then this is a starting point for all $4$CM transitions that are between.
 In the above examples, we go from \texttt{read} to \texttt{print}, so in
-the translation there are transitions recognizing items on the stack (only left in
-this case) and these transitions are in between (in computation flow) these two "top-level" states.
+the translation, there are transitions recognizing items on the stack (only left in
+this case) and these transitions are in between (in computation flow) these two ``top-level'' states.
 
 \subsection{Evaluation}
 
-We evaluated the tool on multiple examples. The results are summarised
-in Table~\ref{t:summary}.
+The tool was evaluated on multiple examples. The results are summarised
+in Table~\ref{t:summary}. In case of very small execution time, the variation
+of the results was high in comparison to the total time, so all such executions
+are marked as $<0.02$s.
+
 We can see that the problems appear starting at $4$CM, where
 the amount of code starts to be significant (millions of instructions).
 The time spent on execution is significantly larger too,
 and some of the codes are not able to finish within a reasonable time frame.
 
-There are $3$ implementations of \texttt{Hello World!} program:
+There are three implementations of \texttt{Hello World!} program:
 \begin{itemize}
   \item \texttt{hello.bf} -- stores a few things in different cells
-      (separately a character to print and a whitespace),
+      (separately a character to print and whitespace),
   \item \texttt{hello3.bf} -- uses only one cell to store all characters to print,
   \item \texttt{hello4.xbf} -- uses only one cell and operates on small numbers
       (shifted print extension).
@@ -1551,7 +1559,7 @@ The latter two codes contain optimizations for the last stages of the translatio
 is running smoothly up to $4$CM, while \texttt{hello4.xbf} is running smoothly
 throughout the whole pipeline. The main difference is about the recourses ---
 in practice to make $4$CM code working in a reasonable time, we need to use only
-$1$ memory cell in original Brainfuck's code.
+one memory cell in the original Brainfuck's code.
 A $2$CM code needs additionally small numbers (characters) stored within this cell.
 
 Examples \texttt{to\_lower.bf} and \texttt{add\_digits.bf} perform basic
@@ -1560,7 +1568,7 @@ computations and it is possible to run them in $4$CM, which is most of the pipel
 There is another group of examples \texttt{simple.tm} and \texttt{rotate.tm}
 which does not start from Brainfuck code. For them, it is easier to express
 the logic in Turing Machine code. \texttt{rotate.tm} is implementing Ceasar cypher
-and it runs within less than $1$s after translating to $4$CM. \texttt{simple.tm}
+and it runs within less than one second after translating to $4$CM. \texttt{simple.tm}
 is in the subsection \ref{turing_machine_example} of Turing Machine
 description (\ref{turing_machine}), which repeats the letter and prints
 additionally \texttt{.} if it was \texttt{b} or \texttt{B}.
@@ -1568,7 +1576,7 @@ The problem in $2$CM (for this group of codes) is using the characters with
 large codes (like $65$ for \texttt{A} etc.).
 
 The very last code \texttt{hello\_opt.pda} is (again) printing
-\texttt{Hello World!}, but in $2$ stack PDA we can already operate on
+\texttt{Hello World!}, but in two stack PDA we can already operate on
 output counters, so all these large numbers (like $2^{65}$) do not
 appear within normal counters. Using directly output counters does not
 require transformation, so the output counter contains only the number $65$,
@@ -1589,47 +1597,47 @@ with $4$ cores. Operating system: Linux thinkpad 4.15.0-45-generic \#48-Ubuntu.
 \hline
 %\texttt{hello.bf} & \# & 111 & 112 & 123 & 5\,175\,355 & 60\,271\,162\\
 \texttt{hello.bf} & \# & 111 & 112 & 123 & 5.2 M & 60.3 M\\
- & {\footnotesize{RT}} & 0.01 s & $<0.01$ s & 0.01 s & $\infty$ & $\infty$ \\
- & {\footnotesize{TT}} & 0.01 s & 0.01 s & 249.84 s & 714.81 s & --- \\
+ & {\footnotesize{RT}} & $<0.02$ s & $<0.02$ s & $<0.02$ s & $\infty$ & $\infty$ \\
+ & {\footnotesize{TT}} & $<0.02$ s & $<0.02$ s & 249.84 s & 714.81 s & --- \\
 \hline
 %\texttt{hello3.bf} & \# & 193 & 205 & 209 & 1\,568\,779 & 17\,088\,537\\
 \texttt{hello3.bf} & \# & 193 & 205 & 209 & 1.6 M & 17 M\\
- & {\footnotesize{RT}} & 0.01 s & 0.01 s & 0.01 s & 80.34 s & $\infty$ \\
- & {\footnotesize{TT}} & 0.01 s & 0.01 s & 94.48 s & 187.77 s & --- \\
+ & {\footnotesize{RT}} & $<0.02$ s & $<0.02$ s & $<0.02$ s & 80.34 s & $\infty$ \\
+ & {\footnotesize{TT}} & $<0.02$ s & $<0.02$ s & 94.48 s & 187.77 s & --- \\
 \hline
 %\texttt{hello4.xbf} & \# & 26 & 27 & 28 & 41\,761 & 365\,202\\
 \texttt{hello4.xbf} & \# & 26 & 27 & 28 & 42 k & 36 k\\
- & {\footnotesize{RT}} & $<0.01$ s & $<0.01$ s & $<0.01$ s & 0.04 s & 1.41 s \\
- & {\footnotesize{TT}} & $<0.01$ s & $<0.01$ s & 5.22 s & 4.71 s & --- \\
+ & {\footnotesize{RT}} & $<0.02$ s & $<0.02$ s & $<0.02$ s & 0.04 s & 1.41 s \\
+ & {\footnotesize{TT}} & $<0.02$ s & $<0.02$ s & 5.22 s & 4.71 s & --- \\
 \hline
 %\texttt{to\_lower.bf} & \# & 34 & 35 & 36 & 385\,189 & 4\,286\,957\\
 \texttt{to\_lower.bf} & \# & 34 & 35 & 36 & 0.4 M & 4.3 M\\
- & {\footnotesize{RT}} & 0.01 s & 0.01 s & $<0.01$ s & 0.41 s & $\infty$ \\
- & {\footnotesize{TT}} & $<0.01$ s & 0.01 s & 21.40 s & 43.21 s & --- \\
+ & {\footnotesize{RT}} & $<0.02$ s & $<0.02$ s & $<0.02$ s & 0.41 s & $\infty$ \\
+ & {\footnotesize{TT}} & $<0.02$ s & $<0.01$ s & 21.40 s & 43.21 s & --- \\
 \hline
 %\texttt{add\_digits.bf} & \# & 69 & 70 & 77 & 3\,894\,442 & 45\,477\,467\\
 \texttt{add\_digits.bf} & \# & 69 & 70 & 77 & 3.9 M & 45.5 M\\
- & {\footnotesize{RT}} & 0.01 s & 0.01 s & 0.01 s & 5.37 s & $\infty$ \\
- & {\footnotesize{TT}} & 0.01 s & 0.01 s & 181.75 s & 515.69 s & --- \\
+ & {\footnotesize{RT}} & $<0.02$ s & $<0.02$ s & $<0.02$ s & 5.37 s & $\infty$ \\
+ & {\footnotesize{TT}} & $<0.02$ s & $<0.02$ s & 181.75 s & 515.69 s & --- \\
 \hline
 %\texttt{inout.bf} & \# & 2 & 3 & 4 & 335\,877 & 3\,847\,757\\
 \texttt{inout.bf} & \# & 2 & 3 & 4 & 0.3 M & 3.8 M\\
- & {\footnotesize{RT}} & 0.01 s & 0.01 s & 0.01 s & 0.03 s & $\infty$ \\
- & {\footnotesize{TT}} & 0.01 s & 0.01 s & 14.99 s & 38.00 s & --- \\
+ & {\footnotesize{RT}} & $<0.02$ s & $<0.02$ s & $<0.02$ s & 0.03 s & $\infty$ \\
+ & {\footnotesize{TT}} & $<0.02$ s & $<0.02$ s & 14.99 s & 38.00 s & --- \\
 \hline
 %\texttt{simple.tm} & \# & --- & 8 & 11 & 345\,407 & 3\,940\,225\\
 \texttt{simple.tm} & \# & --- & 8 & 11 & 0.3 M & 3.9 M\\
- & {\footnotesize{RT}} & --- & 0.01 s & 0.01 s & 0.07 s & $\infty$ \\
- & {\footnotesize{TT}} & --- & $<0.01$ s & 14.57 s & 38.02 s & --- \\
+ & {\footnotesize{RT}} & --- & $<0.02$ s & $<0.02$ s & 0.07 s & $\infty$ \\
+ & {\footnotesize{TT}} & --- & $<0.02$ s & 14.57 s & 38.02 s & --- \\
 \hline
 %\texttt{rotate.tm} & \# & --- & 14 & 18 & 1\,596\,442 & 19\,033\,283\\
 \texttt{rotate.tm} & \# & --- & 14 & 18 & 1.6 M & 19 M\\
- & {\footnotesize{RT}} & --- & 0.01 s & 0.01 s & 0.24 s & $\infty$ \\
- & {\footnotesize{TT}} & --- & 0.01 s & 71.92 s & 213.02 s & --- \\
+ & {\footnotesize{RT}} & --- & $<0.02$ s & $<0.02$ s & 0.24 s & $\infty$ \\
+ & {\footnotesize{TT}} & --- & $<0.02$ s & 71.92 s & 213.02 s & --- \\
 \hline
 %\texttt{hello\_opt.pda} & \# & --- & --- & 13 & 1\,888\,333 & 16\,543\,020\\
 \texttt{hello\_opt.pda} & \# & --- & --- & 13 & 1.9 M & 16.5 M\\
- & {\footnotesize{RT}} & --- & --- & 0.01 s & 0.21 s & 1.32 s \\
+ & {\footnotesize{RT}} & --- & --- & $<0.02$ s & 0.21 s & 1.32 s \\
  & {\footnotesize{TT}} & --- & --- & 77.91 s & 176.33 s & --- \\
 %\hline
 %\hline
@@ -1649,26 +1657,26 @@ with $4$ cores. Operating system: Linux thinkpad 4.15.0-45-generic \#48-Ubuntu.
 \chapter{Summary}
 
 In this thesis, we provided a full implementation of a translation
-from a modern programming language to $2$ Counter Machine. 
+from a modern programming language to Two Counter Machine. 
 While Brainfuck is not widely used, our work can be combined with 
 existing tools translating C++
-to Brainfuck (\cite{in-person}). Together these two works give a full
-proof of the theoretical concept of equivalence of modern languages and $2$ Counter
+to Brainfuck (\hspace{1sp}\cite{in-person}). Together these two works give a full
+proof of the theoretical concept of equivalence of modern languages and Two Counter
 Machine.
 
 The translation time is usually reasonable, but the running time grows
-very quickly once we get to the $2$CM language, were we observe the exponential growth.
+very quickly once we get to the $2$CM language, where we observe the exponential growth.
 This exponential growth limits our implementation especially in presence of ASCII
 characters, whose values are often high.
 If we remapped ASCII characters at the very beginning of the pipeline
 then it would help significantly. Brainfuck's code structure is very connected
-to the current shape of ASCII table, so it is not that simple to make such a remapping.
+to the current shape of the ASCII table, so it is not that simple to make such a remapping.
 Usual Brainfuck's code has many consecutive \texttt{+}'s which are making
 an expected character. Remapping would mean that Brainfuck's code should be changed
 (or at least cut) before the actual translation.
 
 The application serves as a proof of concept, but could also be adapted
-as an education tool. That would require constructing an user-friendly
+as an education tool. That would require constructing a user-friendly
 graphical interface, but this is not in the scope of this thesis.
 
 Other possible directions of further development include:
@@ -1691,7 +1699,7 @@ Other possible directions of further development include:
 \chapter{Examples}
 
 
-Such $2$ stack PDA code:
+Such two stack PDA code:
 
 \begin{verbatim}
 START: read
